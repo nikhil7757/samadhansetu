@@ -18,6 +18,7 @@ import adminRoutes from './routes/admin.routes.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(
