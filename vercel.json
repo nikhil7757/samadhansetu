@@ -1,4 +1,4 @@
-﻿{
+{
   "version": 2,
   "buildCommand": "cd backend && npm install && npx prisma generate && cd ../frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
