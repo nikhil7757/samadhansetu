@@ -34,18 +34,18 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded files
 app.use('/uploads', express.static(path.resolve(__dirname, '..', config.uploadDir)));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/problems', problemRoutes);
-app.use('/api/problems', interestRoutes);
-app.use('/api/problems', commentRoutes);
-app.use('/api/teams', teamRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/admin', adminRoutes);
+// Routes (support both /api/ prefix and stripped prefix)
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/problems', '/problems'], problemRoutes);
+app.use(['/api/problems', '/problems'], interestRoutes);
+app.use(['/api/problems', '/problems'], commentRoutes);
+app.use(['/api/teams', '/teams'], teamRoutes);
+app.use(['/api/notifications', '/notifications'], notificationRoutes);
+app.use(['/api/dashboard', '/dashboard'], dashboardRoutes);
+app.use(['/api/admin', '/admin'], adminRoutes);
 
 // Health check
-app.get('/api/health', (_req, res) => {
+app.get(['/api/health', '/health'], (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
