@@ -1,19 +1,36 @@
 {
   "version": 2,
-  "buildCommand": "cd backend && npm install && npx prisma generate && cd ../frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index"
+      "source": "/api(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "backend"
+      }
     },
     {
-      "source": "/uploads/(.*)",
-      "destination": "/api/index"
+      "source": "/uploads(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "backend"
+      }
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": {
+        "type": "service",
+        "service": "frontend"
+      }
     }
-  ]
+  ],
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "backend": {
+      "root": "backend",
+      "entrypoint": "src/index.ts"
+    }
+  }
 }
