@@ -42,7 +42,7 @@ npm run dev                  # Starts on http://localhost:5173
 
 ### 4. Open the App
 
-Visit **http://localhost:5173** in your browser.
+Visit **https://sih-leaatipmt-nikhil7757.vercel.app/** in your browser.
 
 ## Demo Accounts
 
