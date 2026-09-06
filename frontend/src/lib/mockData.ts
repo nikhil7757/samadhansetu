@@ -13,12 +13,51 @@ export interface MockProblem {
     district: string;
     organizationName?: string;
     role: string;
+    email?: string;
   };
   _count: {
     interests: number;
     comments: number;
   };
 }
+
+export const MOCK_USERS: Record<string, any> = {
+  'admin@samadhansetu.gov.in': {
+    id: 'u-admin',
+    name: 'Vikram Singh (Nodal Admin)',
+    email: 'admin@samadhansetu.gov.in',
+    role: 'ADMIN',
+    organizationName: 'Department of Higher & Technical Education, Govt. of Jharkhand',
+    district: 'Ranchi',
+    preferredLanguage: 'en',
+  },
+  'priya.kumar@gmail.com': {
+    id: 'u-priya',
+    name: 'Priya Kumar',
+    email: 'priya.kumar@gmail.com',
+    role: 'CITIZEN',
+    district: 'Dhanbad',
+    preferredLanguage: 'en',
+  },
+  'iit.ism.team@gmail.com': {
+    id: 'u-iit',
+    name: 'Prof. Anirudh Sen (IIT ISM Team)',
+    email: 'iit.ism.team@gmail.com',
+    role: 'UNIVERSITY',
+    organizationName: 'IIT (ISM) Dhanbad — Dept. of Environmental Engineering',
+    district: 'Dhanbad',
+    preferredLanguage: 'en',
+  },
+  'tata.steel.csr@gmail.com': {
+    id: 'u-tata',
+    name: 'Siddharth Roy (Tata Steel CSR)',
+    email: 'tata.steel.csr@gmail.com',
+    role: 'INDUSTRY',
+    organizationName: 'Tata Steel Rural Development Society (TSRDS)',
+    district: 'East Singhbhum',
+    preferredLanguage: 'en',
+  },
+};
 
 export const MOCK_PROBLEMS: MockProblem[] = [
   {
@@ -30,7 +69,7 @@ export const MOCK_PROBLEMS: MockProblem[] = [
     urgency: 'HIGH',
     status: 'IN_PROGRESS',
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(),
-    submittedBy: { id: 'u1', name: 'Rajesh Oraon', district: 'Deoghar', role: 'CITIZEN' },
+    submittedBy: { id: 'u1', name: 'Rajesh Oraon', district: 'Deoghar', role: 'CITIZEN', email: 'rajesh.oraon@gmail.com' },
     _count: { interests: 4, comments: 8 },
   },
   {
@@ -42,7 +81,7 @@ export const MOCK_PROBLEMS: MockProblem[] = [
     urgency: 'HIGH',
     status: 'TEAM_FORMED',
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12).toISOString(),
-    submittedBy: { id: 'u2', name: 'Anita Devi', district: 'Gumla', role: 'CITIZEN' },
+    submittedBy: { id: 'u2', name: 'Anita Devi', district: 'Gumla', role: 'CITIZEN', email: 'anita.devi@gmail.com' },
     _count: { interests: 3, comments: 5 },
   },
   {
@@ -54,7 +93,7 @@ export const MOCK_PROBLEMS: MockProblem[] = [
     urgency: 'HIGH',
     status: 'IN_PROGRESS',
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 18).toISOString(),
-    submittedBy: { id: 'u3', name: 'Priya Kumar', district: 'Dhanbad', role: 'CITIZEN' },
+    submittedBy: { id: 'u3', name: 'Priya Kumar', district: 'Dhanbad', role: 'CITIZEN', email: 'priya.kumar@gmail.com' },
     _count: { interests: 5, comments: 12 },
   },
   {
@@ -116,5 +155,129 @@ export const MOCK_PROBLEMS: MockProblem[] = [
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(),
     submittedBy: { id: 'u8', name: 'Arun Mahto', district: 'Dhanbad', role: 'CITIZEN' },
     _count: { interests: 4, comments: 11 },
-  }
+  },
+];
+
+export const MOCK_PENDING_PROBLEMS = [
+  {
+    id: 'pend-1',
+    title: 'Seasonal Drying of Subarnarekha River Irrigation Canal in Namkum',
+    description: 'Sediment buildup and breach of canal wall in Namkum block has halted water flow to over 400 hectares of paddy fields. Farmers are requesting engineered desiltation and check-dam repair.',
+    category: 'AGRICULTURE',
+    district: 'Ranchi',
+    urgency: 'HIGH',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    submittedBy: { id: 'up-1', name: 'Alok Tirkey', email: 'alok.tirkey@gmail.com', district: 'Ranchi' },
+  },
+  {
+    id: 'pend-2',
+    title: 'Severe Arsenic Leaching in Tube Wells of Chandankiyari Panchayat',
+    description: 'Preliminary kit testing indicates arsenic above permissible thresholds in 8 public school hand pumps. Lab verification and filtration deployment required immediately.',
+    category: 'WATER_SANITATION',
+    district: 'Bokaro',
+    urgency: 'HIGH',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
+    submittedBy: { id: 'up-2', name: 'Meena Kumari', email: 'meena.k@gmail.com', district: 'Bokaro' },
+  },
+  {
+    id: 'pend-3',
+    title: 'Lack of Cold Storage for Mahua Flower Processing in Tribal Cooperatives',
+    description: 'Over 12 quintals of harvested Mahua flowers ferment prematurely in traditional mud storehouses in Daltonganj, causing heavy income loss to forest gathering families.',
+    category: 'SKILL_DEVELOPMENT',
+    district: 'Palamu',
+    urgency: 'MEDIUM',
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 28).toISOString(),
+    submittedBy: { id: 'up-3', name: 'Sanjay Chero', email: 'sanjay.chero@gmail.com', district: 'Palamu' },
+  },
+];
+
+export const MOCK_MATCHES = [
+  {
+    id: 'team-1',
+    formedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
+    problem: {
+      id: 'prob-1',
+      title: 'High Arsenic & Fluoride Contamination in Deep Groundwater Wells',
+      status: 'IN_PROGRESS',
+      category: 'WATER_SANITATION',
+      district: 'Deoghar',
+    },
+    members: [
+      { id: 'm1', user: { id: 'u1', name: 'Rajesh Oraon', role: 'CITIZEN', organizationName: 'Citizen Submitter' } },
+      { id: 'm2', user: { id: 'u-iit', name: 'Prof. Anirudh Sen', role: 'UNIVERSITY', organizationName: 'IIT (ISM) Dhanbad' } },
+      { id: 'm3', user: { id: 'u-tata', name: 'Siddharth Roy', role: 'INDUSTRY', organizationName: 'Tata Steel CSR' } },
+    ],
+    notes: [
+      {
+        id: 'n1',
+        content: 'Tata Steel CSR has authorized ₹8.5 Lakhs milestone funding for 5 community-scale filtration units in Sarwan block.',
+        authorName: 'Siddharth Roy (Tata Steel CSR)',
+        authorId: 'u-tata',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
+      },
+      {
+        id: 'n2',
+        content: 'Lab testing at IIT ISM confirms that activated alumina columns reduce fluoride from 3.6 mg/L to 0.8 mg/L safely under WHO limits.',
+        authorName: 'Prof. Anirudh Sen (IIT ISM)',
+        authorId: 'u-iit',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+      },
+    ],
+  },
+  {
+    id: 'team-2',
+    formedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(),
+    problem: {
+      id: 'prob-2',
+      title: 'Severe Post-Harvest Tomato Spoilage in Unrefrigerated Farm Clusters',
+      status: 'TEAM_FORMED',
+      category: 'AGRICULTURE',
+      district: 'Gumla',
+    },
+    members: [
+      { id: 'm4', user: { id: 'u2', name: 'Anita Devi', role: 'CITIZEN', organizationName: 'Citizen Submitter' } },
+      { id: 'm5', user: { id: 'u-bit', name: 'BIT Mesra Innovation Cell', role: 'UNIVERSITY', organizationName: 'BIT Mesra Ranchi' } },
+      { id: 'm6', user: { id: 'u-usha', name: 'Usha Martin CSR', role: 'INDUSTRY', organizationName: 'Usha Martin Foundation' } },
+    ],
+    notes: [
+      {
+        id: 'n3',
+        content: 'Zero-energy evaporative cooling chamber design drafted by BIT Mesra mechanical engineering students.',
+        authorName: 'BIT Mesra Innovation Cell',
+        authorId: 'u-bit',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      },
+    ],
+  },
+];
+
+export const MOCK_NOTIFICATIONS = [
+  {
+    id: 'notif-1',
+    message: 'IIT (ISM) Dhanbad submitted an engineering solution proposal for your challenge in Deoghar.',
+    link: '/problems/prob-1',
+    isRead: false,
+    createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+  },
+  {
+    id: 'notif-2',
+    message: 'Nodal Officer approved your challenge: "Heavy Metal Runoff from Abandoned Coal Washeries".',
+    link: '/problems/prob-3',
+    isRead: false,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+  },
+  {
+    id: 'notif-3',
+    message: 'You have been paired into an active collaboration team with Tata Steel CSR.',
+    link: '/teams/team-1',
+    isRead: true,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+  },
+  {
+    id: 'notif-4',
+    message: 'Lifecycle milestone updated: "Maternal Vaccine Cold-Chain" reached Piloted in Field stage.',
+    link: '/problems/prob-4',
+    isRead: true,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
+  },
 ];
