@@ -9,7 +9,7 @@ export class AdminController {
 
   static async approve(req: Request, res: Response) {
     try {
-      const problem = await AdminService.approveProblem(req.params.id, req.user!.userId, req.body.note);
+      const problem = await AdminService.approveProblem(req.params.id as string, req.user!.userId, req.body.note);
       res.json(problem);
     } catch (err: any) {
       if (err.message === 'Problem not found') {
@@ -31,7 +31,7 @@ export class AdminController {
         res.status(400).json({ error: 'Rejection reason is required' });
         return;
       }
-      const problem = await AdminService.rejectProblem(req.params.id, req.user!.userId, note);
+      const problem = await AdminService.rejectProblem(req.params.id as string, req.user!.userId, note);
       res.json(problem);
     } catch (err: any) {
       if (err.message === 'Problem not found') {

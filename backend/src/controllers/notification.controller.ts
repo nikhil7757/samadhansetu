@@ -10,7 +10,7 @@ export class NotificationController {
 
   static async markAsRead(req: Request, res: Response) {
     try {
-      await NotificationService.markAsRead(req.params.id, req.user!.userId);
+      await NotificationService.markAsRead(req.params.id as string, req.user!.userId);
       res.json({ success: true });
     } catch (err: any) {
       if (err.message === 'Notification not found') {

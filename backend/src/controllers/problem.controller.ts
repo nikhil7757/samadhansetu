@@ -27,7 +27,7 @@ export class ProblemController {
 
   static async getById(req: Request, res: Response) {
     try {
-      const problem = await ProblemService.getById(req.params.id);
+      const problem = await ProblemService.getById(req.params.id as string);
       res.json(problem);
     } catch (err: any) {
       if (err.message === 'Problem not found') {
@@ -42,7 +42,7 @@ export class ProblemController {
     try {
       const { newStatus, note } = req.body;
       const problem = await ProblemService.updateStatus(
-        req.params.id,
+        req.params.id as string,
         newStatus,
         req.user!.userId,
         note

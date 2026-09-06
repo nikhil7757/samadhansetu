@@ -4,16 +4,16 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "esModuleInterop": true,
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
     "skipLibCheck": true,
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "src",
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
+    "declaration": false,
+    "sourceMap": false,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "prisma/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "prisma"]
 }

@@ -5,7 +5,7 @@ export class InterestController {
   static async expressInterest(req: Request, res: Response) {
     try {
       const interest = await InterestService.expressInterest(
-        req.params.id,
+        req.params.id as string,
         req.user!.userId,
         req.body.pitchMessage,
         req.user!.role
@@ -25,7 +25,7 @@ export class InterestController {
   }
 
   static async listForProblem(req: Request, res: Response) {
-    const interests = await InterestService.listForProblem(req.params.id);
+    const interests = await InterestService.listForProblem(req.params.id as string);
     res.json(interests);
   }
 }
