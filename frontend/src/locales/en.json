@@ -1,0 +1,288 @@
+{
+  "app": {
+    "name": "SamadhanSetu",
+    "tagline": "Bridging Challenges to Solutions",
+    "description": "A digital platform connecting citizens, universities, and industry to solve Jharkhand's societal challenges collaboratively."
+  },
+  "nav": {
+    "home": "Home",
+    "problems": "Problems",
+    "dashboard": "Impact Dashboard",
+    "mySubmissions": "My Submissions",
+    "myInterests": "My Interests",
+    "myTeams": "My Teams",
+    "admin": "Admin Panel",
+    "submitProblem": "Submit Problem",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "notifications": "Notifications",
+    "profile": "Profile"
+  },
+  "landing": {
+    "hero": {
+      "badge": "Smart India Hackathon 2026 — SIH26043",
+      "title": "Transforming Jharkhand Through Collaborative Problem Solving",
+      "subtitle": "Citizens report verified grassroots challenges. Universities engineer open solutions. Industry partners sponsor pilots and deploy at scale.",
+      "cta": "Submit a Problem",
+      "explore": "Explore Problems",
+      "viewDashboard": "View Impact Dashboard"
+    },
+    "stats": {
+      "problemsSubmitted": "Challenges Reported",
+      "activeSolutions": "Active Projects",
+      "teamCollaborations": "University-Industry Teams",
+      "problemsSolved": "Deployed Solutions"
+    },
+    "howItWorks": {
+      "title": "How SamadhanSetu Works",
+      "subtitle": "A structured matchmaking workflow connecting posters, solvers, and enablers",
+      "step1Title": "1. Report Challenge",
+      "step1Desc": "Citizens and officials report district challenges with location and urgency metadata.",
+      "step2Title": "2. University Solutions",
+      "step2Desc": "Student & faculty teams pitch tailored engineering and scientific solutions.",
+      "step3Title": "3. Industry Enablement",
+      "step3Desc": "CSR and corporate partners offer funding, equipment, and pilot deployments.",
+      "step4Title": "4. Monitored Lifecycle",
+      "step4Desc": "Transparent state-level tracking from initial review to permanent deployment."
+    },
+    "roles": {
+      "title": "A Multi-Stakeholder Ecosystem",
+      "citizen": {
+        "title": "Citizens & Administration",
+        "desc": "Crowdsource real issues across 24 districts and track resolution progress transparently."
+      },
+      "university": {
+        "title": "Universities & Innovation Cells",
+        "desc": "Channel academic research, student capstone projects, and lab innovations into real community impact."
+      },
+      "industry": {
+        "title": "Industry & CSR Partners",
+        "desc": "Direct CSR funding and technology resources into verified local interventions with audited milestones."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign In to SamadhanSetu",
+      "subtitle": "Access your solver workspace, submissions, and notifications",
+      "email": "Official / Registered Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Register here",
+      "error": "Invalid email or password",
+      "demoCredentials": "Demo Accounts Available"
+    },
+    "signup": {
+      "title": "Create an Account",
+      "subtitle": "Join Jharkhand's collaborative innovation network",
+      "name": "Full Name / Organization Contact",
+      "email": "Email Address",
+      "password": "Password (min 8 chars)",
+      "role": "Account Type",
+      "roleCitizen": "Citizen / Government Official",
+      "roleUniversity": "University Solver (Student/Faculty/Cell)",
+      "roleIndustry": "Industry Enabler (Company/CSR)",
+      "organization": "Institution / Company Name",
+      "organizationHint": "Enter your college or corporate entity name",
+      "district": "Base District",
+      "districtPlaceholder": "Select district in Jharkhand",
+      "language": "Preferred Language",
+      "submit": "Register Account",
+      "hasAccount": "Already registered?",
+      "loginLink": "Sign in here",
+      "error": "Registration failed. Please review your inputs."
+    }
+  },
+  "problems": {
+    "feed": {
+      "title": "Civic Challenges Directory",
+      "subtitle": "Explore real problems across Jharkhand seeking university and industry solutions",
+      "search": "Search by keyword, district, or topic...",
+      "filterCategory": "All Categories",
+      "filterDistrict": "All Districts",
+      "filterStatus": "All Statuses",
+      "clearFilters": "Reset Filters",
+      "showing": "Showing {{count}} of {{total}} problems",
+      "noResults": "No problems match the selected criteria",
+      "noResultsHint": "Try broadening your district or category filters",
+      "loadMore": "Load More"
+    },
+    "detail": {
+      "submittedBy": "Reported by",
+      "postedOn": "Submitted on {{date}}",
+      "district": "District",
+      "category": "Domain",
+      "urgency": "Urgency",
+      "status": "Current Status",
+      "interests": "{{count}} interest(s) expressed",
+      "comments": "{{count}} discussion comments",
+      "statusTimeline": "Milestone & Status Lifecycle",
+      "commentSection": "Public Discussion & Queries",
+      "addComment": "Write a constructive query or suggestion...",
+      "postComment": "Post Comment",
+      "noComments": "No comments yet. Be the first to start the discussion.",
+      "expressInterest": "Express Interest / Pitch",
+      "interestAsUniversity": "Propose Technical Solution (University)",
+      "interestAsIndustry": "Offer Sponsorship / Pilot Support (Industry)",
+      "pitchPlaceholder": "Detail your approach, resource requirements, and proposed delivery timeline...",
+      "submitPitch": "Submit Proposal",
+      "alreadyInterested": "Proposal Submitted",
+      "projectTeam": "Assigned Project Team",
+      "viewWorkspace": "Open Team Workspace",
+      "loginToComment": "Sign in to participate in the discussion",
+      "loginToExpress": "Sign in with a University or Industry account to submit a proposal"
+    },
+    "submit": {
+      "title": "Submit a Community Challenge",
+      "subtitle": "Provide actionable details so solver teams can design targeted interventions",
+      "titleField": "Challenge Title",
+      "titlePlaceholder": "e.g., Groundwater Arsenic Contamination in Rural Deoghar",
+      "description": "Comprehensive Description",
+      "descriptionPlaceholder": "Describe the problem, affected demographic, current stopgap measures, and ideal outcomes...",
+      "category": "Category",
+      "categoryPlaceholder": "Select category",
+      "district": "District",
+      "districtPlaceholder": "Select affected district",
+      "urgency": "Urgency Level",
+      "photo": "Supporting Photo (Optional)",
+      "photoHint": "Upload JPG, PNG, or WebP (max 5MB)",
+      "submit": "Submit Challenge for Review",
+      "submitting": "Submitting...",
+      "success": "Challenge submitted successfully! It has been routed to the Nodal Officer review queue.",
+      "error": "Failed to submit challenge. Please check required fields."
+    },
+    "mySubmissions": {
+      "title": "My Submitted Challenges",
+      "subtitle": "Track administrative approval, solvers interested, and lifecycle status",
+      "empty": "You haven't submitted any challenges yet.",
+      "emptyCta": "Submit a New Challenge"
+    }
+  },
+  "interest": {
+    "title": "Collaboration Proposal",
+    "success": "Your proposal has been logged and forwarded to the nodal review team!",
+    "error": "Failed to register proposal. Please try again.",
+    "myInterests": {
+      "title": "My Pitches & Expressions of Interest",
+      "subtitle": "Challenges where your institution or firm has offered solutions",
+      "empty": "No active proposals submitted yet.",
+      "emptyCta": "Browse Open Challenges"
+    }
+  },
+  "teams": {
+    "workspace": {
+      "title": "Collaborative Project Workspace",
+      "members": "Team Roster",
+      "notes": "Collaborative Notes & Activity Log",
+      "addNote": "Share progress update, lab test result, or meeting note...",
+      "postNote": "Add Update",
+      "noNotes": "No notes posted yet. Post your team's kickoff notes here.",
+      "problem": "Target Challenge",
+      "status": "Project Stage",
+      "updateStatus": "Update Project Stage"
+    },
+    "myTeams": {
+      "title": "My Project Teams",
+      "subtitle": "Collaborative workspaces for matched challenge initiatives",
+      "empty": "You are not currently part of any matched project team.",
+      "emptyCta": "Explore Open Challenges"
+    }
+  },
+  "notifications": {
+    "title": "Activity & System Notifications",
+    "markAllRead": "Mark All Read",
+    "empty": "You are all caught up! No unread notifications.",
+    "emptyHint": "Status progressions, review approvals, and team formations will appear here."
+  },
+  "dashboard": {
+    "title": "Jharkhand Civic Impact & Transparency Portal",
+    "subtitle": "Real-time state telemetry tracking crowdsourced civic interventions",
+    "totalProblems": "Total Reported",
+    "solved": "Solved & Deployed",
+    "activeTeams": "Active Teams",
+    "inProgress": "In Field Progress",
+    "byCategory": "Challenges by Category Domain",
+    "byDistrict": "Geographic Distribution (24 Districts)",
+    "byStatus": "Lifecycle Progression Distribution",
+    "govtTag": "Official Open Data Initiative — Govt. of Jharkhand"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Nodal Officer Operations Console",
+      "pendingCount": "{{count}} submissions awaiting review",
+      "viewPending": "Moderation Queue",
+      "viewMatches": "Matchmaking Registry",
+      "quickStats": "Platform Performance"
+    },
+    "pending": {
+      "title": "Challenge Moderation Queue",
+      "subtitle": "Verify veracity and categorize citizen submissions before publishing",
+      "approve": "Approve & Publish",
+      "reject": "Decline Submission",
+      "rejectReason": "Rejection Rationale",
+      "rejectReasonPlaceholder": "Specify why this submission does not meet publication standards...",
+      "empty": "Moderation queue is clean. No pending submissions.",
+      "emptyHint": "All new challenges will appear here for verification.",
+      "approved": "Challenge approved and published to public feed.",
+      "rejected": "Challenge declined and submitter notified."
+    },
+    "matches": {
+      "title": "Matchmaking & Team Formation Registry",
+      "subtitle": "Pair verified university solvers and industry enablers into active project units",
+      "createMatch": "Form Project Team",
+      "selectProblem": "Select Challenge",
+      "selectUsers": "Select Verified Solver/Enabler Partners",
+      "confirm": "Finalize & Launch Workspace",
+      "empty": "No teams formed yet.",
+      "emptyHint": "Review expressed interests on open problems to authorize cross-sector teams.",
+      "created": "Team authorized and workspace provisioned."
+    }
+  },
+  "common": {
+    "loading": "Loading data...",
+    "error": "An error occurred while processing your request.",
+    "retry": "Try Again",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Go Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "viewDetails": "View Details",
+    "urgencyLow": "Low Urgency",
+    "urgencyMedium": "Medium Urgency",
+    "urgencyHigh": "High Urgency",
+    "statusPending": "Under Review",
+    "statusRejected": "Declined",
+    "statusOpen": "Open for Solvers",
+    "statusTeamFormed": "Team Formed",
+    "statusInProgress": "In Development",
+    "statusPiloted": "Piloted in Field",
+    "statusSolved": "Deployed & Solved",
+    "categoryWater": "Water & Sanitation",
+    "categoryAgriculture": "Agriculture & Irrigation",
+    "categoryHealthcare": "Healthcare & Nutrition",
+    "categoryEducation": "Education & Literacy",
+    "categoryInfrastructure": "Infrastructure & Roads",
+    "categoryEnvironment": "Environment & Forestry",
+    "categorySkill": "Skill & Rural Livelihoods",
+    "categoryOther": "Other Civic Needs",
+    "roleCitizen": "Citizen",
+    "roleUniversity": "University Solver",
+    "roleIndustry": "Industry Enabler",
+    "roleAdmin": "Nodal Admin"
+  },
+  "footer": {
+    "tagline": "SamadhanSetu — Facilitating multi-stakeholder civic problem-solving across Jharkhand.",
+    "govt": "Developed for Smart India Hackathon 2026 (SIH26043)",
+    "problem": "Department of Higher and Technical Education & Information Technology, Government of Jharkhand"
+  }
+}

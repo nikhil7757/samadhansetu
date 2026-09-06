@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  /* Deep teal primary - civic/government feel */
+  --color-primary: oklch(0.35 0.12 195);
+  --color-primary-foreground: oklch(0.98 0 0);
+  --color-primary-hover: oklch(0.30 0.12 195);
+  --color-primary-light: oklch(0.92 0.04 195);
+
+  /* Secondary */
+  --color-secondary: oklch(0.95 0.02 210);
+  --color-secondary-foreground: oklch(0.25 0.02 210);
+
+  /* Accent - warm amber */
+  --color-accent: oklch(0.75 0.15 75);
+  --color-accent-foreground: oklch(0.20 0.05 75);
+
+  /* Destructive */
+  --color-destructive: oklch(0.55 0.2 25);
+  --color-destructive-foreground: oklch(0.98 0 0);
+
+  /* Muted */
+  --color-muted: oklch(0.96 0.005 210);
+  --color-muted-foreground: oklch(0.50 0.02 210);
+
+  /* Card / Background */
+  --color-background: oklch(0.985 0.002 210);
+  --color-foreground: oklch(0.15 0.02 210);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.15 0.02 210);
+
+  /* Border */
+  --color-border: oklch(0.90 0.01 210);
+  --color-input: oklch(0.90 0.01 210);
+  --color-ring: oklch(0.35 0.12 195);
+
+  /* Status colors */
+  --color-status-pending: oklch(0.65 0.02 250);
+  --color-status-rejected: oklch(0.55 0.2 25);
+  --color-status-open: oklch(0.60 0.15 230);
+  --color-status-team-formed: oklch(0.55 0.18 290);
+  --color-status-in-progress: oklch(0.70 0.15 75);
+  --color-status-piloted: oklch(0.60 0.15 50);
+  --color-status-solved: oklch(0.55 0.18 155);
+
+  /* Urgency colors */
+  --color-urgency-low: oklch(0.55 0.18 155);
+  --color-urgency-medium: oklch(0.70 0.15 75);
+  --color-urgency-high: oklch(0.55 0.2 25);
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Font */
+  --font-sans: 'Inter', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+}
+
+/* Global styles */
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Skeleton animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-muted) 25%, oklch(0.93 0.005 210) 50%, var(--color-muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.80 0.01 210);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.70 0.01 210);
+}

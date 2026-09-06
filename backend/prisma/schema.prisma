@@ -1,0 +1,197 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CITIZEN
+  UNIVERSITY
+  INDUSTRY
+  ADMIN
+}
+
+enum ProblemStatus {
+  PENDING_APPROVAL
+  REJECTED
+  OPEN
+  TEAM_FORMED
+  IN_PROGRESS
+  PILOTED
+  SOLVED
+}
+
+enum Urgency {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Category {
+  WATER_SANITATION
+  AGRICULTURE
+  HEALTHCARE
+  EDUCATION
+  INFRASTRUCTURE
+  ENVIRONMENT
+  SKILL_DEVELOPMENT
+  OTHER
+}
+
+model User {
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  passwordHash      String
+  role              Role
+  organizationName  String?
+  district          String
+  preferredLanguage String    @default("en")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  submittedProblems Problem[]       @relation("SubmittedProblems")
+  interests         Interest[]
+  statusChanges     StatusHistory[] @relation("StatusChanger")
+  comments          Comment[]
+  notifications     Notification[]
+  teamMemberships   TeamMember[]
+
+  @@map("users")
+}
+
+model Problem {
+  id          String        @id @default(uuid())
+  title       String
+  description String
+  category    Category
+  district    String
+  urgency     Urgency
+  status      ProblemStatus @default(PENDING_APPROVAL)
+  imageUrl    String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  submittedBy   User   @relation("SubmittedProblems", fields: [submittedById], references: [id])
+  submittedById String
+
+  interests     Interest[]
+  statusHistory StatusHistory[]
+  comments      Comment[]
+  projectTeam   ProjectTeam?
+
+  @@index([category])
+  @@index([district])
+  @@index([status])
+  @@index([createdAt])
+  @@map("problems")
+}
+
+model Interest {
+  id           String   @id @default(uuid())
+  pitchMessage String
+  roleAtTime   Role
+  createdAt    DateTime @default(now())
+
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@unique([problemId, userId])
+  @@map("interests")
+}
+
+model ProjectTeam {
+  id       String   @id @default(uuid())
+  formedAt DateTime @default(now())
+
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId String  @unique
+
+  members TeamMember[]
+  notes   TeamNote[]
+
+  @@map("project_teams")
+}
+
+model TeamMember {
+  id String @id @default(uuid())
+
+  team   ProjectTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  joinedAt DateTime @default(now())
+
+  @@unique([teamId, userId])
+  @@map("team_members")
+}
+
+model TeamNote {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  team   ProjectTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId String
+
+  authorId   String
+  authorName String
+
+  @@map("team_notes")
+}
+
+model StatusHistory {
+  id        String        @id @default(uuid())
+  oldStatus ProblemStatus
+  newStatus ProblemStatus
+  note      String?
+  createdAt DateTime      @default(now())
+
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId String
+
+  changedBy   User   @relation("StatusChanger", fields: [changedById], references: [id])
+  changedById String
+
+  @@index([problemId])
+  @@map("status_history")
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  commentText String
+  createdAt   DateTime @default(now())
+
+  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  problemId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([problemId, createdAt])
+  @@map("comments")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
