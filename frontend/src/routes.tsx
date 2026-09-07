@@ -59,10 +59,7 @@ function RoleAwareDashboard() {
   if (user?.role === 'ADMIN') {
     return <PendingApproval />;
   }
-  if (user?.role === 'CITIZEN') {
-    return <MySubmissions />;
-  }
-  return <ImpactDashboard />;
+  return <MySubmissions />;
 }
 
 export const router = createBrowserRouter([

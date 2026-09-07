@@ -114,8 +114,8 @@ export function TopNav() {
                   <span className="font-semibold text-foreground max-w-[120px] truncate leading-tight">
                     {user.name}
                   </span>
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider leading-none">
-                    {user.role}
+                  <span className="text-[10px] text-muted-foreground font-medium capitalize leading-none">
+                    {user.role.toLowerCase()}
                   </span>
                 </div>
               </div>
