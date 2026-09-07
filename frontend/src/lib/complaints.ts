@@ -1,4 +1,5 @@
 import { runAIScoringPipeline, type AIScoreResult } from './aiVerification';
+import api from './api';
 
 export type ComplaintCategory = 'roads' | 'water' | 'electricity' | 'sanitation' | 'corruption' | 'other';
 
@@ -463,6 +464,12 @@ export function submitNewComplaint(input: {
 
   const updated = [newComplaint, ...all];
   saveComplaints(updated);
+
+  // Asynchronously persist to backend database API
+  api.post('/complaints', newComplaint).catch((err) => {
+    console.warn('Backend complaint database sync note:', err?.message || err);
+  });
+
   return newComplaint;
 }
 
@@ -488,6 +495,12 @@ export function appealComplaint(id: string, citizenNote?: string): Complaint | n
 
   all[index] = complaint;
   saveComplaints(all);
+
+  // Sync appeal with backend database API
+  api.post(`/complaints/${encodeURIComponent(id)}/appeal`, { note: citizenNote }).catch((err) => {
+    console.warn('Backend appeal sync note:', err?.message || err);
+  });
+
   return complaint;
 }
 
@@ -541,6 +554,17 @@ export function executeOfficerAction(
 
   all[index] = complaint;
   saveComplaints(all);
+
+  // Sync officer action with backend database API
+  api.patch(`/complaints/${encodeURIComponent(id)}/officer-action`, {
+    action,
+    note: notes,
+    officerId,
+    officerName,
+  }).catch((err) => {
+    console.warn('Backend officer action sync note:', err?.message || err);
+  });
+
   return complaint;
 }
 

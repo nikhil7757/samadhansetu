@@ -50,6 +50,7 @@ export default function PendingApproval() {
   const [complaints, setComplaints] = useState<Complaint[]>(() => getStoredComplaints());
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [dateRangeFilter, setDateRangeFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Action Dialog states
@@ -62,14 +63,28 @@ export default function PendingApproval() {
     return complaints.filter((c) => {
       const isPending = c.status === 'pending_officer' || c.status === 'officer_reviewing';
       const matchesCategory = categoryFilter === 'all' || c.category === categoryFilter;
+
+      let matchesDate = true;
+      if (dateRangeFilter !== 'all') {
+        const submittedTime = new Date(c.submitted_at).getTime();
+        const now = Date.now();
+        if (dateRangeFilter === '24h') {
+          matchesDate = now - submittedTime <= 24 * 60 * 60 * 1000;
+        } else if (dateRangeFilter === '7d') {
+          matchesDate = now - submittedTime <= 7 * 24 * 60 * 60 * 1000;
+        } else if (dateRangeFilter === '30d') {
+          matchesDate = now - submittedTime <= 30 * 24 * 60 * 60 * 1000;
+        }
+      }
+
       const matchesSearch =
         !searchQuery ||
         c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.location.district.toLowerCase().includes(searchQuery.toLowerCase());
-      return isPending && matchesCategory && matchesSearch;
+      return isPending && matchesCategory && matchesDate && matchesSearch;
     });
-  }, [complaints, categoryFilter, searchQuery]);
+  }, [complaints, categoryFilter, dateRangeFilter, searchQuery]);
 
   const handleActionConfirm = () => {
     if (!selectedComplaint || !actionType) return;
@@ -174,22 +189,40 @@ export default function PendingApproval() {
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
-            <Filter className="h-3.5 w-3.5" /> Category:
-          </span>
-          <Select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            options={[
-              { value: 'all', label: 'All Categories' },
-              { value: 'roads', label: '🛣️ Roads' },
-              { value: 'water', label: '🚰 Water' },
-              { value: 'electricity', label: '⚡ Electricity' },
-              { value: 'sanitation', label: '🧹 Sanitation' },
-              { value: 'corruption', label: '⚖️ Public Scheme' },
-            ]}
-          />
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+              <Filter className="h-3.5 w-3.5" /> Category:
+            </span>
+            <Select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              options={[
+                { value: 'all', label: 'All Categories' },
+                { value: 'roads', label: '🛣️ Roads' },
+                { value: 'water', label: '🚰 Water' },
+                { value: 'electricity', label: '⚡ Electricity' },
+                { value: 'sanitation', label: '🧹 Sanitation' },
+                { value: 'corruption', label: '⚖️ Public Scheme' },
+              ]}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" /> Date:
+            </span>
+            <Select
+              value={dateRangeFilter}
+              onChange={(e) => setDateRangeFilter(e.target.value)}
+              options={[
+                { value: 'all', label: 'All Time' },
+                { value: '24h', label: 'Past 24 Hours' },
+                { value: '7d', label: 'Past 7 Days' },
+                { value: '30d', label: 'Past 30 Days' },
+              ]}
+            />
+          </div>
         </div>
       </div>
 

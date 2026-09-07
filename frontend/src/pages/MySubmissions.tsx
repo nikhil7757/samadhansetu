@@ -30,6 +30,7 @@ export default function MySubmissions() {
   const { user } = useAuth();
 
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [dateSort, setDateSort] = useState<'newest' | 'oldest'>('newest');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [complaints] = useState<Complaint[]>(() => {
     const all = getStoredComplaints();
@@ -47,7 +48,7 @@ export default function MySubmissions() {
   });
 
   const filteredComplaints = useMemo(() => {
-    return complaints.filter((c) => {
+    const list = complaints.filter((c) => {
       const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
       const matchesSearch =
         !searchQuery ||
@@ -56,7 +57,13 @@ export default function MySubmissions() {
         c.location.district.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
     });
-  }, [complaints, statusFilter, searchQuery]);
+
+    return list.sort((a, b) => {
+      const timeA = new Date(a.submitted_at).getTime();
+      const timeB = new Date(b.submitted_at).getTime();
+      return dateSort === 'newest' ? timeB - timeA : timeA - timeB;
+    });
+  }, [complaints, statusFilter, dateSort, searchQuery]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-6">
@@ -96,22 +103,38 @@ export default function MySubmissions() {
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-muted-foreground shrink-0 flex items-center gap-1">
-            <Filter className="h-3.5 w-3.5" /> Filter Status:
-          </span>
-          <Select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            options={[
-              { value: 'all', label: 'All Statuses' },
-              { value: 'resolved', label: '🟢 Resolved' },
-              { value: 'verified_in_progress', label: '🔵 In Progress' },
-              { value: 'pending_officer', label: '🟡 Pending Officer Review' },
-              { value: 'auto_approved', label: '🟢 Auto-Approved' },
-              { value: 'auto_rejected', label: '🔴 Auto-Rejected' },
-            ]}
-          />
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground shrink-0 flex items-center gap-1">
+              <Filter className="h-3.5 w-3.5" /> Filter Status:
+            </span>
+            <Select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              options={[
+                { value: 'all', label: 'All Statuses' },
+                { value: 'resolved', label: '🟢 Resolved' },
+                { value: 'verified_in_progress', label: '🔵 In Progress' },
+                { value: 'pending_officer', label: '🟡 Pending Officer Review' },
+                { value: 'auto_approved', label: '🟢 Auto-Approved' },
+                { value: 'auto_rejected', label: '🔴 Auto-Rejected' },
+              ]}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-muted-foreground shrink-0 flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" /> Sort Date:
+            </span>
+            <Select
+              value={dateSort}
+              onChange={(e) => setDateSort(e.target.value as 'newest' | 'oldest')}
+              options={[
+                { value: 'newest', label: '📅 Newest First' },
+                { value: 'oldest', label: '📅 Oldest First' },
+              ]}
+            />
+          </div>
         </div>
       </div>
 

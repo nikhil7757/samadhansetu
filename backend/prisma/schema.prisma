@@ -195,3 +195,47 @@ model Notification {
   @@index([userId, createdAt])
   @@map("notifications")
 }
+
+enum ComplaintStatus {
+  auto_approved
+  pending_officer
+  auto_rejected
+  officer_reviewing
+  verified_in_progress
+  resolved
+  rejected_by_officer
+}
+
+model Complaint {
+  id              String          @id // Public tracking ID format: SS-YYYY-NNNNNN
+  citizenId       String          @map("citizen_id")
+  citizenName     String?         @map("citizen_name")
+  citizenEmail    String?         @map("citizen_email")
+  title           String
+  category        String
+  description     String
+  lat             Float           @default(23.3441)
+  lng             Float           @default(85.3096)
+  address         String
+  district        String
+  block           String?
+  media           String[]        @default([])
+  submittedAt     DateTime        @default(now()) @map("submitted_at")
+  aiScore         Int             @map("ai_score")
+  aiFlags         String[]        @map("ai_flags")
+  status          ComplaintStatus @default(pending_officer)
+  officerId       String?         @map("officer_id")
+  officerName     String?         @map("officer_name")
+  officerNotes    String?         @map("officer_notes")
+  rejectionReason String?         @map("rejection_reason")
+  appealed        Boolean         @default(false)
+  history         Json            @default("[]")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([status])
+  @@index([district])
+  @@index([category])
+  @@index([citizenId])
+  @@map("complaints")
+}

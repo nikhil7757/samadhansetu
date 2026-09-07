@@ -41,6 +41,7 @@ import {
   type Complaint,
 } from '@/lib/complaints';
 import { cn, formatDate } from '@/lib/utils';
+import api from '@/lib/api';
 
 export default function ComplaintTrackerPage() {
   const { complaintId } = useParams<{ complaintId?: string }>();
@@ -67,15 +68,31 @@ export default function ComplaintTrackerPage() {
       return;
     }
 
-    const found = getComplaintById(complaintId);
-    if (found) {
-      setComplaint(found);
-      setSearchInput(found.id);
+    const normalizedId = complaintId.trim().toUpperCase();
+
+    // Check local storage first for instantaneous rendering
+    const localFound = getComplaintById(normalizedId);
+    if (localFound) {
+      setComplaint(localFound);
+      setSearchInput(localFound.id);
       setNotFound(false);
-    } else {
-      setComplaint(null);
-      setNotFound(true);
     }
+
+    // Fetch latest live data from backend database API
+    api.get(`/complaints/${encodeURIComponent(normalizedId)}`)
+      .then((res) => {
+        if (res.data && res.data.id) {
+          setComplaint(res.data);
+          setSearchInput(res.data.id);
+          setNotFound(false);
+        }
+      })
+      .catch((err) => {
+        if (!localFound) {
+          setComplaint(null);
+          setNotFound(true);
+        }
+      });
   }, [complaintId]);
 
   const handleSearch = (e: React.FormEvent) => {
