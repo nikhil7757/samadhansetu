@@ -1,41 +1,43 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  /* Deep teal primary - authoritative civic/government palette */
-  --color-primary: oklch(0.35 0.12 195);
-  --color-primary-foreground: oklch(0.98 0 0);
-  --color-primary-hover: oklch(0.28 0.12 195);
-  --color-primary-light: oklch(0.93 0.04 195);
-  --color-primary-dark: oklch(0.22 0.08 210);
+  /* Deep teal / emerald primary - authoritative civic/government palette */
+  --color-primary: oklch(0.38 0.13 185);
+  --color-primary-foreground: oklch(0.99 0 0);
+  --color-primary-hover: oklch(0.31 0.14 185);
+  --color-primary-light: oklch(0.94 0.035 185);
+  --color-primary-dark: oklch(0.24 0.09 195);
 
   /* Deep slate secondary */
-  --color-secondary: oklch(0.96 0.015 210);
-  --color-secondary-foreground: oklch(0.22 0.03 210);
+  --color-secondary: oklch(0.965 0.012 215);
+  --color-secondary-foreground: oklch(0.20 0.03 215);
 
-  /* Warm amber / coral accent - high-contrast CTAs & critical highlights */
-  --color-accent: oklch(0.72 0.18 55);
-  --color-accent-foreground: oklch(0.98 0 0);
-  --color-accent-hover: oklch(0.66 0.20 52);
-  --color-accent-light: oklch(0.94 0.06 65);
+  /* Warm amber / saffron accent - high-contrast CTAs & critical highlights */
+  --color-accent: oklch(0.70 0.19 58);
+  --color-accent-foreground: oklch(0.99 0 0);
+  --color-accent-hover: oklch(0.64 0.21 54);
+  --color-accent-light: oklch(0.95 0.05 65);
 
   /* Destructive */
   --color-destructive: oklch(0.55 0.22 25);
-  --color-destructive-foreground: oklch(0.98 0 0);
+  --color-destructive-foreground: oklch(0.99 0 0);
 
   /* Muted */
-  --color-muted: oklch(0.95 0.008 210);
-  --color-muted-foreground: oklch(0.48 0.02 210);
+  --color-muted: oklch(0.945 0.008 215);
+  --color-muted-foreground: oklch(0.46 0.02 215);
 
   /* Card / Background */
-  --color-background: oklch(0.985 0.003 210);
-  --color-foreground: oklch(0.15 0.02 210);
+  --color-background: oklch(0.988 0.003 215);
+  --color-foreground: oklch(0.14 0.02 215);
   --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.15 0.02 210);
+  --color-card-foreground: oklch(0.14 0.02 215);
 
   /* Border & Input */
-  --color-border: oklch(0.89 0.015 210);
-  --color-input: oklch(0.89 0.015 210);
-  --color-ring: oklch(0.35 0.12 195);
+  --color-border: oklch(0.89 0.012 215);
+  --color-input: oklch(0.89 0.012 215);
+  --color-ring: oklch(0.38 0.13 185);
 
   /* Status colors */
   --color-status-submitted: oklch(0.55 0.15 240);
@@ -57,6 +59,7 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
 
   /* Typography */
   --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
@@ -78,39 +81,100 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  letter-spacing: -0.025em;
+  letter-spacing: -0.028em;
 }
 
 /* Dark Mode Tokens */
 .dark {
-  --color-primary: oklch(0.62 0.15 195);
-  --color-primary-foreground: oklch(0.12 0.03 210);
-  --color-primary-hover: oklch(0.68 0.15 195);
-  --color-primary-light: oklch(0.24 0.06 195);
-  --color-primary-dark: oklch(0.85 0.05 195);
+  --color-primary: oklch(0.68 0.15 185);
+  --color-primary-foreground: oklch(0.11 0.03 220);
+  --color-primary-hover: oklch(0.74 0.16 185);
+  --color-primary-light: oklch(0.22 0.06 185);
+  --color-primary-dark: oklch(0.88 0.05 185);
 
-  --color-secondary: oklch(0.22 0.02 210);
-  --color-secondary-foreground: oklch(0.92 0.01 210);
+  --color-secondary: oklch(0.20 0.02 225);
+  --color-secondary-foreground: oklch(0.94 0.01 220);
 
-  --color-accent: oklch(0.75 0.18 55);
-  --color-accent-foreground: oklch(0.12 0.03 55);
-  --color-accent-hover: oklch(0.80 0.18 55);
+  --color-accent: oklch(0.76 0.18 58);
+  --color-accent-foreground: oklch(0.11 0.03 55);
+  --color-accent-hover: oklch(0.82 0.18 58);
   --color-accent-light: oklch(0.28 0.08 55);
 
   --color-destructive: oklch(0.62 0.22 25);
-  --color-destructive-foreground: oklch(0.98 0 0);
+  --color-destructive-foreground: oklch(0.99 0 0);
 
-  --color-muted: oklch(0.22 0.015 210);
-  --color-muted-foreground: oklch(0.65 0.02 210);
+  --color-muted: oklch(0.20 0.015 225);
+  --color-muted-foreground: oklch(0.66 0.02 220);
 
-  --color-background: oklch(0.14 0.02 220);
-  --color-foreground: oklch(0.95 0.01 210);
-  --color-card: oklch(0.18 0.02 220);
-  --color-card-foreground: oklch(0.95 0.01 210);
+  --color-background: oklch(0.12 0.018 230);
+  --color-foreground: oklch(0.96 0.008 220);
+  --color-card: oklch(0.165 0.02 230);
+  --color-card-foreground: oklch(0.96 0.008 220);
 
-  --color-border: oklch(0.28 0.02 220);
-  --color-input: oklch(0.28 0.02 220);
-  --color-ring: oklch(0.62 0.15 195);
+  --color-border: oklch(0.26 0.02 230);
+  --color-input: oklch(0.26 0.02 230);
+  --color-ring: oklch(0.68 0.15 185);
+}
+
+/* Glassmorphism & Atmospheric Layers */
+.glass-panel {
+  background: color-mix(in oklch, var(--color-card) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in oklch, var(--color-border) 75%, transparent);
+}
+
+.glass-card {
+  background: color-mix(in oklch, var(--color-card) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+.glow-teal {
+  box-shadow: 0 0 32px -6px oklch(0.38 0.13 185 / 0.22);
+}
+
+.dark .glow-teal {
+  box-shadow: 0 0 32px -6px oklch(0.68 0.15 185 / 0.28);
+}
+
+.glow-accent {
+  box-shadow: 0 0 30px -6px oklch(0.70 0.19 58 / 0.35);
+}
+
+.bg-mesh-subtle {
+  background-image:
+    radial-gradient(at 0% 0%, oklch(0.38 0.13 185 / 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, oklch(0.70 0.19 58 / 0.06) 0px, transparent 50%);
+}
+
+.dark .bg-mesh-subtle {
+  background-image:
+    radial-gradient(at 0% 0%, oklch(0.68 0.15 185 / 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, oklch(0.76 0.18 58 / 0.08) 0px, transparent 50%);
+}
+
+.hero-grid-pattern {
+  background-image: radial-gradient(color-mix(in oklch, var(--color-foreground) 8%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Specular highlight for elevated cards */
+.specular-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.specular-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--color-foreground) 15%, transparent), transparent);
+  pointer-events: none;
 }
 
 /* Animations */
@@ -125,8 +189,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { opacity: 1; filter: drop-shadow(0 0 8px oklch(0.72 0.18 55 / 0.4)); }
-  50% { opacity: 0.85; filter: drop-shadow(0 0 2px oklch(0.72 0.18 55 / 0.1)); }
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px oklch(0.70 0.19 58 / 0.45)); }
+  50% { opacity: 0.85; filter: drop-shadow(0 0 2px oklch(0.70 0.19 58 / 0.15)); }
+}
+
+@keyframes pulseLive {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.7; }
 }
 
 .animate-fade-in {
@@ -141,14 +210,24 @@ h1, h2, h3, h4, h5, h6 {
   animation: pulseGlow 2.5s ease-in-out infinite;
 }
 
+.animate-pulse-live {
+  animation: pulseLive 2s ease-in-out infinite;
+}
+
 /* Card Hover Lift */
 .card-hover-lift {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
 }
 
 .card-hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px -6px oklch(0.15 0.05 210 / 0.12), 0 4px 10px -2px oklch(0.15 0.05 210 / 0.06);
+  box-shadow: 0 16px 36px -8px oklch(0.15 0.05 210 / 0.14), 0 6px 14px -3px oklch(0.15 0.05 210 / 0.06);
+  border-color: color-mix(in oklch, var(--color-primary) 35%, var(--color-border));
+}
+
+.dark .card-hover-lift:hover {
+  box-shadow: 0 16px 36px -8px oklch(0 0 0 / 0.5), 0 6px 14px -3px oklch(0 0 0 / 0.3);
+  border-color: color-mix(in oklch, var(--color-primary) 45%, var(--color-border));
 }
 
 /* Skeleton animation */
@@ -158,13 +237,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--color-muted) 25%, oklch(0.92 0.01 210) 50%, var(--color-muted) 75%);
+  background: linear-gradient(90deg, var(--color-muted) 25%, oklch(0.92 0.01 215) 50%, var(--color-muted) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
 .dark .skeleton {
-  background: linear-gradient(90deg, oklch(0.22 0.015 210) 25%, oklch(0.28 0.02 210) 50%, oklch(0.22 0.015 210) 75%);
+  background: linear-gradient(90deg, oklch(0.20 0.015 225) 25%, oklch(0.27 0.02 225) 50%, oklch(0.20 0.015 225) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
@@ -180,14 +259,155 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(0.80 0.01 210);
+  background: oklch(0.78 0.01 215);
   border-radius: 3px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: oklch(0.35 0.02 210);
+  background: oklch(0.34 0.02 225);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.65 0.01 210);
+  background: oklch(0.60 0.01 215);
 }
+
+/* Sovereign Civic Design System & Docket Utilities */
+
+/* 1. Official Physical Docket Sheet */
+.docket-sheet {
+  position: relative;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  box-shadow:
+    0 1px 3px 0 oklch(0.15 0.03 210 / 0.08),
+    0 4px 16px -2px oklch(0.15 0.03 210 / 0.06);
+}
+
+.dark .docket-sheet {
+  box-shadow:
+    0 1px 3px 0 oklch(0 0 0 / 0.5),
+    0 8px 24px -4px oklch(0 0 0 / 0.4);
+}
+
+/* Official top paper ledger rule */
+.docket-ledger-rule {
+  height: 3px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-primary) 0px,
+    var(--color-primary) 8px,
+    var(--color-accent) 8px,
+    var(--color-accent) 16px,
+    transparent 16px,
+    transparent 20px
+  );
+}
+
+/* 2. Official Stamped Seals (Ink stamps) */
+.docket-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-width: 2px;
+  border-style: dashed;
+  border-radius: 0.25rem;
+  transform: rotate(-2deg);
+  user-select: none;
+}
+
+.docket-stamp-verified {
+  color: oklch(0.48 0.17 148);
+  border-color: oklch(0.48 0.17 148 / 0.85);
+  background-color: oklch(0.48 0.17 148 / 0.08);
+}
+
+.dark .docket-stamp-verified {
+  color: oklch(0.72 0.16 148);
+  border-color: oklch(0.72 0.16 148 / 0.85);
+  background-color: oklch(0.72 0.16 148 / 0.12);
+}
+
+.docket-stamp-pending {
+  color: oklch(0.62 0.18 55);
+  border-color: oklch(0.62 0.18 55 / 0.85);
+  background-color: oklch(0.62 0.18 55 / 0.08);
+}
+
+.dark .docket-stamp-pending {
+  color: oklch(0.78 0.16 55);
+  border-color: oklch(0.78 0.16 55 / 0.85);
+  background-color: oklch(0.78 0.16 55 / 0.12);
+}
+
+.docket-stamp-action {
+  color: oklch(0.45 0.18 240);
+  border-color: oklch(0.45 0.18 240 / 0.85);
+  background-color: oklch(0.45 0.18 240 / 0.08);
+}
+
+.dark .docket-stamp-action {
+  color: oklch(0.70 0.16 240);
+  border-color: oklch(0.70 0.16 240 / 0.85);
+  background-color: oklch(0.70 0.16 240 / 0.12);
+}
+
+/* 3. Barcode pattern for official dockets */
+.barcode-stripe {
+  height: 24px;
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0px,
+    currentColor 2px,
+    transparent 2px,
+    transparent 3px,
+    currentColor 3px,
+    currentColor 6px,
+    transparent 6px,
+    transparent 8px,
+    currentColor 8px,
+    currentColor 9px,
+    transparent 9px,
+    transparent 12px
+  );
+  opacity: 0.75;
+}
+
+/* 4. Continuous Marquee Ticker for Live Dispatches */
+@keyframes marqueeScroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 42s linear infinite;
+}
+
+.ticker-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* 5. Radar scan pulse for AI intake */
+@keyframes radarSweep {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 0.6; }
+  100% { transform: translateY(200%); opacity: 0; }
+}
+
+.radar-sweep-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-accent), transparent);
+  box-shadow: 0 0 12px var(--color-accent);
+  animation: radarSweep 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+

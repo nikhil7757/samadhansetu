@@ -160,22 +160,27 @@ export default function ProblemFeed() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
       {/* Feed Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 border-b border-border">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] font-bold tracking-wide">
+            <Layers className="h-3 w-3" />
+            <span>SIH 2026 Problem Statement 043 • State Directory</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
             {t('problems.feed.title')}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             {t('problems.feed.subtitle')}
           </p>
         </div>
 
-        <div className="text-xs text-muted-foreground font-mono">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/50 border border-border text-xs text-muted-foreground font-mono self-start md:self-auto">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           {!isLoading && t('problems.feed.showing', { count: problems.length, total: pagination.total })}
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="my-6 space-y-3">
+      <div className="my-6 p-4 rounded-2xl border border-border/80 bg-card/60 specular-card backdrop-blur-sm space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Keyword Search */}
           <div className="relative lg:col-span-2">
@@ -215,15 +220,15 @@ export default function ProblemFeed() {
 
         {/* Clear filters pill */}
         {hasActiveFilters && (
-          <div className="flex items-center gap-2 pt-1">
-            <span className="text-xs text-muted-foreground">Active filters applied</span>
+          <div className="flex items-center gap-2 pt-1 border-t border-border/60">
+            <span className="text-xs text-muted-foreground">Active filters applied:</span>
             <Button
               variant="ghost"
               size="sm"
               onClick={clearAllFilters}
-              className="h-7 text-xs text-primary gap-1 hover:bg-primary/10"
+              className="h-6 text-xs text-primary gap-1 hover:bg-primary/10 px-2 rounded-lg"
             >
-              <FilterX className="h-3.5 w-3.5" />
+              <FilterX className="h-3 w-3" />
               {t('problems.feed.clearFilters')}
             </Button>
           </div>
@@ -256,7 +261,7 @@ export default function ProblemFeed() {
             <Link
               key={problem.id}
               to={`/problems/${problem.id}`}
-              className="group flex flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-xs hover:shadow-md hover:border-primary/40 transition-all duration-200"
+              className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5.5 specular-card card-hover-lift hover:border-primary/50 transition-all duration-200"
             >
               <div>
                 {/* Header metadata */}
@@ -289,11 +294,11 @@ export default function ProblemFeed() {
                 </div>
 
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="flex items-center gap-1" title="Universities / Enablers interested">
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary/50 font-medium" title="Universities / Enablers interested">
                     <Users className="h-3.5 w-3.5 text-sky-600" />
                     <span>{problem._count?.interests || 0}</span>
                   </span>
-                  <span className="flex items-center gap-1" title="Discussion comments">
+                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-secondary/50 font-medium" title="Discussion comments">
                     <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
                     <span>{problem._count?.comments || 0}</span>
                   </span>

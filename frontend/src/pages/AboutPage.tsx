@@ -26,7 +26,7 @@ export default function AboutPage() {
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-foreground">Our Four-Pillar Architecture</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Card className="p-5 rounded-2xl border-border bg-card shadow-xs">
+            <Card className="p-5 rounded-2xl border-border/80 bg-card specular-card card-hover-lift shadow-xs">
               <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
                 <Users className="h-5 w-5" />
               </div>
@@ -36,7 +36,7 @@ export default function AboutPage() {
               </p>
             </Card>
 
-            <Card className="p-5 rounded-2xl border-border bg-card shadow-xs">
+            <Card className="p-5 rounded-2xl border-border/80 bg-card specular-card card-hover-lift shadow-xs">
               <div className="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3">
                 <Sparkles className="h-5 w-5" />
               </div>
@@ -46,7 +46,7 @@ export default function AboutPage() {
               </p>
             </Card>
 
-            <Card className="p-5 rounded-2xl border-border bg-card shadow-xs">
+            <Card className="p-5 rounded-2xl border-border/80 bg-card specular-card card-hover-lift shadow-xs">
               <div className="h-10 w-10 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center mb-3">
                 <GraduationCap className="h-5 w-5" />
               </div>
@@ -56,7 +56,7 @@ export default function AboutPage() {
               </p>
             </Card>
 
-            <Card className="p-5 rounded-2xl border-border bg-card shadow-xs">
+            <Card className="p-5 rounded-2xl border-border/80 bg-card specular-card card-hover-lift shadow-xs">
               <div className="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-3">
                 <Building2 className="h-5 w-5" />
               </div>
@@ -69,7 +69,7 @@ export default function AboutPage() {
         </div>
 
         {/* Nodal Oversight & Human Override */}
-        <Card className="p-6 sm:p-8 rounded-2xl border-primary/20 bg-primary/5 shadow-xs space-y-3">
+        <Card className="p-6 sm:p-8 rounded-2xl border-primary/30 bg-primary/5 specular-card shadow-xs space-y-3">
           <h3 className="text-base font-bold text-foreground flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
             Human-in-the-Loop Nodal Governance
@@ -78,7 +78,7 @@ export default function AboutPage() {
             Under administrative rules from the Department of Higher & Technical Education, no civic complaint can be permanently dismissed by AI alone. Any grievance scored below 40 retains an immediate citizen appeal button, forcing a District Nodal Officer to inspect and record an official determination on the public tracker.
           </p>
           <div className="pt-2">
-            <Button onClick={() => window.location.href = '/#report'} className="gap-2 font-bold text-xs">
+            <Button onClick={() => window.location.href = '/#report'} className="gap-2 font-bold text-xs rounded-xl shadow-xs">
               <span>File a Grievance Now</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Button>

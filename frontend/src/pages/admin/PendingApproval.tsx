@@ -135,42 +135,44 @@ export default function PendingApproval() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/80">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Link
               to="/admin"
-              className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+              className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors flex items-center gap-1.5"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to Overview</span>
+              <span>Back to Executive Dashboard</span>
             </Link>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground flex items-center gap-2">
-            <Clock className="h-7 w-7 text-amber-600" />
-            Nodal Officer Verification Queue
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground flex items-center gap-2.5">
+            <div className="h-9 w-9 rounded-xl bg-amber-500/15 text-amber-600 flex items-center justify-center">
+              <Clock className="h-5 w-5 animate-pulse" />
+            </div>
+            <span>Nodal Officer Verification Queue</span>
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Review complaints scored 40–79 by AI or appealed by citizens requiring human verification.
+            Official human review queue for complaints scored 40–79 by AI or appealed by citizens requiring physical verification.
           </p>
         </div>
 
         {/* Officer Personal Stats Widget */}
-        <div className="flex items-center gap-3 bg-secondary/40 border border-border/80 p-3 rounded-2xl">
+        <div className="flex items-center gap-4 bg-secondary/50 border border-border/80 p-3.5 rounded-2xl shadow-xs specular-card">
           <div className="text-right">
-            <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-              Pending in Queue
+            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
+              In Review
             </span>
-            <span className="text-xl font-black font-mono text-amber-600">
+            <span className="text-2xl font-black font-mono text-amber-600 dark:text-amber-400">
               {pendingComplaints.length}
             </span>
           </div>
-          <div className="h-8 w-px bg-border" />
+          <div className="h-8 w-px bg-border/80" />
           <div className="text-right">
-            <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-              Avg. Review Time
+            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block">
+              Avg SLA
             </span>
-            <span className="text-xl font-black font-mono text-primary">
+            <span className="text-2xl font-black font-mono text-primary">
               1.4h
             </span>
           </div>
@@ -178,25 +180,26 @@ export default function PendingApproval() {
       </div>
 
       {/* Filter & Search Controls */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between p-2 rounded-2xl bg-secondary/30 border border-border/70">
         <div className="relative w-full sm:w-80">
-          <Search className="h-4 w-4 absolute left-3 top-2.5 text-muted-foreground" />
+          <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
           <Input
             placeholder="Search by Tracking ID, title, district..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 text-xs"
+            className="pl-9 text-xs bg-card"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+            <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
               <Filter className="h-3.5 w-3.5" /> Category:
             </span>
             <Select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
+              className="bg-card text-xs"
               options={[
                 { value: 'all', label: 'All Categories' },
                 { value: 'roads', label: '🛣️ Roads' },
@@ -209,12 +212,13 @@ export default function PendingApproval() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+            <span className="text-xs font-bold text-muted-foreground flex items-center gap-1">
               <Calendar className="h-3.5 w-3.5" /> Date:
             </span>
             <Select
               value={dateRangeFilter}
               onChange={(e) => setDateRangeFilter(e.target.value)}
+              className="bg-card text-xs"
               options={[
                 { value: 'all', label: 'All Time' },
                 { value: '24h', label: 'Past 24 Hours' },
@@ -252,10 +256,10 @@ export default function PendingApproval() {
                   key={c.id}
                   onClick={() => setSelectedComplaint(c)}
                   className={cn(
-                    'p-4 rounded-xl border transition-all cursor-pointer card-hover-lift',
+                    'p-4 rounded-xl border transition-all cursor-pointer card-hover-lift docket-sheet',
                     isSelected
-                      ? 'border-primary ring-2 ring-primary/20 bg-primary/5 shadow-md'
-                      : 'border-border bg-card hover:border-primary/40'
+                      ? 'border-emerald-600 ring-2 ring-emerald-500/30 bg-emerald-500/5 shadow-md'
+                      : 'border-border bg-card hover:border-emerald-500/40'
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -264,12 +268,12 @@ export default function PendingApproval() {
                         <span className="font-mono text-xs font-black text-primary">
                           {c.id}
                         </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary uppercase font-semibold text-muted-foreground">
+                        <span className="text-[10px] px-2 py-0.5 rounded-md bg-secondary uppercase font-bold text-muted-foreground font-mono">
                           {c.category}
                         </span>
                         {c.appealed && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 font-bold">
-                            Citizen Appeal
+                          <span className="docket-stamp docket-stamp-pending text-[9px] py-0.2">
+                            CITIZEN APPEAL
                           </span>
                         )}
                       </div>

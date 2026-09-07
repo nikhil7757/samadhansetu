@@ -5,56 +5,65 @@ import { ShieldCheck, HeartHandshake, Phone, Mail, MapPin, ExternalLink } from '
 export function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="border-t border-border bg-card/80 mt-auto text-muted-foreground">
+    <footer className="border-t border-border/80 bg-card/90 backdrop-blur-md mt-auto text-muted-foreground relative z-10">
+      {/* Accent top gradient line */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           {/* Col 1: Platform identity */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-primary-foreground font-black text-xs">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-emerald-800 text-white font-black text-xs shadow-sm ring-1 ring-white/20">
                 SS
               </div>
-              <span className="font-black text-foreground text-base tracking-tight font-heading">
-                SamadhanSetu
-              </span>
+              <div className="flex flex-col">
+                <span className="font-black text-foreground text-base tracking-tight font-heading">
+                  SamadhanSetu
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  समाधान सेतु • Jharkhand
+                </span>
+              </div>
             </div>
             <p className="text-xs leading-relaxed">
-              Govt. of Jharkhand Civic Challenge Resolution Platform. Crowdsourcing societal grievances with automated AI verification and academic/CSR ground resolution.
+              Official Civic Challenge Resolution Platform for the Government of Jharkhand. Crowdsources infrastructure grievances with multi-factor AI verification, student innovation squads, and CSR ground execution.
             </p>
-            <div className="text-[11px] font-mono text-muted-foreground/90">
-              SIH 2026 • Problem Statement 043
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-secondary text-[11px] font-mono text-foreground font-semibold border border-border/60">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              <span>SIH 2026 • Problem Statement 043</span>
             </div>
           </div>
 
           {/* Col 2: Navigation Shortcuts */}
           <div className="space-y-3 text-xs">
-            <h4 className="font-bold uppercase tracking-wider text-foreground">
-              Portal Shortcuts
+            <h4 className="font-bold uppercase tracking-wider text-foreground text-[11px]">
+              Civic Services
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               <li>
-                <Link to="/report" className="hover:text-primary transition-colors">
-                  Report a Problem
+                <Link to="/report" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
+                  File a Civic Grievance
                 </Link>
               </li>
               <li>
-                <Link to="/track" className="hover:text-primary transition-colors">
-                  Track Your Complaint Status
+                <Link to="/track" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
+                  Track Complaint Status
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard" className="hover:text-primary transition-colors">
-                  Citizen & Officer Dashboard
+                <Link to="/dashboard" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
+                  State Redressal Dashboard
                 </Link>
               </li>
               <li>
-                <Link to="/problems" className="hover:text-primary transition-colors">
+                <Link to="/problems" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
                   Browse 24 Districts Directory
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="hover:text-primary transition-colors">
-                  State Nodal Analytics
+                <Link to="/admin" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
+                  Nodal Officer Command
                 </Link>
               </li>
             </ul>
@@ -62,22 +71,22 @@ export function Footer() {
 
           {/* Col 3: Information & FAQ */}
           <div className="space-y-3 text-xs">
-            <h4 className="font-bold uppercase tracking-wider text-foreground">
+            <h4 className="font-bold uppercase tracking-wider text-foreground text-[11px]">
               Citizen Resources
             </h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               <li>
-                <Link to="/about" className="hover:text-primary transition-colors">
+                <Link to="/about" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
                   About SamadhanSetu
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-primary transition-colors">
+                <Link to="/faq" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
                   Frequently Asked Questions
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-primary transition-colors">
+                <Link to="/contact" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
                   District Nodal Directory
                 </Link>
               </li>
@@ -86,36 +95,42 @@ export function Footer() {
                   href="https://jharkhand.gov.in"
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-primary transition-colors flex items-center gap-1"
+                  className="hover:text-primary transition-colors flex items-center gap-1 group"
                 >
                   <span>Government of Jharkhand Portal</span>
-                  <ExternalLink className="h-3 w-3" />
+                  <ExternalLink className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Col 4: Department & Helpline */}
+          {/* Col 4: Department & Helpline Card */}
           <div className="space-y-3 text-xs">
-            <h4 className="font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+            <h4 className="font-bold uppercase tracking-wider text-foreground text-[11px] flex items-center gap-1.5">
               <ShieldCheck className="h-4 w-4 text-primary" />
-              Department & Helplines
+              Nodal Contact & Helpline
             </h4>
-            <div className="space-y-2">
-              <p className="text-foreground font-semibold">
-                Department of Higher & Technical Education
-              </p>
-              <p className="text-[11px] leading-relaxed">
-                Yojana Bhawan, Nepal House, Doranda, Ranchi — 834002
-              </p>
-              <div className="pt-1 space-y-1">
-                <div className="flex items-center gap-1.5 text-foreground">
-                  <Phone className="h-3.5 w-3.5 text-primary" />
-                  <span>24x7 Citizen Helpline: <strong>181</strong></span>
-                </div>
-                <div className="flex items-center gap-1.5 text-foreground">
-                  <Mail className="h-3.5 w-3.5 text-primary" />
-                  <span>nodal.sih@samadhansetu.gov.in</span>
+            <div className="p-4 rounded-xl border border-border/80 bg-secondary/30 space-y-3">
+              <div>
+                <p className="text-foreground font-bold text-xs">
+                  Dept. of Higher & Technical Education
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Yojana Bhawan, Nepal House, Doranda, Ranchi — 834002
+                </p>
+              </div>
+
+              <div className="space-y-1.5 pt-2 border-t border-border/60">
+                <a
+                  href="tel:181"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary font-bold text-xs transition-colors"
+                >
+                  <Phone className="h-4 w-4 shrink-0" />
+                  <span>24x7 Citizen Helpline: <strong className="font-mono text-sm">181</strong></span>
+                </a>
+                <div className="flex items-center gap-2 text-muted-foreground text-[11px] px-1">
+                  <Mail className="h-3.5 w-3.5 shrink-0 text-primary" />
+                  <span className="font-mono truncate">nodal.sih@samadhansetu.gov.in</span>
                 </div>
               </div>
             </div>
@@ -125,11 +140,11 @@ export function Footer() {
         <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
           <p>© 2026 Government of Jharkhand — SamadhanSetu. All rights reserved.</p>
           <div className="flex items-center gap-4 text-xs">
-            <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1">
+            <span className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              State Telemetry Live
+              State Telemetry Active
             </span>
-            <span className="font-mono text-[11px]">SIH26043 Edition</span>
+            <span className="font-mono text-[11px] text-muted-foreground">SIH26043 Release</span>
           </div>
         </div>
       </div>

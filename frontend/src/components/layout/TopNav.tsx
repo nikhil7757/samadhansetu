@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { NotificationBell } from '@/components/shared/NotificationBell';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { StateSeal } from '@/components/shared/StateSeal';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -37,47 +38,70 @@ export function TopNav() {
   };
 
   const navLinks = [
-    { to: '/report', label: 'Report Problem', icon: PlusCircle, show: true, highlight: true },
-    { to: '/track', label: 'Track Status', icon: Search, show: true },
-    { to: '/dashboard', label: 'Dashboard', icon: BarChart3, show: true },
-    { to: '/problems', label: 'Directory', icon: Compass, show: true },
-    { to: '/admin', label: 'Admin', icon: ShieldAlert, show: user?.role === 'ADMIN' },
-    { to: '/about', label: 'About', icon: Info, show: true },
-    { to: '/faq', label: 'FAQ', icon: HelpCircle, show: true },
-    { to: '/contact', label: 'Contact', icon: Phone, show: true },
+    { to: '/report', label: 'File Grievance', icon: PlusCircle, show: true, highlight: true },
+    { to: '/track', label: 'Track Docket', icon: Search, show: true },
+    { to: '/dashboard', label: 'Operations', icon: BarChart3, show: true },
+    { to: '/problems', label: 'Challenge Board', icon: Compass, show: true },
+    { to: '/admin', label: 'Nodal Officer', icon: ShieldAlert, show: user?.role === 'ADMIN' },
+    { to: '/about', label: 'Gazette / About', icon: Info, show: true },
+    { to: '/faq', label: 'Citizen Guide', icon: HelpCircle, show: true },
   ].filter((l) => l.show);
 
   const isActive = (path: string) =>
     location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md supports-[backdrop-filter]:bg-card/85">
-      {/* Gov banner top bar */}
-      <div className="bg-primary text-primary-foreground py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between">
-        <div className="flex items-center gap-2 mx-auto max-w-7xl w-full">
-          <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          <span>Government of Jharkhand • Civic Challenge Resolution Platform (SIH 2026 PS-043)</span>
+    <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-card/95 backdrop-blur-xl supports-[backdrop-filter]:bg-card/90 transition-colors">
+      {/* Tiranga Tricolor Micro-Ribbon */}
+      <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-white to-emerald-600 dark:from-amber-600 dark:via-slate-200 dark:to-emerald-700" />
+
+      {/* Sovereign Official Gazette Banner */}
+      <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between border-b border-white/10">
+        <div className="flex items-center justify-between mx-auto max-w-7xl w-full">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse ring-2 ring-emerald-400/30" />
+            <span className="font-bold tracking-tight text-emerald-200">
+              झारखंड सरकार • Government of Jharkhand
+            </span>
+            <span className="text-white/30 hidden md:inline">|</span>
+            <span className="text-white/80 hidden md:inline text-[10.5px]">
+              योजना एवं विकास विभाग • SIH 2026 Problem Statement 043
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 text-[10.5px]">
+            <span className="hidden sm:flex items-center gap-1.5 font-mono text-emerald-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+              24 District Registries Live
+            </span>
+            <span className="hidden sm:inline text-white/30">•</span>
+            <span className="flex items-center gap-1.5 text-white/90">
+              Citizen Redressal Helpline: <strong className="text-amber-400 font-mono font-bold bg-amber-400/20 px-1.5 py-0.2 rounded">181</strong>
+            </span>
+          </div>
         </div>
       </div>
 
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5 font-bold text-lg text-foreground hover:opacity-90 transition-opacity">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs font-black tracking-tight text-sm">
-            SS
-          </div>
+        {/* Sovereign Brand Logo with State Seal */}
+        <Link to="/" className="flex items-center gap-3.5 font-bold text-lg text-foreground hover:opacity-95 transition-all group">
+          <StateSeal size="md" className="group-hover:scale-105 transition-transform" />
           <div className="flex flex-col">
-            <span className="font-black text-base leading-tight tracking-tight text-primary font-heading">
-              SamadhanSetu
-            </span>
-            <span className="text-[10px] text-muted-foreground font-normal leading-none hidden sm:inline">
-              समाधान सेतु • Civic Grievance Portal
+            <div className="flex items-center gap-1.5 font-black text-lg sm:text-xl leading-tight tracking-tight font-heading">
+              <span className="text-foreground">Samadhan</span>
+              <span className="text-emerald-700 dark:text-emerald-400">Setu</span>
+              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
+                PORTAL
+              </span>
+            </div>
+            <span className="text-[10px] text-muted-foreground font-semibold leading-none tracking-normal">
+              समाधान सेतु • लोक समस्या एवं नवाचार समाधान महाप्रणाली
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-1 bg-secondary/40 p-1 rounded-xl border border-border/50">
           {navLinks.map((link) => {
             const active = isActive(link.to);
             return (
@@ -85,16 +109,19 @@ export function TopNav() {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  'px-3 py-1.5 text-xs font-semibold transition-all duration-150 rounded-lg flex items-center gap-1.5',
+                  'px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 rounded-lg flex items-center gap-1.5 relative',
                   link.highlight && !active
-                    ? 'bg-accent/15 text-accent-foreground border border-accent/30 hover:bg-accent/25'
+                    ? 'bg-accent/15 text-accent-foreground border border-accent/30 hover:bg-accent/25 hover:shadow-xs'
                     : active
-                    ? 'bg-primary/10 text-primary font-bold'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+                    ? 'bg-card text-primary font-bold shadow-xs border border-border/80'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
                 )}
               >
-                <link.icon className="h-3.5 w-3.5 shrink-0 opacity-80" />
-                {link.label}
+                <link.icon className={cn('h-3.5 w-3.5 shrink-0', active ? 'text-primary' : 'opacity-70')} />
+                <span>{link.label}</span>
+                {active && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-primary rounded-full" />
+                )}
               </Link>
             );
           })}
@@ -107,15 +134,17 @@ export function TopNav() {
           <NotificationBell />
 
           {user ? (
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border">
-              <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-secondary text-xs">
-                <UserIcon className="h-3.5 w-3.5 text-primary" />
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border/80">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-xl bg-secondary/80 border border-border/60 text-xs shadow-2xs">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[11px]">
+                  {user.name.charAt(0)}
+                </div>
                 <div className="flex flex-col text-left">
-                  <span className="font-semibold text-foreground max-w-[120px] truncate leading-tight">
+                  <span className="font-semibold text-foreground max-w-[110px] truncate leading-tight">
                     {user.name}
                   </span>
-                  <span className="text-[10px] text-muted-foreground font-medium capitalize leading-none">
-                    {user.role.toLowerCase()}
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-primary font-bold leading-none">
+                    {user.role}
                   </span>
                 </div>
               </div>
@@ -123,29 +152,29 @@ export function TopNav() {
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="h-8 px-2 text-muted-foreground hover:text-destructive"
+                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
                 title="Logout"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3.5 w-3.5" />
               </Button>
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border">
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border/80">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/login')}
-                className="text-xs font-semibold"
+                className="text-xs font-semibold px-3 h-8 rounded-lg"
               >
                 Sign In
               </Button>
               <Button
                 size="sm"
                 onClick={() => navigate('/report')}
-                className="text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground shadow-xs gap-1.5"
+                className="text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground shadow-sm hover:shadow-md transition-all gap-1.5 px-3.5 h-8 rounded-lg cursor-pointer"
               >
                 <PlusCircle className="h-3.5 w-3.5" />
-                <span>Report</span>
+                <span>Report Issue</span>
               </Button>
             </div>
           )}
@@ -154,7 +183,7 @@ export function TopNav() {
           <Button
             variant="ghost"
             size="sm"
-            className="lg:hidden h-9 w-9 p-0"
+            className="lg:hidden h-9 w-9 p-0 rounded-lg border border-border/50"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle navigation menu"
           >

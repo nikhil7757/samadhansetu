@@ -35,11 +35,11 @@ export default function AdminDashboard() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/80">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            <span>State Nodal Oversight</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-2 border border-primary/20 shadow-2xs">
+            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>State Nodal Oversight • Telemetry Hub</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
             Platform Analytics & Verification Telemetry
@@ -49,10 +49,10 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <Button
             onClick={() => navigate('/admin/pending')}
-            className="gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-bold shadow-sm"
+            className="gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-extrabold shadow-md hover:shadow-lg transition-all"
           >
             <Clock className="h-4 w-4" />
             <span>Review Queue ({pendingCount})</span>
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
           <Button
             variant="outline"
             onClick={() => navigate('/dashboard')}
-            className="text-xs font-semibold"
+            className="text-xs font-bold border-border/80"
           >
             Impact Graphs
           </Button>
@@ -70,98 +70,110 @@ export default function AdminDashboard() {
       {/* Primary KPI Grid (6 Metric Cards as Requested) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* 1. Total Complaints */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
+        <Card className="p-6 rounded-2xl border-border/80 bg-gradient-to-br from-primary/5 via-card to-card shadow-xs card-hover-lift specular-card">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold mb-2">
             <span>Total Grievances Indexed</span>
-            <Layers className="h-4 w-4 text-primary" />
+            <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <Layers className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl sm:text-4xl font-black text-foreground">
             <AnimatedStatCounter value={stats.totalComplaints} />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             Crowdsourced across all 24 Jharkhand administrative districts
           </p>
         </Card>
 
         {/* 2. AI Auto-Approved % */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
-            <span>AI Auto-Approved Rate</span>
-            <Sparkles className="h-4 w-4 text-emerald-600" />
+        <Card className="p-6 rounded-2xl border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-card shadow-xs card-hover-lift specular-card">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold mb-2">
+            <span className="text-emerald-700 dark:text-emerald-400">AI Auto-Approved Rate</span>
+            <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600">
+              <Sparkles className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400">
             <AnimatedStatCounter value={stats.autoApprovedPct} suffix="%" />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             High authenticity confidence (Score ≥ 80) auto-forwarded immediately
           </p>
         </Card>
 
         {/* 3. AI Auto-Rejected % */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
-            <span>AI Auto-Rejected Rate</span>
-            <XCircle className="h-4 w-4 text-rose-600" />
+        <Card className="p-6 rounded-2xl border-rose-500/30 bg-gradient-to-br from-rose-500/10 via-card to-card shadow-xs card-hover-lift specular-card">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold mb-2">
+            <span className="text-rose-700 dark:text-rose-400">AI Auto-Rejected Rate</span>
+            <div className="h-7 w-7 rounded-lg bg-rose-500/15 flex items-center justify-center text-rose-600">
+              <XCircle className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl sm:text-4xl font-black text-rose-600 dark:text-rose-400">
             <AnimatedStatCounter value={stats.autoRejectedPct} suffix="%" />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             Low quality or spam (Score &lt; 40); 100% appealable with human override
           </p>
         </Card>
 
         {/* 4. Officer Overturn Rate */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
-            <span>Officer Overturn Rate</span>
-            <RotateCcw className="h-4 w-4 text-amber-600" />
+        <Card className="p-6 rounded-2xl border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card shadow-xs card-hover-lift specular-card">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold mb-2">
+            <span className="text-amber-700 dark:text-amber-400">Officer Overturn Rate</span>
+            <div className="h-7 w-7 rounded-lg bg-amber-500/15 flex items-center justify-center text-amber-600">
+              <RotateCcw className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl sm:text-4xl font-black text-amber-600 dark:text-amber-400">
             <AnimatedStatCounter value={stats.overturnRatePct} suffix="%" />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             Percentage of flagged grievances verified and greenlit after human review
           </p>
         </Card>
 
         {/* 5. Average Resolution Time */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
-            <span>Avg. Resolution Time</span>
-            <Clock className="h-4 w-4 text-primary" />
+        <Card className="p-6 rounded-2xl border-border/80 bg-gradient-to-br from-primary/5 via-card to-card shadow-xs card-hover-lift specular-card">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold mb-2">
+            <span>Avg. Resolution Turnaround</span>
+            <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <Clock className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl sm:text-4xl font-black text-foreground">
             <AnimatedStatCounter value={stats.avgResolutionTimeDays} decimals={1} suffix=" Days" />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             From citizen report submission to independent lab/field sign-off
           </p>
         </Card>
 
         {/* 6. Total Resolved Ground Cases */}
-        <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
-            <span>Verified Resolutions</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+        <Card className="p-6 rounded-2xl border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-card shadow-xs card-hover-lift specular-card">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold mb-2">
+            <span className="text-emerald-700 dark:text-emerald-400">Verified Resolutions</span>
+            <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400">
             <AnimatedStatCounter value={stats.resolvedCount} />
           </div>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
             Permanent infrastructure fixes delivered by universities & CSR
           </p>
         </Card>
       </div>
 
       {/* Fast Action Shortcuts */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
         <div
           onClick={() => navigate('/admin/pending')}
-          className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between card-hover-lift"
+          className="p-5 rounded-2xl border border-border/80 bg-card hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between card-hover-lift specular-card group"
         >
           <div className="space-y-1">
-            <span className="text-sm font-bold text-foreground flex items-center gap-2">
+            <span className="text-sm font-black text-foreground flex items-center gap-2 group-hover:text-primary transition-colors">
               <Clock className="h-4 w-4 text-amber-600" />
               Inspect Pending Officer Verification Queue
             </span>
@@ -169,15 +181,15 @@ export default function AdminDashboard() {
               {pendingCount} grievances currently require officer inspection and determination.
             </p>
           </div>
-          <ArrowRight className="h-5 w-5 text-primary shrink-0" />
+          <ArrowRight className="h-5 w-5 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
         </div>
 
         <div
           onClick={() => navigate('/admin/matches')}
-          className="p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between card-hover-lift"
+          className="p-5 rounded-2xl border border-border/80 bg-card hover:border-primary/50 transition-all cursor-pointer flex items-center justify-between card-hover-lift specular-card group"
         >
           <div className="space-y-1">
-            <span className="text-sm font-bold text-foreground flex items-center gap-2">
+            <span className="text-sm font-black text-foreground flex items-center gap-2 group-hover:text-primary transition-colors">
               <Users className="h-4 w-4 text-primary" />
               Manage Multi-Stakeholder University-CSR Matches
             </span>
@@ -185,7 +197,7 @@ export default function AdminDashboard() {
               Assign university student innovation teams and industry CSR milestone co-funding.
             </p>
           </div>
-          <ArrowRight className="h-5 w-5 text-primary shrink-0" />
+          <ArrowRight className="h-5 w-5 text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
         </div>
       </div>
     </div>

@@ -67,13 +67,13 @@ export const STATUSES = [
 ] as const;
 
 export const STATUS_COLORS: Record<string, string> = {
-  PENDING_APPROVAL: 'bg-slate-100 text-slate-700 border-slate-300',
-  REJECTED: 'bg-rose-100 text-rose-800 border-rose-300',
-  OPEN: 'bg-sky-100 text-sky-800 border-sky-300',
-  TEAM_FORMED: 'bg-purple-100 text-purple-800 border-purple-300',
-  IN_PROGRESS: 'bg-amber-100 text-amber-800 border-amber-300',
-  PILOTED: 'bg-orange-100 text-orange-800 border-orange-300',
-  SOLVED: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+  PENDING_APPROVAL: 'bg-slate-500/10 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700',
+  REJECTED: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/30',
+  OPEN: 'bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-500/30',
+  TEAM_FORMED: 'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/30',
+  IN_PROGRESS: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30',
+  PILOTED: 'bg-orange-500/10 text-orange-700 dark:text-orange-400 border-orange-500/30',
+  SOLVED: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
 };
 
 export const STATUS_DOT_COLORS: Record<string, string> = {
@@ -87,9 +87,9 @@ export const STATUS_DOT_COLORS: Record<string, string> = {
 };
 
 export const URGENCY_COLORS: Record<string, string> = {
-  LOW: 'bg-emerald-50 text-emerald-700 border-emerald-300',
-  MEDIUM: 'bg-amber-50 text-amber-700 border-amber-300',
-  HIGH: 'bg-rose-50 text-rose-700 border-rose-300',
+  LOW: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
+  MEDIUM: 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30',
+  HIGH: 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/30',
 };
 
 export const CHART_STATUS_COLORS: Record<string, string> = {

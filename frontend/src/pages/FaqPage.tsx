@@ -57,15 +57,21 @@ export default function FaqPage() {
               <Card
                 key={idx}
                 onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="p-5 rounded-2xl border-border bg-card shadow-xs transition-all cursor-pointer hover:border-primary/50"
+                className={`p-5.5 rounded-2xl border bg-card specular-card shadow-xs transition-all duration-200 cursor-pointer ${
+                  isOpen ? 'border-primary/50 shadow-sm' : 'border-border/80 hover:border-primary/40'
+                }`}
               >
                 <div className="flex items-center justify-between gap-4">
                   <h3 className="font-bold text-sm text-foreground">{faq.q}</h3>
-                  {isOpen ? (
-                    <ChevronUp className="h-4 w-4 text-primary shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
-                  )}
+                  <div className={`h-7 w-7 rounded-lg flex items-center justify-center transition-colors ${
+                    isOpen ? 'bg-primary/10 text-primary' : 'bg-secondary text-muted-foreground'
+                  }`}>
+                    {isOpen ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </div>
                 </div>
                 {isOpen && (
                   <p className="text-xs text-muted-foreground leading-relaxed mt-3 pt-3 border-t border-border/60 animate-fade-in">
@@ -77,12 +83,12 @@ export default function FaqPage() {
           })}
         </div>
 
-        <div className="p-6 rounded-2xl bg-secondary/30 border border-border text-center space-y-3">
+        <div className="p-6 rounded-2xl bg-secondary/30 border border-border/80 specular-card text-center space-y-3">
           <h3 className="text-sm font-bold text-foreground">Still have questions?</h3>
           <p className="text-xs text-muted-foreground">
             Call the Government of Jharkhand 24x7 Citizen Helpline at <strong className="text-foreground">181</strong> or contact your District Nodal Directorate.
           </p>
-          <Button onClick={() => window.location.href = '/contact'} variant="outline" size="sm" className="text-xs font-bold gap-1.5">
+          <Button onClick={() => window.location.href = '/contact'} variant="outline" size="sm" className="text-xs font-bold gap-1.5 rounded-xl">
             <span>View District Directory</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Button>

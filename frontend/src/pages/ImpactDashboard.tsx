@@ -131,40 +131,48 @@ export default function ImpactDashboard() {
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-5 rounded-xl border border-border bg-card shadow-xs">
+        <div className="p-5 rounded-2xl border border-border/80 bg-gradient-to-br from-primary/5 via-card to-card shadow-xs specular-card card-hover-lift">
           <div className="flex items-center justify-between text-muted-foreground mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">{t('dashboard.totalProblems')}</span>
-            <Layers className="h-4 w-4 text-primary" />
+            <span className="text-xs font-bold uppercase tracking-wider">{t('dashboard.totalProblems')}</span>
+            <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <Layers className="h-3.5 w-3.5" />
+            </div>
           </div>
           <div className="text-3xl font-black text-foreground tracking-tight">{stats.totalProblems}</div>
-          <span className="text-[11px] text-muted-foreground mt-1 block">Verified across state</span>
+          <span className="text-[11px] text-muted-foreground mt-1.5 block">Verified across state</span>
         </div>
 
-        <div className="p-5 rounded-xl border border-border bg-card shadow-xs">
+        <div className="p-5 rounded-2xl border border-sky-500/30 bg-gradient-to-br from-sky-500/10 via-card to-card shadow-xs specular-card card-hover-lift">
           <div className="flex items-center justify-between text-muted-foreground mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">{t('dashboard.activeTeams')}</span>
-            <Users className="h-4 w-4 text-sky-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400">{t('dashboard.activeTeams')}</span>
+            <div className="h-7 w-7 rounded-lg bg-sky-500/15 flex items-center justify-center text-sky-600">
+              <Users className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-primary tracking-tight">{stats.activeCollaborations}</div>
-          <span className="text-[11px] text-muted-foreground mt-1 block">University-Industry matches</span>
+          <div className="text-3xl font-black text-primary dark:text-emerald-400 tracking-tight">{stats.activeCollaborations}</div>
+          <span className="text-[11px] text-muted-foreground mt-1.5 block">University-Industry matches</span>
         </div>
 
-        <div className="p-5 rounded-xl border border-border bg-card shadow-xs">
+        <div className="p-5 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card shadow-xs specular-card card-hover-lift">
           <div className="flex items-center justify-between text-muted-foreground mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">{t('dashboard.inProgress')}</span>
-            <TrendingUp className="h-4 w-4 text-amber-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">{t('dashboard.inProgress')}</span>
+            <div className="h-7 w-7 rounded-lg bg-amber-500/15 flex items-center justify-center text-amber-600">
+              <TrendingUp className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-amber-600 tracking-tight">{stats.inProgress}</div>
-          <span className="text-[11px] text-muted-foreground mt-1 block">Active prototyping & pilots</span>
+          <div className="text-3xl font-black text-amber-600 dark:text-amber-400 tracking-tight">{stats.inProgress}</div>
+          <span className="text-[11px] text-muted-foreground mt-1.5 block">Active prototyping & pilots</span>
         </div>
 
-        <div className="p-5 rounded-xl border border-border bg-card shadow-xs">
+        <div className="p-5 rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 via-card to-card shadow-xs specular-card card-hover-lift">
           <div className="flex items-center justify-between text-muted-foreground mb-2">
-            <span className="text-xs font-semibold uppercase tracking-wider">{t('dashboard.solved')}</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">{t('dashboard.solved')}</span>
+            <div className="h-7 w-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-600">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+            </div>
           </div>
-          <div className="text-3xl font-black text-emerald-600 tracking-tight">{stats.solvedCount}</div>
-          <span className="text-[11px] text-muted-foreground mt-1 block">Successfully resolved</span>
+          <div className="text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight">{stats.solvedCount}</div>
+          <span className="text-[11px] text-muted-foreground mt-1.5 block">Successfully resolved</span>
         </div>
       </div>
 

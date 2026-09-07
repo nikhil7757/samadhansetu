@@ -68,14 +68,14 @@ export default function MySubmissions() {
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/80">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-2 border border-primary/20 shadow-2xs">
             <Layers className="h-3.5 w-3.5" />
-            <span>Citizen Workspace</span>
+            <span>Citizen Redressal Workspace</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-            My Complaints
+            My Submissions & Grievances
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl">
             Track all civic grievances reported across Jharkhand with automated AI scores and nodal verification steps.
@@ -84,38 +84,59 @@ export default function MySubmissions() {
 
         <Button
           onClick={() => navigate('/report')}
-          className="gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-bold shadow-sm"
+          className="gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-extrabold shadow-md hover:shadow-lg transition-all"
         >
           <PlusCircle className="h-4 w-4" />
           <span>Report New Problem</span>
         </Button>
       </div>
 
+      {/* Summary KPI Strip */}
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+        <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs specular-card">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Total Filed</span>
+          <span className="text-2xl font-black font-mono text-foreground">{complaints.length}</span>
+        </div>
+        <div className="p-4 rounded-2xl border border-sky-500/30 bg-sky-500/5 shadow-xs specular-card">
+          <span className="text-[11px] font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wider block">In Progress</span>
+          <span className="text-2xl font-black font-mono text-sky-600 dark:text-sky-400">
+            {complaints.filter((c) => c.status === 'verified_in_progress' || c.status === 'pending_officer' || c.status === 'officer_reviewing').length}
+          </span>
+        </div>
+        <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 shadow-xs specular-card">
+          <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Resolved</span>
+          <span className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">
+            {complaints.filter((c) => c.status === 'resolved').length}
+          </span>
+        </div>
+      </div>
+
       {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between p-2 rounded-2xl bg-secondary/30 border border-border/70">
         <div className="relative w-full sm:w-80">
-          <Search className="h-4 w-4 absolute left-3 top-2.5 text-muted-foreground" />
+          <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
           <Input
-            placeholder="Search by Tracking ID, title, or district..."
+            placeholder="Search by Tracking ID, title, district..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 text-xs"
+            className="pl-9 text-xs bg-card"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground shrink-0 flex items-center gap-1">
-              <Filter className="h-3.5 w-3.5" /> Filter Status:
+            <span className="text-xs font-bold text-muted-foreground shrink-0 flex items-center gap-1">
+              <Filter className="h-3.5 w-3.5" /> Status:
             </span>
             <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-card text-xs"
               options={[
                 { value: 'all', label: 'All Statuses' },
                 { value: 'resolved', label: '🟢 Resolved' },
                 { value: 'verified_in_progress', label: '🔵 In Progress' },
-                { value: 'pending_officer', label: '🟡 Pending Officer Review' },
+                { value: 'pending_officer', label: '🟡 Pending Officer' },
                 { value: 'auto_approved', label: '🟢 Auto-Approved' },
                 { value: 'auto_rejected', label: '🔴 Auto-Rejected' },
               ]}
@@ -123,12 +144,13 @@ export default function MySubmissions() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-muted-foreground shrink-0 flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" /> Sort Date:
+            <span className="text-xs font-bold text-muted-foreground shrink-0 flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" /> Sort:
             </span>
             <Select
               value={dateSort}
               onChange={(e) => setDateSort(e.target.value as 'newest' | 'oldest')}
+              className="bg-card text-xs"
               options={[
                 { value: 'newest', label: '📅 Newest First' },
                 { value: 'oldest', label: '📅 Oldest First' },
@@ -155,7 +177,7 @@ export default function MySubmissions() {
             <Card
               key={c.id}
               onClick={() => navigate(`/track/${c.id}`)}
-              className="border-border rounded-2xl overflow-hidden card-hover-lift cursor-pointer bg-card flex flex-col justify-between"
+              className="docket-sheet rounded-2xl overflow-hidden card-hover-lift cursor-pointer flex flex-col justify-between border border-border shadow-sm hover:shadow-xl transition-all group"
             >
               <div>
                 {/* Photo & Badge Header */}
@@ -163,35 +185,27 @@ export default function MySubmissions() {
                   <img
                     src={c.media[0] || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80'}
                     alt={c.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-3 left-3 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-white text-[11px] font-mono font-bold">
+                  <div className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-black/80 backdrop-blur-xs text-white text-[11px] font-mono font-bold">
                     {c.id}
                   </div>
 
-                  {/* Color-coded Status Badge */}
+                  {/* Official Ink-style Status Badge */}
                   <div
                     className={cn(
-                      'absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-xs flex items-center gap-1',
+                      'absolute top-3 right-3 docket-stamp text-[10px] py-0.5 shadow-md',
                       c.status === 'resolved'
-                        ? 'bg-emerald-600 text-white'
+                        ? 'docket-stamp-verified bg-emerald-950/90 text-emerald-200 border-emerald-400'
                         : c.status === 'verified_in_progress'
-                        ? 'bg-sky-600 text-white'
+                        ? 'docket-stamp-action bg-sky-950/90 text-sky-200 border-sky-400'
                         : c.status === 'pending_officer' || c.status === 'officer_reviewing'
-                        ? 'bg-amber-500 text-white animate-pulse'
+                        ? 'docket-stamp-pending bg-amber-950/90 text-amber-200 border-amber-400'
                         : c.status === 'auto_approved'
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-rose-600 text-white'
+                        ? 'docket-stamp-verified bg-emerald-950/90 text-emerald-200 border-emerald-400'
+                        : 'docket-stamp-action bg-rose-950/90 text-rose-200 border-rose-400'
                     )}
                   >
-                    {c.status === 'resolved' && <CheckCircle2 className="h-3 w-3" />}
-                    {c.status === 'verified_in_progress' && <Clock className="h-3 w-3" />}
-                    {(c.status === 'pending_officer' || c.status === 'officer_reviewing') && (
-                      <Clock className="h-3 w-3" />
-                    )}
-                    {(c.status === 'auto_rejected' || c.status === 'rejected_by_officer') && (
-                      <XCircle className="h-3 w-3" />
-                    )}
                     <span>{c.status.replace(/_/g, ' ')}</span>
                   </div>
                 </div>

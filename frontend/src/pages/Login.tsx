@@ -65,9 +65,9 @@ export default function Login() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 py-12 bg-secondary/20">
       <div className="w-full max-w-md space-y-6">
-        <Card className="border-border shadow-md">
+        <Card className="border-border/80 shadow-lg specular-card rounded-2xl bg-card">
           <CardHeader className="space-y-2 text-center pb-6">
-            <div className="mx-auto h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+            <div className="mx-auto h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs border border-primary/20">
               <LogIn className="h-6 w-6" />
             </div>
             <CardTitle className="text-xl font-bold">{t('auth.login.title')}</CardTitle>
@@ -106,7 +106,7 @@ export default function Login() {
                 />
               </div>
 
-              <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
+              <Button type="submit" className="w-full mt-2 rounded-xl font-bold" disabled={isSubmitting}>
                 {isSubmitting ? t('common.loading') : t('auth.login.submit')}
               </Button>
             </CardContent>
@@ -133,7 +133,7 @@ export default function Login() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => handleQuickLogin('admin@samadhansetu.gov.in')}
-                  className="px-2.5 py-2 rounded-lg text-[11px] bg-primary/10 hover:bg-primary/20 text-primary font-medium transition-all border border-primary/20 text-left flex flex-col gap-0.5 cursor-pointer disabled:opacity-50"
+                  className="px-2.5 py-2 rounded-xl text-[11px] bg-primary/10 hover:bg-primary/20 text-primary font-medium transition-all border border-primary/20 text-left flex flex-col gap-0.5 cursor-pointer disabled:opacity-50 hover:shadow-xs"
                 >
                   <div className="flex items-center gap-1.5">
                     <Shield className="h-3.5 w-3.5 text-primary shrink-0" />

@@ -66,9 +66,9 @@ export default function Signup() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 py-12 bg-secondary/20">
       <div className="w-full max-w-xl space-y-6">
-        <Card className="border-border shadow-md">
+        <Card className="border-border/80 shadow-lg specular-card rounded-2xl bg-card">
           <CardHeader className="space-y-2 text-center pb-6">
-            <div className="mx-auto h-12 w-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+            <div className="mx-auto h-12 w-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-xs border border-primary/20">
               <UserPlus className="h-6 w-6" />
             </div>
             <CardTitle className="text-xl font-bold">{t('auth.signup.title')}</CardTitle>

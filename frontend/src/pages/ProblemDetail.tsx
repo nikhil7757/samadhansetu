@@ -301,10 +301,13 @@ export default function ProblemDetail() {
           )}
 
           {/* Full Problem Description */}
-          <div className="rounded-xl border border-border bg-card p-6 shadow-xs space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              Challenge Overview
-            </h2>
+          <div className="rounded-2xl border border-border/80 bg-card p-6 specular-card shadow-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-primary" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Challenge Overview
+              </h2>
+            </div>
             <p className="text-sm leading-relaxed text-foreground whitespace-pre-line">
               {problem.description}
             </p>
@@ -312,11 +315,11 @@ export default function ProblemDetail() {
 
           {/* Active Project Team (if formed) */}
           {problem.projectTeam && (
-            <div className="rounded-xl border border-primary/30 bg-primary/5 p-6 shadow-xs space-y-4">
+            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 specular-card shadow-xs space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
-                    <Users className="h-4 w-4" />
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-xs">
+                    <Users className="h-5 w-5" />
                   </div>
                   <div>
                     <h3 className="font-bold text-sm text-foreground">
@@ -331,7 +334,7 @@ export default function ProblemDetail() {
                 <Button
                   size="sm"
                   onClick={() => navigate(`/teams/${problem.projectTeam?.id}`)}
-                  className="gap-1.5"
+                  className="gap-1.5 rounded-xl font-bold text-xs"
                 >
                   {t('problems.detail.viewWorkspace')} <ExternalLink className="h-3.5 w-3.5" />
                 </Button>
@@ -341,7 +344,7 @@ export default function ProblemDetail() {
                 {problem.projectTeam.members.map((m) => (
                   <div
                     key={m.id}
-                    className="p-3 rounded-lg bg-card border border-border text-xs flex items-start gap-2.5"
+                    className="p-3.5 rounded-xl bg-card border border-border/80 specular-card text-xs flex items-start gap-2.5"
                   >
                     {m.user.role === 'UNIVERSITY' ? (
                       <GraduationCap className="h-4 w-4 text-sky-600 mt-0.5 shrink-0" />
@@ -429,9 +432,12 @@ export default function ProblemDetail() {
         {/* Right Col: Action Sidebar & Status Timeline */}
         <div className="lg:col-span-4 space-y-6">
           {/* Action Card: Express Interest */}
-          <Card className="border-border shadow-xs">
+          <Card className="rounded-2xl border-border/80 bg-card specular-card shadow-xs">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">{t('problems.detail.expressInterest')}</CardTitle>
+              <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                {t('problems.detail.expressInterest')}
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-xs text-muted-foreground leading-relaxed">
@@ -441,7 +447,7 @@ export default function ProblemDetail() {
               {canExpressInterest ? (
                 <Button
                   onClick={() => setInterestDialogOpen(true)}
-                  className="w-full gap-2"
+                  className="w-full gap-2 rounded-xl font-bold text-xs"
                   variant="default"
                 >
                   {user?.role === 'UNIVERSITY' ? (
@@ -457,7 +463,7 @@ export default function ProblemDetail() {
                   )}
                 </Button>
               ) : hasExpressedInterest ? (
-                <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-medium flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
                   {t('problems.detail.alreadyInterested')}
                 </div>
@@ -465,19 +471,19 @@ export default function ProblemDetail() {
                 <Button
                   variant="outline"
                   onClick={() => navigate('/login')}
-                  className="w-full text-xs"
+                  className="w-full text-xs rounded-xl font-bold"
                 >
                   {t('problems.detail.loginToExpress')}
                 </Button>
               ) : (
-                <div className="text-xs text-muted-foreground italic">
+                <div className="text-xs text-muted-foreground italic p-3 rounded-xl bg-secondary/30 border border-border/60">
                   Signed in as Citizen. Solvers and Industry partners can pitch on open challenges.
                 </div>
               )}
 
               <div className="pt-3 border-t border-border/80 flex items-center justify-between text-xs text-muted-foreground">
                 <span>Total solver proposals:</span>
-                <span className="font-bold text-foreground font-mono">
+                <span className="font-bold text-foreground font-mono bg-secondary/60 px-2 py-0.5 rounded">
                   {problem._count?.interests || 0}
                 </span>
               </div>
@@ -485,9 +491,9 @@ export default function ProblemDetail() {
           </Card>
 
           {/* Status Lifecycle Timeline */}
-          <Card className="border-border shadow-xs">
+          <Card className="rounded-2xl border-border/80 bg-card specular-card shadow-xs">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-1.5">
+              <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
                 <Clock className="h-4 w-4 text-primary" />
                 {t('problems.detail.statusTimeline')}
               </CardTitle>
@@ -497,7 +503,7 @@ export default function ProblemDetail() {
                 {problem.statusHistory && problem.statusHistory.length > 0 ? (
                   problem.statusHistory.map((item, idx) => (
                     <div key={item.id || idx} className="relative text-xs space-y-1">
-                      <span className="absolute -left-6 top-0.5 h-3 w-3 rounded-full border-2 border-background bg-primary" />
+                      <span className="absolute -left-6 top-0.5 h-3 w-3 rounded-full border-2 border-background bg-primary ring-2 ring-primary/20" />
                       <div className="flex items-center justify-between">
                         <StatusBadge status={item.newStatus} />
                         <span className="text-[10px] text-muted-foreground font-mono">
@@ -505,7 +511,7 @@ export default function ProblemDetail() {
                         </span>
                       </div>
                       {item.note && (
-                        <p className="text-muted-foreground text-[11px] italic bg-secondary/50 p-2 rounded">
+                        <p className="text-muted-foreground text-[11px] italic bg-secondary/50 p-2.5 rounded-xl border border-border/50">
                           "{item.note}"
                         </p>
                       )}
@@ -516,7 +522,7 @@ export default function ProblemDetail() {
                   ))
                 ) : (
                   <div className="relative text-xs space-y-1">
-                    <span className="absolute -left-6 top-0.5 h-3 w-3 rounded-full border-2 border-background bg-primary" />
+                    <span className="absolute -left-6 top-0.5 h-3 w-3 rounded-full border-2 border-background bg-primary ring-2 ring-primary/20" />
                     <StatusBadge status={problem.status} />
                     <p className="text-[10px] text-muted-foreground">
                       Initial submission verified
