@@ -34,3 +34,8 @@ backend/uploads/
 Thumbs.db
 
 .vercel
+.agents/
+.claude/
+agent/
+docs/
+skills-lock.json

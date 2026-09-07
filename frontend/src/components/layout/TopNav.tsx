@@ -1,10 +1,26 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, LogOut, User as UserIcon, ShieldAlert, PlusCircle, Compass, BarChart3, Layers, Building2 } from 'lucide-react';
+import {
+  Menu,
+  X,
+  LogOut,
+  User as UserIcon,
+  ShieldAlert,
+  PlusCircle,
+  Compass,
+  BarChart3,
+  Layers,
+  Building2,
+  Search,
+  HelpCircle,
+  Phone,
+  Info,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { NotificationBell } from '@/components/shared/NotificationBell';
+import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
@@ -21,39 +37,41 @@ export function TopNav() {
   };
 
   const navLinks = [
-    { to: '/problems', label: t('nav.problems'), icon: Compass, show: true },
-    { to: '/dashboard', label: t('nav.dashboard'), icon: BarChart3, show: true },
-    { to: '/problems/submit', label: t('nav.submitProblem'), icon: PlusCircle, show: user?.role === 'CITIZEN' },
-    { to: '/my/submissions', label: t('nav.mySubmissions'), icon: Layers, show: user?.role === 'CITIZEN' },
-    { to: '/my/interests', label: t('nav.myInterests'), icon: Building2, show: user?.role === 'UNIVERSITY' || user?.role === 'INDUSTRY' },
-    { to: '/my/teams', label: t('nav.myTeams'), icon: Layers, show: !!user },
-    { to: '/admin', label: t('nav.admin'), icon: ShieldAlert, show: user?.role === 'ADMIN' },
+    { to: '/report', label: 'Report Problem', icon: PlusCircle, show: true, highlight: true },
+    { to: '/track', label: 'Track Status', icon: Search, show: true },
+    { to: '/dashboard', label: 'Dashboard', icon: BarChart3, show: true },
+    { to: '/problems', label: 'Directory', icon: Compass, show: true },
+    { to: '/admin', label: 'Admin', icon: ShieldAlert, show: user?.role === 'ADMIN' },
+    { to: '/about', label: 'About', icon: Info, show: true },
+    { to: '/faq', label: 'FAQ', icon: HelpCircle, show: true },
+    { to: '/contact', label: 'Contact', icon: Phone, show: true },
   ].filter((l) => l.show);
 
-  const isActive = (path: string) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
+  const isActive = (path: string) =>
+    location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md supports-[backdrop-filter]:bg-card/85">
       {/* Gov banner top bar */}
-      <div className="bg-primary-hover text-primary-foreground py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between">
+      <div className="bg-primary text-primary-foreground py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between">
         <div className="flex items-center gap-2 mx-auto max-w-7xl w-full">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
-          <span>{t('landing.hero.badge')} | Government of Jharkhand Civic Innovation Portal</span>
+          <span>Government of Jharkhand • Civic Challenge Resolution Platform (SIH 2026 PS-043)</span>
         </div>
       </div>
 
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-2.5 font-bold text-lg text-foreground hover:opacity-90 transition-opacity">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs font-black tracking-tight">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs font-black tracking-tight text-sm">
             SS
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-base leading-tight tracking-tight text-primary">
-              {t('app.name')}
+            <span className="font-black text-base leading-tight tracking-tight text-primary font-heading">
+              SamadhanSetu
             </span>
             <span className="text-[10px] text-muted-foreground font-normal leading-none hidden sm:inline">
-              {t('app.tagline')}
+              समाधान सेतु • Civic Grievance Portal
             </span>
           </div>
         </Link>
@@ -67,13 +85,15 @@ export function TopNav() {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  'px-3 py-1.5 text-sm font-medium transition-all duration-150 rounded-md flex items-center gap-1.5',
-                  active
-                    ? 'bg-primary/10 text-primary font-semibold'
+                  'px-3 py-1.5 text-xs font-semibold transition-all duration-150 rounded-lg flex items-center gap-1.5',
+                  link.highlight && !active
+                    ? 'bg-accent/15 text-accent-foreground border border-accent/30 hover:bg-accent/25'
+                    : active
+                    ? 'bg-primary/10 text-primary font-bold'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 )}
               >
-                <link.icon className="h-4 w-4 shrink-0 opacity-80" />
+                <link.icon className="h-3.5 w-3.5 shrink-0 opacity-80" />
                 {link.label}
               </Link>
             );
@@ -81,7 +101,8 @@ export function TopNav() {
         </nav>
 
         {/* Right Action Bar */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ThemeToggle />
           <LanguageToggle />
           <NotificationBell />
 
@@ -100,106 +121,116 @@ export function TopNav() {
               </div>
               <Button
                 variant="ghost"
-                size="icon"
+                size="sm"
                 onClick={handleLogout}
-                aria-label={t('nav.logout')}
-                title={t('nav.logout')}
-                className="text-muted-foreground hover:text-destructive h-8 w-8"
+                className="h-8 px-2 text-muted-foreground hover:text-destructive"
+                title="Logout"
               >
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
           ) : (
             <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-border">
-              <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
-                {t('nav.login')}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/login')}
+                className="text-xs font-semibold"
+              >
+                Sign In
               </Button>
-              <Button size="sm" onClick={() => navigate('/signup')}>
-                {t('nav.signup')}
+              <Button
+                size="sm"
+                onClick={() => navigate('/report')}
+                className="text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground shadow-xs gap-1.5"
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span>Report</span>
               </Button>
             </div>
           )}
 
-          {/* Mobile menu trigger */}
-          <button
-            type="button"
-            className="lg:hidden p-2 rounded-md hover:bg-secondary text-foreground"
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="lg:hidden h-9 w-9 p-0"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle Navigation Menu"
+            aria-label="Toggle navigation menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile dropdown menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-card animate-in slide-in-from-top-2 duration-150">
-          <nav className="flex flex-col p-4 gap-1">
-            {navLinks.map((link) => (
+        <div className="lg:hidden border-t border-border bg-card px-4 py-4 space-y-2 animate-fade-in shadow-lg">
+          {navLinks.map((link) => {
+            const active = isActive(link.to);
+            return (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  'px-3.5 py-2 text-sm font-medium rounded-lg transition-colors flex items-center gap-2.5',
-                  isActive(link.to)
-                    ? 'bg-primary/10 text-primary font-semibold'
-                    : 'text-foreground hover:bg-secondary'
+                  'flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+                  active
+                    ? 'bg-primary/10 text-primary font-bold'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
                 )}
               >
-                <link.icon className="h-4 w-4 shrink-0 opacity-80" />
+                <link.icon className="h-4 w-4 shrink-0" />
                 {link.label}
               </Link>
-            ))}
+            );
+          })}
 
+          <div className="pt-3 border-t border-border space-y-2">
             {user ? (
               <>
-                <div className="border-t border-border my-2 pt-2" />
-                <div className="px-3.5 py-2 text-xs text-muted-foreground flex items-center justify-between">
-                  <span className="font-semibold text-foreground">{user.name}</span>
-                  <span className="bg-secondary px-2 py-0.5 rounded text-[10px] uppercase font-mono">
-                    {user.role}
-                  </span>
+                <div className="px-3 py-1 text-xs text-muted-foreground">
+                  Signed in as <strong className="text-foreground">{user.name}</strong> ({user.role})
                 </div>
-                <button
-                  type="button"
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     handleLogout();
                     setMobileOpen(false);
                   }}
-                  className="px-3.5 py-2 text-sm font-medium rounded-lg text-destructive hover:bg-destructive/10 text-left flex items-center gap-2"
+                  className="w-full text-xs font-medium gap-2 text-destructive border-destructive/30"
                 >
-                  <LogOut className="h-4 w-4" /> {t('nav.logout')}
-                </button>
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span>Logout</span>
+                </Button>
               </>
             ) : (
-              <>
-                <div className="border-t border-border my-2 pt-2" />
-                <div className="grid grid-cols-2 gap-2 pt-1">
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => {
-                      navigate('/login');
-                      setMobileOpen(false);
-                    }}
-                  >
-                    {t('nav.login')}
-                  </Button>
-                  <Button
-                    className="w-full"
-                    onClick={() => {
-                      navigate('/signup');
-                      setMobileOpen(false);
-                    }}
-                  >
-                    {t('nav.signup')}
-                  </Button>
-                </div>
-              </>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    navigate('/login');
+                    setMobileOpen(false);
+                  }}
+                  className="w-full text-xs"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    navigate('/report');
+                    setMobileOpen(false);
+                  }}
+                  className="w-full text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground"
+                >
+                  Report Problem
+                </Button>
+              </div>
             )}
-          </nav>
+          </div>
         </div>
       )}
     </header>

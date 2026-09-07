@@ -14,6 +14,7 @@ import teamRoutes from './routes/team.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 import dashboardRoutes from './routes/dashboard.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import complaintRoutes from './routes/complaint.routes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,6 +45,7 @@ app.use(['/api/teams', '/teams'], teamRoutes);
 app.use(['/api/notifications', '/notifications'], notificationRoutes);
 app.use(['/api/dashboard', '/dashboard'], dashboardRoutes);
 app.use(['/api/admin', '/admin'], adminRoutes);
+app.use(['/api/complaints', '/complaints'], complaintRoutes);
 
 // Health check
 app.get(['/api/health', '/health'], (_req, res) => {
