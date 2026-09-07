@@ -131,7 +131,7 @@ export default function ComplaintTrackerPage() {
               <span>Back to Home</span>
             </Link>
             <span className="text-muted-foreground">•</span>
-            <span className="text-xs font-bold text-primary uppercase tracking-wider">
+            <span className="text-xs font-semibold text-primary">
               Public Grievance Tracker
             </span>
           </div>
@@ -182,7 +182,7 @@ export default function ComplaintTrackerPage() {
               <div className="p-6 sm:p-8 space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
                   <div className="space-y-1">
-                    <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    <span className="text-xs text-muted-foreground font-medium">
                       Official Public Tracking Identifier
                     </span>
                     <div className="flex items-center gap-3">

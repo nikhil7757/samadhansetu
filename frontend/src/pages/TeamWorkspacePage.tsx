@@ -333,7 +333,7 @@ export default function TeamWorkspacePage() {
                   to={`/problems/${team.problem.id}`}
                   className="text-xs text-primary font-semibold hover:underline block text-center"
                 >
-                  View Public Challenge Record →
+                  View Public Challenge Record
                 </Link>
               </div>
             </CardContent>

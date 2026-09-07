@@ -208,7 +208,7 @@ export default function PendingApproval() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Col: Queue List (7 cols) */}
           <div className="lg:col-span-7 space-y-3">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+            <span className="text-xs font-semibold text-muted-foreground block">
               Grievance Inspection Queue ({pendingComplaints.length})
             </span>
 

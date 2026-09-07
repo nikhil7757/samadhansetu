@@ -168,8 +168,8 @@ export function QuickReportWidget() {
         <div className="bg-gradient-to-r from-primary via-primary-hover to-primary text-primary-foreground px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="flex h-2.5 w-2.5 rounded-full bg-accent animate-pulse" />
-            <h3 className="text-sm font-extrabold tracking-tight uppercase">
-              Quick Report — File a Grievance Direct
+            <h3 className="text-sm font-bold tracking-tight">
+              File a Civic Grievance
             </h3>
           </div>
           <span className="text-[11px] font-mono opacity-90 hidden sm:inline">
@@ -381,10 +381,10 @@ export function QuickReportWidget() {
               {/* Tracking ID Box */}
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between shadow-xs">
                 <div>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                  <span className="text-[10px] font-semibold text-muted-foreground block">
                     Public Tracking ID
                   </span>
-                  <span className="text-lg font-black font-mono text-primary tracking-tight">
+                  <span className="text-lg font-bold font-mono text-primary tracking-tight">
                     {submittedComplaint.id}
                   </span>
                 </div>
@@ -417,7 +417,7 @@ export function QuickReportWidget() {
                     AI Authenticity Score
                   </span>
                   <span
-                    className={`font-black font-mono px-2.5 py-0.5 rounded-md text-xs ${
+                    className={`font-mono font-bold px-2.5 py-0.5 rounded-md text-xs ${
                       submittedComplaint.ai_score >= 80
                         ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
                         : submittedComplaint.ai_score >= 40
@@ -436,17 +436,17 @@ export function QuickReportWidget() {
                   <span className="text-xs font-bold text-foreground">
                     {submittedComplaint.status === 'auto_approved' && (
                       <span className="text-emerald-600 dark:text-emerald-400">
-                        ✅ Auto-Approved & Forwarded to Department
+                        Auto-Approved & Forwarded to Department
                       </span>
                     )}
                     {submittedComplaint.status === 'pending_officer' && (
                       <span className="text-amber-600 dark:text-amber-400">
-                        ⏳ Under Review by District Nodal Officer
+                        Under Review by District Nodal Officer
                       </span>
                     )}
                     {submittedComplaint.status === 'auto_rejected' && (
                       <span className="text-rose-600 dark:text-rose-400">
-                        ⚠️ Flagged as Invalid (One-Click Appeal Available)
+                        Flagged as Invalid (One-Click Appeal Available)
                       </span>
                     )}
                   </span>
@@ -485,10 +485,9 @@ export function QuickReportWidget() {
                   navigate(`/track/${submittedComplaint.id}`);
                 }
               }}
-              className="w-full sm:w-1/2 text-xs font-bold gap-1.5"
+              className="w-full sm:w-1/2 text-xs font-bold"
             >
               <span>Track Live Status</span>
-              <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </DialogFooter>
         </DialogContent>

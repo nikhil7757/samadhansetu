@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SamadhanSetu — Complaint Verification Logic Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal-primary: #0B4F56;
+      --teal-hover: #073B40;
+      --teal-light: #E6F3F4;
+      --slate-text: #1E293B;
+      --slate-muted: #64748B;
+      --slate-border: #CBD5E1;
+      --bg-canvas: #F8FAFC;
+      --surface-card: #FFFFFF;
+      --amber-accent: #D97706;
+      --amber-light: #FEF3C7;
+      --emerald-success: #047857;
+      --emerald-light: #D1FAE5;
+      --crimson-danger: #B91C1C;
+      --crimson-light: #FEE2E2;
+      --sky-info: #0284C7;
+      --sky-light: #E0F2FE;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-canvas);
+      color: var(--slate-text);
+      line-height: 1.5;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    header {
+      background: var(--teal-primary);
+      color: white;
+      padding: 24px 28px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(11, 79, 86, 0.15);
+    }
+    .gov-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #99F6E4;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .header-desc {
+      font-size: 13px;
+      color: #CCFBF1;
+      margin-top: 6px;
+      max-width: 780px;
+    }
+
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--slate-border);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+    .card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--slate-text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--slate-border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: none;
+      border: 1px solid var(--slate-border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--slate-muted);
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--teal-primary);
+      color: white;
+      border-color: var(--teal-primary);
+    }
+    .scenario-desc {
+      font-size: 13px;
+      color: var(--slate-muted);
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      background: var(--bg-canvas);
+      border-radius: 8px;
+      border-left: 3px solid var(--teal-primary);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button.action-btn {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--teal-primary); color: white; }
+    .btn-primary:hover { background: var(--teal-hover); }
+    .btn-amber { background: var(--amber-accent); color: white; }
+    .btn-amber:hover { background: #B45309; }
+    .btn-emerald { background: var(--emerald-success); color: white; }
+    .btn-emerald:hover { background: #065F46; }
+    .btn-crimson { background: var(--crimson-danger); color: white; }
+    .btn-crimson:hover { background: #991B1B; }
+    .btn-outline { background: white; border-color: var(--slate-border); color: var(--slate-text); }
+    .btn-outline:hover { background: var(--bg-canvas); border-color: #94A3B8; }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .step-node {
+      border: 1px solid var(--slate-border);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      background: var(--bg-canvas);
+      transition: all 0.2s;
+    }
+    .step-node.completed {
+      background: var(--emerald-light);
+      border-color: var(--emerald-success);
+      color: var(--emerald-success);
+    }
+    .step-node.active {
+      background: var(--amber-light);
+      border-color: var(--amber-accent);
+      color: var(--amber-accent);
+      font-weight: 700;
+    }
+    .step-node.failed {
+      background: var(--crimson-light);
+      border-color: var(--crimson-danger);
+      color: var(--crimson-danger);
+    }
+    .step-title { font-size: 11px; font-weight: 700; }
+    .step-meta { font-size: 10px; color: var(--slate-muted); margin-top: 2px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .stepper { grid-template-columns: 1fr; }
+    }
+    .field-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 12px;
+    }
+    .field-label { color: var(--slate-muted); font-weight: 500; }
+    .field-value { font-weight: 600; text-align: right; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .tag-emerald { background: var(--emerald-light); color: var(--emerald-success); }
+    .tag-amber { background: var(--amber-light); color: var(--amber-accent); }
+    .tag-crimson { background: var(--crimson-light); color: var(--crimson-danger); }
+    .tag-sky { background: var(--sky-light); color: var(--sky-info); }
+
+    .log-list {
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .log-item {
+      font-size: 11px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: var(--bg-canvas);
+      border-left: 3px solid var(--teal-primary);
+    }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      color: var(--slate-muted);
+      margin-bottom: 3px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="gov-badge">Government of Jharkhand • SIH 2026 Problem Statement 043</div>
+    <h1>SamadhanSetu — Verification State Machine Prototype</h1>
+    <p class="header-desc">
+      Interactive logic demo: test how multi-factor AI scoring, automated routing thresholds, Nodal Officer moderation, and guaranteed citizen appeal cycles behave under real-world civic conditions.
+    </p>
+  </header>
+
+  <div class="card">
+    <div class="card-title">
+      <span>Guided Walkthrough Scenarios</span>
+      <span style="font-size: 11px; color: var(--slate-muted); font-weight: normal;">Click tabs to drive pre-set cases</span>
+    </div>
+
+    <div class="tabs-nav" id="scenarioTabs">
+      <button class="tab-btn active" onclick="loadScenario(0)">1. High Authenticity (Score ≥80)</button>
+      <button class="tab-btn" onclick="loadScenario(1)">2. Amber Review (Score 40–79)</button>
+      <button class="tab-btn" onclick="loadScenario(2)">3. Spam Reject & Citizen Appeal</button>
+      <button class="tab-btn" onclick="loadScenario(3)">4. Officer Rejection Cycle</button>
+    </div>
+
+    <div class="scenario-desc" id="scenarioDescription">Loading...</div>
+
+    <div class="btn-group" id="scenarioActions"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>Complaint Lifecycle Step-Tracker</span>
+      <span id="currentStatusBadge" class="tag tag-sky">submitted</span>
+    </div>
+
+    <div class="stepper" id="stepperNodes"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Complaint State Attributes</div>
+      <div id="stateAttributes"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Timestamped Audit History Trail</div>
+      <div class="log-list" id="auditLogList"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>Free-Play Action Controls</span>
+      <span style="font-size: 11px; color: var(--slate-muted); font-weight: normal;">Test individual state machine transitions manually</span>
+    </div>
+
+    <div class="btn-group">
+      <button class="action-btn btn-primary" onclick="freePlayAction('submit_high')">Submit Clean Report (Score 88)</button>
+      <button class="action-btn btn-amber" onclick="freePlayAction('submit_amber')">Submit Borderline Report (Score 55)</button>
+      <button class="action-btn btn-crimson" onclick="freePlayAction('submit_low')">Submit Vague Spam (Score 25)</button>
+      <button class="action-btn btn-emerald" onclick="freePlayAction('officer_approve')">Officer Approve & Forward</button>
+      <button class="action-btn btn-crimson" onclick="freePlayAction('officer_reject')">Officer Reject with Reason</button>
+      <button class="action-btn btn-amber" onclick="freePlayAction('citizen_appeal')">Citizen Appeal Decision</button>
+      <button class="action-btn btn-primary" onclick="freePlayAction('mark_resolved')">Mark Ground Resolved</button>
+      <button class="action-btn btn-outline" onclick="freePlayAction('reset')">Reset State</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const VerificationMachine = {
+  calculateScore: function(data) {
+    let score = 0;
+    const flags = [];
+
+    const words = (data.description || '').trim().split(/\s+/).length;
+    if (words >= 25) { score += 20; flags.push('specific_details_verified'); }
+    else if (words >= 12) { score += 12; flags.push('moderate_word_count'); }
+    else { flags.push('spam_text_too_short'); }
+
+    if (data.isDuplicate) { flags.push('potential_duplicate_detected'); }
+    else { score += 20; flags.push('unique_grievance_confirmed'); }
+
+    if (data.lat >= 21.98 && data.lat <= 25.35 && data.lng >= 83.33 && data.lng <= 87.92) {
+      score += 20; flags.push('geo_consistency_verified');
+    } else {
+      flags.push('coords_outside_jharkhand');
+    }
+
+    if (data.hasPhoto) { score += 15; flags.push('exif_metadata_passed'); }
+    else { flags.push('no_media_evidence'); }
+
+    const trust = data.submitterReputation !== undefined ? data.submitterReputation : 0.85;
+    score += Math.round(trust * 15);
+    if (trust >= 0.8) flags.push('trusted_citizen_reputation');
+
+    if (data.categoryMatch) { score += 10; flags.push('category_context_aligned'); }
+
+    let status = 'auto_rejected';
+    if (score >= 80) status = 'auto_approved';
+    else if (score >= 40) status = 'pending_officer';
+
+    return { score, flags, status };
+  },
+
+  createComplaint: function(input) {
+    const verified = this.calculateScore(input);
+    const now = new Date().toISOString();
+    const id = 'SS-2026-' + Math.floor(100000 + Math.random() * 900000);
+
+    const complaint = {
+      id: id,
+      citizen_id: input.citizen_id || 'u-citizen-demo',
+      category: input.category || 'roads',
+      title: input.title || 'Civic Infrastructure Grievance',
+      description: input.description,
+      location: {
+        district: input.district || 'Ranchi',
+        lat: input.lat || 23.3441,
+        lng: input.lng || 85.3096,
+        address: input.address || 'Birsa Chowk, Ranchi'
+      },
+      media: input.hasPhoto ? ['https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600'] : [],
+      submitted_at: now,
+      ai_score: verified.score,
+      ai_flags: verified.flags,
+      status: verified.status,
+      officer_id: null,
+      officer_notes: null,
+      rejection_reason: verified.status === 'auto_rejected' ? 'Insufficient specificity and lack of verified photographic evidence.' : null,
+      appealed: false,
+      history: [
+        {
+          status: 'submitted',
+          actor: 'Citizen Submitter',
+          timestamp: now,
+          note: 'Complaint registered and submitted for AI automated checks.'
+        },
+        {
+          status: verified.status,
+          actor: 'SamadhanSetu AI Verification Engine',
+          timestamp: now,
+          note: `Scored ${verified.score}/100. Automated determination: ${verified.status.replace(/_/g, ' ')}.`
+        }
+      ]
+    };
+
+    if (verified.status === 'auto_approved') {
+      complaint.status = 'verified_in_progress';
+      complaint.history.push({
+        status: 'verified_in_progress',
+        actor: 'Autonomous Dispatcher',
+        timestamp: now,
+        note: 'High score (≥80) triggered instant auto-forwarding to District Engineering Division.'
+      });
+    }
+
+    return complaint;
+  }
+};
+
+let currentComplaint = null;
+
+const SCENARIOS = [
+  {
+    title: "1. High Authenticity (Score ≥80)",
+    desc: "Citizen submits a detailed, geotagged report of a major culvert collapse in Dhanbad with photos. Score: 88/100. System auto-approves and advances to In Progress without human officer bottleneck.",
+    steps: [
+      {
+        label: "1. Submit High-Quality Report",
+        run: function() {
+          currentComplaint = VerificationMachine.createComplaint({
+            title: "Collapsed Culvert on Katras Haulage Route",
+            description: "4-foot asphalt cave-in developed over collapsed storm culvert near Katras bazaar crossing. School vehicles diverted into lanes.",
+            category: "roads",
+            district: "Dhanbad",
+            lat: 23.8135,
+            lng: 86.2842,
+            hasPhoto: true,
+            isDuplicate: false,
+            submitterReputation: 0.95,
+            categoryMatch: true
+          });
+          renderState();
+        }
+      },
+      {
+        label: "2. Dispatch Engineering Field Crew",
+        run: function() {
+          currentComplaint.history.push({
+            status: 'verified_in_progress',
+            actor: 'Dhanbad Municipal Corporation',
+            timestamp: new Date().toISOString(),
+            note: 'Contractor deployed for road surface reconstruction and culvert reinforcement.'
+          });
+          renderState();
+        }
+      },
+      {
+        label: "3. Mark Field Repair Resolved",
+        run: function() {
+          currentComplaint.status = 'resolved';
+          currentComplaint.history.push({
+            status: 'resolved',
+            actor: 'Chief Quality Inspector (DMC)',
+            timestamp: new Date().toISOString(),
+            note: 'On-site field verification test passed. Culvert reinforced, asphalt sealed.'
+          });
+          renderState();
+        }
+      }
+    ]
+  },
+  {
+    title: "2. Amber Review (Score 40–79)",
+    desc: "Citizen submits genuine drinking water leak in Bokaro without clear geotag metadata. Score: 55/100. Sent to District Nodal Officer queue with flag chips for manual investigation.",
+    steps: [
+      {
+        label: "1. Submit Moderate Complaint",
+        run: function() {
+          currentComplaint = VerificationMachine.createComplaint({
+            title: "Drinking Water Pipeline Leak near Sector 4",
+            description: "Water gushing from main pipe line near shopping complex for two days. Road is waterlogged.",
+            category: "water",
+            district: "Bokaro",
+            lat: 23.6693,
+            lng: 86.1511,
+            hasPhoto: false,
+            isDuplicate: false,
+            submitterReputation: 0.8,
+            categoryMatch: true
+          });
+          renderState();
+        }
+      },
+      {
+        label: "2. Officer Opens Case for Review",
+        run: function() {
+          currentComplaint.status = 'officer_reviewing';
+          currentComplaint.officer_id = 'u-officer-bokaro';
+          currentComplaint.history.push({
+            status: 'officer_reviewing',
+            actor: 'Vikram Singh (Bokaro Nodal Officer)',
+            timestamp: new Date().toISOString(),
+            note: 'Inspecting grievance. Contacted Bokaro Steel City water works department.'
+          });
+          renderState();
+        }
+      },
+      {
+        label: "3. Officer Approves & Forwards",
+        run: function() {
+          currentComplaint.status = 'verified_in_progress';
+          currentComplaint.officer_notes = 'Verified through Sector 4 ward supervisor. Work order issued.';
+          currentComplaint.history.push({
+            status: 'verified_in_progress',
+            actor: 'Vikram Singh (Bokaro Nodal Officer)',
+            timestamp: new Date().toISOString(),
+            note: 'Officer approved & dispatched: Verified through Sector 4 ward supervisor.'
+          });
+          renderState();
+        }
+      }
+    ]
+  },
+  {
+    title: "3. Spam Reject & Citizen Appeal",
+    desc: "Vague one-liner submission with no photo or landmark scores 22/100 (auto-rejected). Citizen uses the one-click Appeal button to add specific evidence, overriding rejection and triggering human officer review.",
+    steps: [
+      {
+        label: "1. Submit Low-Quality Complaint",
+        run: function() {
+          currentComplaint = VerificationMachine.createComplaint({
+            title: "Road bad",
+            description: "Road is bad fix it",
+            category: "roads",
+            district: "Ranchi",
+            lat: 23.3441,
+            lng: 85.3096,
+            hasPhoto: false,
+            isDuplicate: false,
+            submitterReputation: 0.5,
+            categoryMatch: false
+          });
+          renderState();
+        }
+      },
+      {
+        label: "2. Citizen Files Appeal with Detail",
+        run: function() {
+          currentComplaint.status = 'pending_officer';
+          currentComplaint.appealed = true;
+          currentComplaint.description = "APPEAL EVIDENCE: Specifically, the culvert opposite St. Xavier College Main Gate has 3 deep potholes causing daily vehicle damage.";
+          currentComplaint.ai_score = 62;
+          currentComplaint.history.push({
+            status: 'pending_officer',
+            actor: 'Citizen (Appeal Override)',
+            timestamp: new Date().toISOString(),
+            note: 'Citizen exercised one-click appeal with landmark detail. Reopened into Nodal Officer queue.'
+          });
+          renderState();
+        }
+      },
+      {
+        label: "3. Officer Overturns & Approves",
+        run: function() {
+          currentComplaint.status = 'verified_in_progress';
+          currentComplaint.officer_notes = 'Appeal accepted: St. Xavier College location verified with Ward 14.';
+          currentComplaint.history.push({
+            status: 'verified_in_progress',
+            actor: 'Ranchi Nodal Officer',
+            timestamp: new Date().toISOString(),
+            note: 'Officer overturn: Grievance greenlit and dispatched to Ranchi Municipal Corporation.'
+          });
+          renderState();
+        }
+      }
+    ]
+  },
+  {
+    title: "4. Officer Rejection Cycle",
+    desc: "Grievance falls in amber zone, but on-ground inspection reveals jurisdiction belongs to Central NHAI. Officer rejects with a mandatory explanation note that appears on the public tracker.",
+    steps: [
+      {
+        label: "1. Load Borderline Complaint",
+        run: function() {
+          currentComplaint = VerificationMachine.createComplaint({
+            title: "Cracked Highway Expansion Joint on Ring Road",
+            description: "Deep fracture in expansion joint of expressway bridge causing severe thudding at 60 km/h.",
+            category: "roads",
+            district: "Ranchi",
+            lat: 23.4012,
+            lng: 85.3501,
+            hasPhoto: true,
+            isDuplicate: false,
+            submitterReputation: 0.8,
+            categoryMatch: true
+          });
+          renderState();
+        }
+      },
+      {
+        label: "2. Officer Rejects with Reason",
+        run: function() {
+          currentComplaint.status = 'rejected_by_officer';
+          const reason = "Out of State Jurisdiction: Ranchi Ring Road km 14 is maintained by National Highways Authority of India (NHAI), not RMC. Transferred to Central NHAI Portal.";
+          currentComplaint.rejection_reason = reason;
+          currentComplaint.officer_notes = reason;
+          currentComplaint.history.push({
+            status: 'rejected_by_officer',
+            actor: 'P. K. Verma (District Nodal Officer)',
+            timestamp: new Date().toISOString(),
+            note: 'Officer Rejected Complaint: ' + reason
+          });
+          renderState();
+        }
+      }
+    ]
+  }
+];
+
+function loadScenario(idx) {
+  const s = SCENARIOS[idx];
+  const tabButtons = document.querySelectorAll('#scenarioTabs .tab-btn');
+  tabButtons.forEach((btn, i) => {
+    btn.className = i === idx ? 'tab-btn active' : 'tab-btn';
+  });
+
+  document.getElementById('scenarioDescription').innerText = s.desc;
+
+  const container = document.getElementById('scenarioActions');
+  container.innerHTML = '';
+  s.steps.forEach((step) => {
+    const btn = document.createElement('button');
+    btn.className = 'action-btn btn-primary';
+    btn.innerText = step.label;
+    btn.onclick = step.run;
+    container.appendChild(btn);
+  });
+
+  s.steps[0].run();
+}
+
+function freePlayAction(type) {
+  if (type === 'submit_high') {
+    currentComplaint = VerificationMachine.createComplaint({
+      title: "Critical Hospital Feeder Line Transformer Trip",
+      description: "Dedicated 11kV line supplying Sadar Hospital tripped due to burnt insulator near power substation.",
+      category: "electricity",
+      district: "Ranchi",
+      lat: 23.3541,
+      lng: 85.3282,
+      hasPhoto: true,
+      isDuplicate: false,
+      submitterReputation: 0.95,
+      categoryMatch: true
+    });
+  } else if (type === 'submit_amber') {
+    currentComplaint = VerificationMachine.createComplaint({
+      title: "Choked Municipal Drain in Purulia Road",
+      description: "Drain overflowing into shops after 2 hours of monsoon rain.",
+      category: "sanitation",
+      district: "Ranchi",
+      lat: 23.3611,
+      lng: 85.3211,
+      hasPhoto: false,
+      isDuplicate: false,
+      submitterReputation: 0.75,
+      categoryMatch: true
+    });
+  } else if (type === 'submit_low') {
+    currentComplaint = VerificationMachine.createComplaint({
+      title: "bad street",
+      description: "fix light",
+      category: "electricity",
+      district: "Ranchi",
+      lat: 12.9716,
+      lng: 77.5946,
+      hasPhoto: false,
+      isDuplicate: false,
+      submitterReputation: 0.3,
+      categoryMatch: false
+    });
+  } else if (type === 'officer_approve') {
+    if (!currentComplaint) return;
+    currentComplaint.status = 'verified_in_progress';
+    currentComplaint.officer_id = 'u-officer';
+    currentComplaint.officer_notes = 'Field engineer confirmed civic disruption. Approved for immediate municipal repair.';
+    currentComplaint.history.push({
+      status: 'verified_in_progress',
+      actor: 'District Nodal Officer',
+      timestamp: new Date().toISOString(),
+      note: 'Officer verified and approved: Ground crew dispatched.'
+    });
+  } else if (type === 'officer_reject') {
+    if (!currentComplaint) return;
+    currentComplaint.status = 'rejected_by_officer';
+    const reason = 'Invalid claim: Physical site verification found no water stagnation.';
+    currentComplaint.rejection_reason = reason;
+    currentComplaint.history.push({
+      status: 'rejected_by_officer',
+      actor: 'District Nodal Officer',
+      timestamp: new Date().toISOString(),
+      note: 'Officer Rejected: ' + reason
+    });
+  } else if (type === 'citizen_appeal') {
+    if (!currentComplaint) return;
+    currentComplaint.status = 'pending_officer';
+    currentComplaint.appealed = true;
+    currentComplaint.history.push({
+      status: 'pending_officer',
+      actor: 'Citizen (Appeal Override)',
+      timestamp: new Date().toISOString(),
+      note: 'Citizen formally appealed rejection decision with additional landmark proof.'
+    });
+  } else if (type === 'mark_resolved') {
+    if (!currentComplaint) return;
+    currentComplaint.status = 'resolved';
+    currentComplaint.history.push({
+      status: 'resolved',
+      actor: 'State Engineering Quality Cell',
+      timestamp: new Date().toISOString(),
+      note: 'Repair completed, inspected and signed off.'
+    });
+  } else if (type === 'reset') {
+    loadScenario(0);
+    return;
+  }
+
+  renderState();
+}
+
+function renderState() {
+  if (!currentComplaint) return;
+  const c = currentComplaint;
+
+  const badge = document.getElementById('currentStatusBadge');
+  badge.innerText = c.status.replace(/_/g, ' ');
+  badge.className = 'tag ' + (
+    c.status === 'resolved' ? 'tag-emerald' :
+    c.status === 'verified_in_progress' ? 'tag-sky' :
+    c.status === 'pending_officer' || c.status === 'officer_reviewing' ? 'tag-amber' :
+    c.status === 'auto_approved' ? 'tag-emerald' : 'tag-crimson'
+  );
+
+  const stepper = document.getElementById('stepperNodes');
+  const isFailed = c.status === 'auto_rejected' || c.status === 'rejected_by_officer';
+  const isPending = c.status === 'pending_officer' || c.status === 'officer_reviewing';
+  const isInProg = c.status === 'verified_in_progress';
+  const isDone = c.status === 'resolved';
+
+  const stepsData = [
+    { title: "1. Submitted", meta: "Indexed", class: "completed" },
+    { title: "2. AI Scoring", meta: `${c.ai_score}/100 Score`, class: c.status === 'auto_rejected' ? 'failed' : 'completed' },
+    { title: "3. Officer Review", meta: isFailed ? 'Rejected' : isPending ? 'In Queue' : 'Approved', class: isFailed ? 'failed' : isPending ? 'active' : 'completed' },
+    { title: "4. In Progress", meta: isInProg ? 'Crew Dispatched' : isDone ? 'Done' : 'Pending', class: isDone ? 'completed' : isInProg ? 'active' : '' },
+    { title: "5. Resolved", meta: isDone ? 'Verified Closed' : isFailed ? 'Needs Appeal' : 'Final Step', class: isDone ? 'completed' : isFailed ? 'failed' : '' }
+  ];
+
+  stepper.innerHTML = stepsData.map(s => `
+    <div class="step-node ${s.class}">
+      <div class="step-title">${s.title}</div>
+      <div class="step-meta">${s.meta}</div>
+    </div>
+  `).join('');
+
+  const attrContainer = document.getElementById('stateAttributes');
+  attrContainer.innerHTML = `
+    <div class="field-row">
+      <span class="field-label">Tracking ID</span>
+      <span class="field-value font-mono" style="color: var(--teal-primary);">${c.id}</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Category & District</span>
+      <span class="field-value">${c.category.toUpperCase()} • ${c.location.district}</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">AI Authenticity Score</span>
+      <span class="field-value font-mono" style="font-weight: 800; color: ${c.ai_score >= 80 ? 'var(--emerald-success)' : c.ai_score >= 40 ? 'var(--amber-accent)' : 'var(--crimson-danger)'};">
+        ${c.ai_score} / 100
+      </span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Appealed by Citizen</span>
+      <span class="field-value">${c.appealed ? 'YES (Forced Human Review)' : 'NO'}</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Rejection Reason</span>
+      <span class="field-value" style="color: var(--crimson-danger);">${c.rejection_reason || 'None (Compliant)'}</span>
+    </div>
+    <div class="field-row" style="flex-direction: column; gap: 6px; padding-top: 10px;">
+      <span class="field-label">AI Flags Detected:</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+        ${c.ai_flags.map(f => `<span class="tag tag-sky font-mono">#${f}</span>`).join('')}
+      </div>
+    </div>
+  `;
+
+  const logContainer = document.getElementById('auditLogList');
+  logContainer.innerHTML = c.history.map(item => `
+    <div class="log-item">
+      <div class="log-header">
+        <strong>${item.status.toUpperCase()}</strong>
+        <span>${new Date(item.timestamp).toLocaleTimeString()}</span>
+      </div>
+      <div style="font-weight: 600; color: var(--slate-text); margin-bottom: 2px;">Actor: ${item.actor}</div>
+      <div style="color: var(--slate-muted);">${item.note || ''}</div>
+    </div>
+  `).reverse().join('');
+}
+
+loadScenario(0);
+</script>
+
+</body>
+</html>

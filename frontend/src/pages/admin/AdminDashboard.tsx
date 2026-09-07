@@ -37,14 +37,14 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
             <ShieldCheck className="h-3.5 w-3.5" />
             <span>State Nodal Oversight</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
             Platform Analytics & Verification Telemetry
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl">
             Government of Jharkhand Civic Redressal Performance Metrics • SIH 2026 Problem Statement 043
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* 1. Total Complaints */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
             <span>Total Grievances Indexed</span>
             <Layers className="h-4 w-4 text-primary" />
           </div>
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
 
         {/* 2. AI Auto-Approved % */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
             <span>AI Auto-Approved Rate</span>
             <Sparkles className="h-4 w-4 text-emerald-600" />
           </div>
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
 
         {/* 3. AI Auto-Rejected % */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
             <span>AI Auto-Rejected Rate</span>
             <XCircle className="h-4 w-4 text-rose-600" />
           </div>
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
 
         {/* 4. Officer Overturn Rate */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
             <span>Officer Overturn Rate</span>
             <RotateCcw className="h-4 w-4 text-amber-600" />
           </div>
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
 
         {/* 5. Average Resolution Time */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
             <span>Avg. Resolution Time</span>
             <Clock className="h-4 w-4 text-primary" />
           </div>
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
 
         {/* 6. Total Resolved Ground Cases */}
         <Card className="p-6 rounded-2xl border-border bg-card shadow-xs card-hover-lift">
-          <div className="flex items-center justify-between text-muted-foreground text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="flex items-center justify-between text-muted-foreground text-xs font-semibold mb-2">
             <span>Verified Resolutions</span>
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
           </div>

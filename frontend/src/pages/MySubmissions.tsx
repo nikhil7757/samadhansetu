@@ -63,15 +63,15 @@ export default function MySubmissions() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-2">
             <Layers className="h-3.5 w-3.5" />
             <span>Citizen Workspace</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-            My Registered Complaints
+            My Complaints
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Track all civic issues you have reported across Jharkhand with live AI scores and nodal verification steps.
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl">
+            Track all civic grievances reported across Jharkhand with automated AI scores and nodal verification steps.
           </p>
         </div>
 
@@ -149,7 +149,7 @@ export default function MySubmissions() {
                   {/* Color-coded Status Badge */}
                   <div
                     className={cn(
-                      'absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs flex items-center gap-1',
+                      'absolute top-3 right-3 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-xs flex items-center gap-1',
                       c.status === 'resolved'
                         ? 'bg-emerald-600 text-white'
                         : c.status === 'verified_in_progress'
@@ -198,8 +198,8 @@ export default function MySubmissions() {
                 <span className="text-muted-foreground font-mono text-[11px]">
                   {formatDate(c.submitted_at)}
                 </span>
-                <span className="text-primary font-bold flex items-center gap-1">
-                  Track Live →
+                <span className="text-primary font-bold">
+                  Track Status
                 </span>
               </div>
             </Card>
