@@ -1,7 +1,43 @@
 import { lazy, Suspense, type ReactNode } from 'react';
-import { createBrowserRouter, Navigate } from 'react-router';
+import { createBrowserRouter, Navigate, useRouteError } from 'react-router';
 import { AppShell } from '@/components/layout/AppShell';
 import { useAuth } from '@/lib/auth';
+
+function RootErrorBoundary() {
+  const error = useRouteError() as any;
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 text-center">
+      <div className="h-14 w-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl mb-4">
+        🏛️
+      </div>
+      <h1 className="text-xl font-bold text-foreground mb-2">SamadhanSetu Platform Notice</h1>
+      <p className="text-sm text-muted-foreground max-w-md mb-6 leading-relaxed">
+        The application encountered an unexpected client state. You can reload or navigate back to the portal home.
+      </p>
+      {error?.message && (
+        <pre className="text-xs font-mono bg-secondary/50 text-destructive border border-border p-3 rounded-lg max-w-lg mb-6 overflow-x-auto text-left">
+          {error.message}
+        </pre>
+      )}
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => { window.location.href = '/'; }}
+          className="px-4 py-2 text-xs font-bold text-white bg-primary rounded-lg shadow-sm hover:opacity-95 cursor-pointer"
+        >
+          Return to Portal
+        </button>
+        <button
+          type="button"
+          onClick={() => { window.location.reload(); }}
+          className="px-4 py-2 text-xs font-bold text-foreground bg-secondary border border-border rounded-lg hover:bg-secondary/80 cursor-pointer"
+        >
+          Reload Page
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // Lazy-loaded pages
 const Landing = lazy(() => import('@/pages/Landing'));
@@ -65,6 +101,7 @@ function RoleAwareDashboard() {
 export const router = createBrowserRouter([
   {
     element: <AppShell />,
+    errorElement: <RootErrorBoundary />,
     children: [
       { index: true, element: <SuspenseWrapper><Landing /></SuspenseWrapper> },
       { path: 'login', element: <SuspenseWrapper><Login /></SuspenseWrapper> },

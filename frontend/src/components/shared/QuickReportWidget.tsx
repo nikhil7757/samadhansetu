@@ -30,7 +30,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { submitNewComplaint, type Complaint, type ComplaintCategory } from '@/lib/complaints';
-import { JHARKHAND_DISTRICTS } from '@/lib/utils';
+import { JHARKHAND_DISTRICTS, cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 
 import { StateSeal } from '@/components/shared/StateSeal';

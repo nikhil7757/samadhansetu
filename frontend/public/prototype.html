@@ -249,10 +249,16 @@
 
 <div class="container">
   <header>
-    <div class="gov-badge">Government of Jharkhand • SIH 2026 Problem Statement 043</div>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div class="gov-badge">Government of Jharkhand • SIH 2026 Problem Statement 043</div>
+      <div style="display: flex; gap: 8px;">
+        <a href="/" style="font-size: 11px; font-weight: 700; color: #CCFBF1; text-decoration: none; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.15);">← Live Portal</a>
+        <a href="/architecture-review.html" style="font-size: 11px; font-weight: 700; color: #99F6E4; text-decoration: none; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.15);">Architecture Review ↗</a>
+      </div>
+    </div>
     <h1>SamadhanSetu — Verification State Machine Prototype</h1>
     <p class="header-desc">
-      Interactive logic demo: test how multi-factor AI scoring, automated routing thresholds, Nodal Officer moderation, and guaranteed citizen appeal cycles behave under real-world civic conditions.
+      Interactive logic demo: test how multi-factor AI scoring, automated routing thresholds, Nodal Officer moderation, citizen appeal cycles, and academic solver team formation behave under real-world civic conditions.
     </p>
   </header>
 
@@ -267,6 +273,7 @@
       <button class="tab-btn" onclick="loadScenario(1)">2. Amber Review (Score 40–79)</button>
       <button class="tab-btn" onclick="loadScenario(2)">3. Spam Reject & Citizen Appeal</button>
       <button class="tab-btn" onclick="loadScenario(3)">4. Officer Rejection Cycle</button>
+      <button class="tab-btn" onclick="loadScenario(4)">5. Academic Solver Matching (SIH PS-043)</button>
     </div>
 
     <div class="scenario-desc" id="scenarioDescription">Loading...</div>
@@ -308,6 +315,7 @@
       <button class="action-btn btn-emerald" onclick="freePlayAction('officer_approve')">Officer Approve & Forward</button>
       <button class="action-btn btn-crimson" onclick="freePlayAction('officer_reject')">Officer Reject with Reason</button>
       <button class="action-btn btn-amber" onclick="freePlayAction('citizen_appeal')">Citizen Appeal Decision</button>
+      <button class="action-btn btn-primary" style="background: #0284C7;" onclick="freePlayAction('form_solver_team')">Form University Solver Team</button>
       <button class="action-btn btn-primary" onclick="freePlayAction('mark_resolved')">Mark Ground Resolved</button>
       <button class="action-btn btn-outline" onclick="freePlayAction('reset')">Reset State</button>
     </div>
@@ -603,6 +611,70 @@ const SCENARIOS = [
         }
       }
     ]
+  },
+  {
+    title: "5. Academic Solver Matching (SIH Problem Statement 043)",
+    desc: "Complex recurring civic challenges (e.g. chronic groundwater arsenic/fluoride contamination in Deoghar) are escalated by Nodal Officers to academic institutions (BIT Mesra, IIT ISM Dhanbad). A multidisciplinary University Solver Team deploys an engineering pilot and certifies safe water.",
+    steps: [
+      {
+        label: "1. Intake Chronic Water Hazard",
+        run: function() {
+          currentComplaint = VerificationMachine.createComplaint({
+            title: "Severe Groundwater Arsenic & Fluoride Contamination in Sarwan",
+            description: "Over 250 rural households face toxic fluoride and arsenic discharge from deep communal borewells. Repeated handpump repairs fail within weeks.",
+            category: "water",
+            district: "Deoghar",
+            lat: 24.3821,
+            lng: 86.7845,
+            hasPhoto: true,
+            isDuplicate: false,
+            submitterReputation: 0.9,
+            categoryMatch: true
+          });
+          renderState();
+        }
+      },
+      {
+        label: "2. Officer Escalates to Academic Exchange",
+        run: function() {
+          currentComplaint.status = 'verified_in_progress';
+          currentComplaint.officer_id = 'u-officer-deoghar';
+          currentComplaint.officer_notes = 'Escalated to State Academic Solver Exchange: Standard PWD contractor cannot treat geo-chemical contamination.';
+          currentComplaint.history.push({
+            status: 'verified_in_progress',
+            actor: 'Sri S. Soren (DWSD Executive Engineer)',
+            timestamp: new Date().toISOString(),
+            note: 'Escalated: Transferred docket to University R&D Consortium.'
+          });
+          renderState();
+        }
+      },
+      {
+        label: "3. Form University Solver Team (BIT Mesra / IIT ISM)",
+        run: function() {
+          currentComplaint.history.push({
+            status: 'verified_in_progress',
+            actor: 'Academic Solver Exchange Hub',
+            timestamp: new Date().toISOString(),
+            note: 'Solver Team Formed: Team JalSetu (Dept of Civil & Environmental Engg, BIT Mesra & IIT ISM Dhanbad). Prototype adsorption filter pilot sanctioned.'
+          });
+          renderState();
+        }
+      },
+      {
+        label: "4. Deploy Pilot & Certify Safe Water (Resolved)",
+        run: function() {
+          currentComplaint.status = 'resolved';
+          currentComplaint.history.push({
+            status: 'resolved',
+            actor: 'State Water Quality Testing Cell',
+            timestamp: new Date().toISOString(),
+            note: 'Pilot Successful: Adsorption filtration column installed on site. Arsenic reduced to <0.01 mg/L (WHO standards). Signed off.'
+          });
+          renderState();
+        }
+      }
+    ]
   }
 ];
 
@@ -699,6 +771,15 @@ function freePlayAction(type) {
       actor: 'Citizen (Appeal Override)',
       timestamp: new Date().toISOString(),
       note: 'Citizen formally appealed rejection decision with additional landmark proof.'
+    });
+  } else if (type === 'form_solver_team') {
+    if (!currentComplaint) return;
+    currentComplaint.status = 'verified_in_progress';
+    currentComplaint.history.push({
+      status: 'verified_in_progress',
+      actor: 'Academic Solver Exchange (BIT Mesra / IIT ISM Dhanbad)',
+      timestamp: new Date().toISOString(),
+      note: 'Interdisciplinary University Solver Team formed. On-site engineering prototype study authorized.'
     });
   } else if (type === 'mark_resolved') {
     if (!currentComplaint) return;

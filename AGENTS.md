@@ -23,3 +23,17 @@ When the user requests a complete redesign or provides standalone code (HTML/CSS
    - Use a lightweight, portable standard library Node script (`build.js` using `fs.cpSync` / `fs.copyFileSync`) so production builds (Vercel, Cloudflare, Netlify) succeed in milliseconds.
 2. **Never Let Silent Build Failures Mask UI Updates**:
    - Verify that production deployment pipelines succeed and do not stall on stale build caches.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues at `nikhil7757/samadhansetu` using `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Five canonical roles mapped to repository issue tracker labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context repository layout with root `CONTEXT.md` and `docs/adr/`. See `docs/agents/domain.md`.
