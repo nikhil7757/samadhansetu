@@ -15,7 +15,9 @@ import {
   ChevronDown,
   ChevronUp,
   AlertCircle,
+  Clock,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -45,9 +47,19 @@ const CATEGORY_OPTIONS = [
 ];
 
 export function QuickReportWidget() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const categoryOptions = [
+    { value: 'roads', label: t('widget.catRoads', 'Roads & Bridges'), icon: '🛣️', dept: 'RCD / PWD', desc: t('widget.catRoadsDesc', 'Potholes, culverts, broken tarmac') },
+    { value: 'water', label: t('widget.catWater', 'Water Supply & Quality'), icon: '🚰', dept: 'DWSD', desc: t('widget.catWaterDesc', 'Contamination, dried borewells, pipeline leaks') },
+    { value: 'electricity', label: t('widget.catElectricity', 'Power & Transmission'), icon: '⚡', dept: 'JBVNL', desc: t('widget.catElectricityDesc', 'Burnt transformers, sagging 11kV lines') },
+    { value: 'sanitation', label: t('widget.catSanitation', 'Solid Waste & Drainage'), icon: '🧹', dept: 'UD&HD', desc: t('widget.catSanitationDesc', 'Overflowing dump yards, open drains') },
+    { value: 'corruption', label: t('widget.catCorruption', 'Public Scheme Delivery'), icon: '⚖️', dept: 'District Admin', desc: t('widget.catCorruptionDesc', 'Ration delivery, scholarship hurdles') },
+    { value: 'other', label: t('widget.catOther', 'Civic Infrastructure'), icon: '🏛️', dept: 'Rural Dev', desc: t('widget.catOtherDesc', 'Community halls, bridges, streetlights') },
+  ];
 
   const [category, setCategory] = useState<ComplaintCategory>('roads');
   const [description, setDescription] = useState<string>('');
@@ -177,20 +189,20 @@ export function QuickReportWidget() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold font-mono tracking-widest text-emerald-300 uppercase">
-                  JH-REG/2026/INTAKE
+                  {t('widget.headerCode', 'JH-REG/2026/INTAKE')}
                 </span>
                 <span className="text-[10px] px-2 py-0.2 rounded bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 font-semibold">
-                  GAZETTE VERIFIED
+                  {t('widget.gazetteVerified', 'GAZETTE VERIFIED')}
                 </span>
               </div>
               <h3 className="text-sm font-black tracking-tight text-white flex items-center gap-1.5">
-                <span>Citizen Public Grievance Intake Docket</span>
+                <span>{t('widget.docketTitle', 'Citizen Public Grievance Intake Docket')}</span>
               </h3>
             </div>
           </div>
           <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-200 bg-white/10 px-3 py-1 rounded-lg border border-white/15">
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="hidden sm:inline">AI Anti-Fraud Radar Active</span>
+            <span className="hidden sm:inline">{t('widget.aiRadarActive', 'AI Anti-Fraud Radar Active')}</span>
           </div>
         </div>
 
@@ -199,16 +211,16 @@ export function QuickReportWidget() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <span>Target Civic Department & Category</span>
+                <span>{t('widget.targetDept', 'Target Civic Department & Category')}</span>
                 <span className="text-accent">*</span>
               </label>
               <span className="text-[11px] text-muted-foreground font-mono">
-                Assigned: <strong className="text-primary">{CATEGORY_OPTIONS.find(c => c.value === category)?.dept}</strong>
+                {t('widget.assigned', 'Assigned:')} <strong className="text-primary">{categoryOptions.find(c => c.value === category)?.dept}</strong>
               </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {CATEGORY_OPTIONS.map((cat) => {
+              {categoryOptions.map((cat) => {
                 const isSelected = category === cat.value;
                 return (
                   <button
@@ -246,14 +258,14 @@ export function QuickReportWidget() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-foreground">
-                Grievance Particulars & Ground Facts <span className="text-accent">*</span>
+                {t('widget.particulars', 'Grievance Particulars & Ground Facts')} <span className="text-accent">*</span>
               </label>
               <span className="text-[11px] text-muted-foreground font-mono">
                 {description.length}/500 chars (Min 15)
               </span>
             </div>
             <Textarea
-              placeholder="Provide exact field particulars: Specific street, landmark, municipal ward, duration of failure, and safety hazards (e.g. 100kVA transformer exploded near Katras Bazaar Chowk, sparking wires hanging 6 feet above road for 48 hours)..."
+              placeholder={t('widget.placeholder', 'Provide exact field particulars: Specific street, landmark, municipal ward, duration of failure, and safety hazards (e.g. 100kVA transformer exploded near Katras Bazaar Chowk, sparking wires hanging 6 feet above road for 48 hours)...')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
@@ -271,17 +283,17 @@ export function QuickReportWidget() {
                   : 'bg-secondary text-muted-foreground border-border'
               )}>
                 <Sparkles className="h-3 w-3" />
-                Clarity: {description.length >= 50 ? '98% (Excellent)' : description.length >= 25 ? '75% (Adequate)' : 'Pending input'}
+                {t('widget.clarity', 'Clarity:')} {description.length >= 50 ? t('widget.clarityExcellent', '98% (Excellent)') : description.length >= 25 ? t('widget.clarityAdequate', '75% (Adequate)') : t('widget.clarityPending', 'Pending input')}
               </span>
 
               <span className="px-2.5 py-0.5 rounded-md border border-border bg-secondary/50 font-mono text-muted-foreground flex items-center gap-1">
-                <span>🛡️ Anti-Duplicate:</span>
-                <strong className="text-foreground">0 Prior Matches</strong>
+                <span>🛡️ {t('widget.antiDuplicate', 'Anti-Duplicate:')}</span>
+                <strong className="text-foreground">{t('widget.zeroMatches', '0 Prior Matches')}</strong>
               </span>
 
               <span className="px-2.5 py-0.5 rounded-md border border-border bg-secondary/50 font-mono text-muted-foreground flex items-center gap-1">
-                <span>⏱️ Target SLA:</span>
-                <strong className="text-amber-600 dark:text-amber-400">72 Hours Max</strong>
+                <span>⏱️ {t('widget.targetSla', 'Target SLA:')}</span>
+                <strong className="text-amber-600 dark:text-amber-400">{t('widget.maxSla', '72 Hours Max')}</strong>
               </span>
             </div>
           </div>
@@ -290,11 +302,11 @@ export function QuickReportWidget() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-foreground">
-                Photo Evidence (Recommended)
+                {t('widget.photoEvidence', 'Photo Evidence (Recommended)')}
               </label>
               <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-md">
                 <Sparkles className="h-3 w-3" />
-                +30% AI Authenticity Boost
+                {t('widget.aiBoost', '+30% AI Authenticity Boost')}
               </span>
             </div>
             <input
@@ -321,7 +333,7 @@ export function QuickReportWidget() {
                       {((selectedPhoto?.size || 0) / 1024).toFixed(1)} KB
                     </span>
                     <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
-                      <CheckCircle2 className="h-3 w-3" /> Valid Evidence
+                      <CheckCircle2 className="h-3 w-3" /> {t('widget.validEvidence', 'Valid Evidence')}
                     </span>
                   </div>
                 </div>
@@ -345,8 +357,8 @@ export function QuickReportWidget() {
                   <Camera className="h-4 w-4" />
                 </div>
                 <div className="text-center sm:text-left">
-                  <span className="font-bold text-foreground block sm:inline mr-1">Upload on-site photograph</span>
-                  <span className="text-muted-foreground">(JPEG, PNG, WebP &lt; 10MB)</span>
+                  <span className="font-bold text-foreground block sm:inline mr-1">{t('widget.uploadPhoto', 'Upload on-site photograph')}</span>
+                  <span className="text-muted-foreground">{t('widget.uploadSpecs', '(JPEG, PNG, WebP < 10MB)')}</span>
                 </div>
               </button>
             )}
@@ -362,12 +374,12 @@ export function QuickReportWidget() {
               {isExpanded ? (
                 <>
                   <ChevronUp className="h-4 w-4" />
-                  <span>Hide Additional Location Details</span>
+                  <span>{t('widget.hideLocation', 'Hide Additional Location Details')}</span>
                 </>
               ) : (
                 <>
                   <ChevronDown className="h-4 w-4" />
-                  <span>Add Specific District, Title or GPS Coordinates (Optional)</span>
+                  <span>{t('widget.addLocation', 'Add Specific District, Title or GPS Coordinates (Optional)')}</span>
                 </>
               )}
             </button>
@@ -378,7 +390,7 @@ export function QuickReportWidget() {
             <div className="p-4 rounded-xl border border-border/80 bg-secondary/20 space-y-3 animate-fade-in">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-foreground">District Jurisdiction</label>
+                  <label className="text-xs font-semibold text-foreground">{t('widget.district', 'District Jurisdiction')}</label>
                   <Select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
@@ -388,7 +400,7 @@ export function QuickReportWidget() {
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold text-foreground">Street / Landmark</label>
+                    <label className="text-xs font-semibold text-foreground">{t('widget.street', 'Street / Landmark')}</label>
                     <button
                       type="button"
                       onClick={handleDetectGPS}
@@ -396,7 +408,7 @@ export function QuickReportWidget() {
                       className="text-[11px] text-primary hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <Navigation className="h-3 w-3" />
-                      {isGettingLocation ? 'Detecting...' : 'Use GPS'}
+                      {isGettingLocation ? t('widget.detecting', 'Detecting...') : t('widget.useGps', 'Use GPS')}
                     </button>
                   </div>
                   <div className="relative">
@@ -412,9 +424,9 @@ export function QuickReportWidget() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-foreground">Custom Grievance Title</label>
+                <label className="text-xs font-semibold text-foreground">{t('widget.customTitle', 'Custom Grievance Title')}</label>
                 <Input
-                  placeholder="Optional custom headline (e.g. Collapsed drainage culvert)"
+                  placeholder={t('widget.customTitlePlaceholder', 'Optional custom headline (e.g. Collapsed drainage culvert)')}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="text-xs"
@@ -433,17 +445,17 @@ export function QuickReportWidget() {
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 animate-spin" />
-                  Running Multi-Factor AI Verification...
+                  {t('widget.submitting', 'Running Multi-Factor AI Verification...')}
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <Send className="h-4 w-4" />
-                  Submit Grievance Now
+                  {t('widget.submitBtn', 'Submit Grievance Now')}
                 </span>
               )}
             </Button>
             <p className="text-[11px] text-center text-muted-foreground mt-2 font-medium">
-              🔒 Generates a permanent public tracking ID (SS-2026-NNNNNN) with real-time audit trail
+              {t('widget.permanentAuditNote', '🔒 Generates a permanent public tracking ID (SS-2026-NNNNNN) with real-time audit trail')}
             </p>
           </div>
         </form>
@@ -452,6 +464,12 @@ export function QuickReportWidget() {
       {/* Immediate Tracking ID Confirmation Dialog */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="max-w-lg p-0 overflow-hidden rounded-2xl border border-border shadow-2xl docket-sheet">
+          {/* Accessibility Header */}
+          <DialogHeader className="sr-only">
+            <DialogTitle>{t('receipt.title', 'Official Grievance Docket Receipt')}</DialogTitle>
+            <DialogDescription>{t('receipt.desc', 'Your civic grievance tracking ID and verification details.')}</DialogDescription>
+          </DialogHeader>
+
           {/* Top Ledger Stripe */}
           <div className="docket-ledger-rule" />
 
@@ -461,15 +479,15 @@ export function QuickReportWidget() {
               <StateSeal size="sm" />
               <div>
                 <span className="text-[10px] font-mono tracking-widest text-emerald-300 uppercase block">
-                  GOVERNMENT OF JHARKHAND
+                  {t('receipt.govJharkhand', 'GOVERNMENT OF JHARKHAND')}
                 </span>
                 <h3 className="text-base font-black tracking-tight text-white">
-                  Official Grievance Docket Receipt
+                  {t('receipt.title', 'Official Grievance Docket Receipt')}
                 </h3>
               </div>
             </div>
             <div className="docket-stamp docket-stamp-verified">
-              VERIFIED INTAKE
+              {t('receipt.verifiedIntake', 'VERIFIED INTAKE')}
             </div>
           </div>
 
@@ -479,10 +497,10 @@ export function QuickReportWidget() {
               <div className="p-4 rounded-xl border border-border bg-secondary/30 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground font-bold">
-                    OFFICIAL DOCKET TRACKING NUMBER
+                    {t('receipt.trackingNumber', 'OFFICIAL DOCKET TRACKING NUMBER')}
                   </span>
                   <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                    SLA CLOCK: 72H
+                    {t('receipt.slaClock', 'SLA CLOCK: 72H')}
                   </span>
                 </div>
 
@@ -495,17 +513,17 @@ export function QuickReportWidget() {
                     variant="outline"
                     size="sm"
                     onClick={copyTrackingId}
-                    className="gap-1.5 text-xs font-bold shrink-0 border-primary/40 hover:bg-primary/10"
+                    className="gap-1.5 text-xs font-bold shrink-0 border-primary/40 hover:bg-primary/10 cursor-pointer"
                   >
                     {hasCopied ? (
                       <>
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                        <span>Copied</span>
+                        <span>{t('receipt.copied', 'Copied!')}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        <span>Copy Token</span>
+                        <span>{t('receipt.copyToken', 'Copy Token')}</span>
                       </>
                     )}
                   </Button>
@@ -518,29 +536,80 @@ export function QuickReportWidget() {
               {/* Docket Specifics Grid */}
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="p-3 rounded-lg border border-border/80 bg-card">
-                  <span className="text-[10px] text-muted-foreground block uppercase font-mono font-bold">District & Ward</span>
+                  <span className="text-[10px] text-muted-foreground block uppercase font-mono font-bold">{t('receipt.districtWard', 'District & Ward')}</span>
                   <span className="font-bold text-foreground truncate block">{submittedComplaint.location.district} ({submittedComplaint.location.address || 'Central Ward'})</span>
                 </div>
                 <div className="p-3 rounded-lg border border-border/80 bg-card">
-                  <span className="text-[10px] text-muted-foreground block uppercase font-mono font-bold">Department Routing</span>
+                  <span className="text-[10px] text-muted-foreground block uppercase font-mono font-bold">{t('receipt.deptRouting', 'Department Routing')}</span>
                   <span className="font-bold text-primary truncate block uppercase">{submittedComplaint.category} Division</span>
                 </div>
               </div>
 
-              {/* AI Verification Score HUD */}
-              <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 space-y-2">
-                <div className="flex items-center justify-between text-xs">
+              {/* AI Verification Score HUD with Lifecycle Status and Signal Chips */}
+              <div className="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 space-y-2.5">
+                <div className="flex items-center justify-between text-xs font-semibold">
                   <span className="flex items-center gap-1.5 text-foreground font-bold">
                     <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                    AI Authenticity Validation
+                    {t('receipt.aiValidation', 'AI Authenticity Validation')}
                   </span>
-                  <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                  <span
+                    className={cn(
+                      'font-mono font-black text-xs px-2.5 py-0.5 rounded-md',
+                      submittedComplaint.ai_score >= 80
+                        ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                        : submittedComplaint.ai_score >= 40
+                        ? 'bg-amber-500/20 text-amber-700 dark:text-amber-300'
+                        : 'bg-rose-500/20 text-rose-700 dark:text-rose-300'
+                    )}
+                  >
                     {submittedComplaint.ai_score} / 100 PTS
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Grievance passed forensic deduplication and linguistic clarity thresholds. Docket has been registered in the District Nodal queue.
-                </p>
+
+                <div className="space-y-1">
+                  <span className="text-[10.5px] font-mono text-muted-foreground uppercase font-bold block">
+                    {t('receipt.lifecycleStatus', 'Lifecycle Status:')}
+                  </span>
+                  <div className="text-xs font-bold text-foreground">
+                    {submittedComplaint.status === 'auto_approved' && (
+                      <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {t('receipt.autoApproved', 'Auto-Approved & Forwarded to Department Works')}
+                      </span>
+                    )}
+                    {submittedComplaint.status === 'pending_officer' && (
+                      <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5" />
+                        {t('receipt.underReview', 'Under Review by District Nodal Officer (72H SLA Clock Active)')}
+                      </span>
+                    )}
+                    {submittedComplaint.status === 'auto_rejected' && (
+                      <span className="text-rose-600 dark:text-rose-400 flex items-center gap-1">
+                        <AlertCircle className="h-3.5 w-3.5" />
+                        {t('receipt.flagged', 'Flagged by Automated Pre-check (One-Click Appeal Rights Admissible)')}
+                      </span>
+                    )}
+                    {submittedComplaint.status === 'verified_in_progress' && (
+                      <span className="text-sky-600 dark:text-sky-400 flex items-center gap-1">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {t('receipt.verifiedInProgress', 'Verified In Progress — District Dispatch Mobilized')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {submittedComplaint.ai_flags && submittedComplaint.ai_flags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {submittedComplaint.ai_flags.map((flag, i) => (
+                      <span
+                        key={i}
+                        className="text-[10px] px-2 py-0.5 rounded bg-card border border-border text-muted-foreground font-mono"
+                      >
+                        #{flag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
@@ -548,9 +617,9 @@ export function QuickReportWidget() {
                   type="button"
                   variant="outline"
                   onClick={() => setModalOpen(false)}
-                  className="w-full sm:w-1/2 text-xs font-semibold"
+                  className="w-full sm:w-1/2 text-xs font-semibold cursor-pointer"
                 >
-                  File Another Docket
+                  {t('receipt.fileAnother', 'File Another Docket')}
                 </Button>
                 <Button
                   type="button"
@@ -558,9 +627,9 @@ export function QuickReportWidget() {
                     setModalOpen(false);
                     navigate(`/track/${submittedComplaint.id}`);
                   }}
-                  className="w-full sm:w-1/2 text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground shadow-md gap-1.5"
+                  className="w-full sm:w-1/2 text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground shadow-md gap-1.5 cursor-pointer"
                 >
-                  <span>Open Official Dossier</span>
+                  <span>{t('receipt.openDossier', 'Open Official Dossier')}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>

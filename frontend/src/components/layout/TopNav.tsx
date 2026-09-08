@@ -38,13 +38,13 @@ export function TopNav() {
   };
 
   const navLinks = [
-    { to: '/report', label: 'File Grievance', icon: PlusCircle, show: true, highlight: true },
-    { to: '/track', label: 'Track Docket', icon: Search, show: true },
-    { to: '/dashboard', label: 'Operations', icon: BarChart3, show: true },
-    { to: '/problems', label: 'Challenge Board', icon: Compass, show: true },
-    { to: '/admin', label: 'Nodal Officer', icon: ShieldAlert, show: user?.role === 'ADMIN' },
-    { to: '/about', label: 'Gazette / About', icon: Info, show: true },
-    { to: '/faq', label: 'Citizen Guide', icon: HelpCircle, show: true },
+    { to: '/report', label: t('nav.fileGrievance', 'File Grievance'), icon: PlusCircle, show: true, highlight: true },
+    { to: '/track', label: t('nav.trackDocket', 'Track Docket'), icon: Search, show: true },
+    { to: '/dashboard', label: t('nav.operations', 'Operations'), icon: BarChart3, show: true },
+    { to: '/problems', label: t('nav.challengeBoard', 'Challenge Board'), icon: Compass, show: true },
+    { to: '/admin', label: t('nav.nodalOfficer', 'Nodal Officer'), icon: ShieldAlert, show: user?.role === 'ADMIN' },
+    { to: '/about', label: t('nav.gazetteAbout', 'Gazette / About'), icon: Info, show: true },
+    { to: '/faq', label: t('nav.citizenGuide', 'Citizen Guide'), icon: HelpCircle, show: true },
   ].filter((l) => l.show);
 
   const isActive = (path: string) =>
@@ -61,22 +61,23 @@ export function TopNav() {
           <div className="flex items-center gap-2.5">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 ring-1 ring-emerald-400/40" />
             <span className="font-bold tracking-tight text-emerald-200">
-              झारखंड सरकार • Government of Jharkhand
+              {t('nav.topBannerGov', 'झारखंड सरकार • Government of Jharkhand')}
             </span>
             <span className="text-white/30 hidden md:inline">|</span>
             <span className="text-white/80 hidden md:inline text-[10.5px]">
-              योजना एवं विकास विभाग • SIH 2026 Problem Statement 043
+              {t('nav.topBannerDept', 'योजना एवं विकास विभाग • SIH 2026 Problem Statement 043')}
             </span>
           </div>
 
           <div className="flex items-center gap-4 text-[10.5px]">
             <span className="hidden sm:flex items-center gap-1.5 font-mono text-emerald-300">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              24 District Registries Active
+              {t('nav.registriesActive', '24 District Registries Active')}
             </span>
             <span className="hidden sm:inline text-white/30">•</span>
             <span className="flex items-center gap-1.5 text-white/90">
-              Citizen Redressal Helpline: <strong className="text-amber-400 font-mono font-bold bg-amber-400/20 px-1.5 py-0.2 rounded">181</strong>
+              {t('nav.helpline', 'Citizen Redressal Helpline:')}{' '}
+              <strong className="text-amber-400 font-mono font-bold bg-amber-400/20 px-1.5 py-0.2 rounded">181</strong>
             </span>
           </div>
         </div>
@@ -95,7 +96,7 @@ export function TopNav() {
               </span>
             </div>
             <span className="text-[10px] text-muted-foreground font-semibold leading-none tracking-normal">
-              समाधान सेतु • लोक समस्या एवं नवाचार समाधान महाप्रणाली
+              {t('nav.taglineFull', 'समाधान सेतु • लोक समस्या एवं नवाचार समाधान महाप्रणाली')}
             </span>
           </div>
         </Link>
@@ -153,7 +154,7 @@ export function TopNav() {
                 size="sm"
                 onClick={handleLogout}
                 className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg"
-                title="Logout"
+                title={t('nav.logout', 'Logout')}
               >
                 <LogOut className="h-3.5 w-3.5" />
               </Button>
@@ -166,7 +167,7 @@ export function TopNav() {
                 onClick={() => navigate('/login')}
                 className="text-xs font-semibold px-3 h-8 rounded-lg"
               >
-                Sign In
+                {t('nav.login', 'Sign In')}
               </Button>
               <Button
                 size="sm"
@@ -174,7 +175,7 @@ export function TopNav() {
                 className="text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground shadow-sm hover:shadow-md transition-all gap-1.5 px-3.5 h-8 rounded-lg cursor-pointer"
               >
                 <PlusCircle className="h-3.5 w-3.5" />
-                <span>Report Issue</span>
+                <span>{t('nav.reportIssue', 'Report Issue')}</span>
               </Button>
             </div>
           )}
@@ -219,7 +220,7 @@ export function TopNav() {
             {user ? (
               <>
                 <div className="px-3 py-1 text-xs text-muted-foreground">
-                  Signed in as <strong className="text-foreground">{user.name}</strong> ({user.role})
+                  {t('nav.signedInAs', 'Signed in as')} <strong className="text-foreground">{user.name}</strong> ({user.role})
                 </div>
                 <Button
                   variant="outline"
@@ -231,7 +232,7 @@ export function TopNav() {
                   className="w-full text-xs font-medium gap-2 text-destructive border-destructive/30"
                 >
                   <LogOut className="h-3.5 w-3.5" />
-                  <span>Logout</span>
+                  <span>{t('nav.logout', 'Logout')}</span>
                 </Button>
               </>
             ) : (
@@ -245,7 +246,7 @@ export function TopNav() {
                   }}
                   className="w-full text-xs"
                 >
-                  Sign In
+                  {t('nav.login', 'Sign In')}
                 </Button>
                 <Button
                   size="sm"
@@ -255,7 +256,7 @@ export function TopNav() {
                   }}
                   className="w-full text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground"
                 >
-                  Report Problem
+                  {t('nav.reportProblem', 'Report Problem')}
                 </Button>
               </div>
             )}

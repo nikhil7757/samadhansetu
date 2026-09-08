@@ -1,14 +1,32 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 export function LanguageToggle() {
   const { i18n } = useTranslation();
-  const current = i18n.language || 'en';
+  const [current, setCurrent] = useState(() => i18n.language || (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : 'en') || 'en');
+
+  useEffect(() => {
+    const handleLangChange = (lng: string) => setCurrent(lng);
+    i18n.on('languageChanged', handleLangChange);
+    return () => {
+      i18n.off('languageChanged', handleLangChange);
+    };
+  }, [i18n]);
 
   const toggle = (lang: string) => {
     i18n.changeLanguage(lang);
-    localStorage.setItem('lang', lang);
+    setCurrent(lang);
+    try {
+      localStorage.setItem('lang', lang);
+      if (typeof document !== 'undefined') {
+        document.documentElement.lang = lang;
+      }
+    } catch (_) {}
   };
+
+  const isEn = current.startsWith('en');
+  const isHi = current.startsWith('hi');
 
   return (
     <div
@@ -21,11 +39,11 @@ export function LanguageToggle() {
         onClick={() => toggle('en')}
         className={cn(
           'rounded-md px-2.5 py-1 transition-all duration-150 cursor-pointer',
-          current.startsWith('en')
-            ? 'bg-primary text-primary-foreground shadow-xs'
+          isEn
+            ? 'bg-primary text-primary-foreground shadow-xs font-bold'
             : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
         )}
-        aria-pressed={current.startsWith('en')}
+        aria-pressed={isEn}
         aria-label="English"
       >
         EN
@@ -35,11 +53,11 @@ export function LanguageToggle() {
         onClick={() => toggle('hi')}
         className={cn(
           'rounded-md px-2.5 py-1 transition-all duration-150 cursor-pointer font-medium',
-          current.startsWith('hi')
-            ? 'bg-primary text-primary-foreground shadow-xs'
+          isHi
+            ? 'bg-primary text-primary-foreground shadow-xs font-bold'
             : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
         )}
-        aria-pressed={current.startsWith('hi')}
+        aria-pressed={isHi}
         aria-label="हिन्दी"
       >
         हिं

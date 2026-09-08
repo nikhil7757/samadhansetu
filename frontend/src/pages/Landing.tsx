@@ -179,27 +179,25 @@ export default function Landing() {
               {/* Official Gazette Badge */}
               <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-bold tracking-tight border border-primary/25 shadow-2xs">
                 <StateSeal size="sm" />
-                <span>झारखंड सरकार • SIH 2026 Problem Statement 043</span>
+                <span>{t('landing.hero.badge', 'झारखंड सरकार • SIH 2026 Problem Statement 043')}</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
               </div>
 
               {/* Editorial Display Heading */}
               <div className="space-y-2">
                 <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400 font-mono block">
-                  प्रत्येक जनसमस्या का पारदर्शी निवारण
+                  {t('landing.hero.kicker', 'प्रत्येक जनसमस्या का पारदर्शी निवारण')}
                 </span>
                 <h1 className="text-3xl sm:text-5xl lg:text-5xl font-black tracking-tight text-foreground leading-[1.14]">
-                  Sovereign Public Redressal & <br className="hidden sm:inline" />
+                  {t('landing.hero.titlePart1', 'Sovereign Public Redressal &')} <br className="hidden sm:inline" />
                   <span className="bg-gradient-to-r from-emerald-800 via-teal-700 to-emerald-600 dark:from-emerald-300 dark:via-teal-300 dark:to-emerald-400 bg-clip-text text-transparent">
-                    Multi-Sector Solver Exchange
+                    {t('landing.hero.titlePart2', 'Multi-Sector Solver Exchange')}
                   </span>
                 </h1>
               </div>
 
               <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl font-normal">
-                Connecting <strong>3.9 Crore citizens</strong> across 24 districts directly to District Nodal Officers,
-                academic engineering teams from <strong>BIT Mesra, NIT Jamshedpur & IIT-ISM Dhanbad</strong>, and CSR delivery squads.
-                Guaranteed algorithmic authenticity with human administrative accountability.
+                {t('landing.hero.subtitle', 'Connecting 3.9 Crore citizens across 24 districts directly to District Nodal Officers, academic engineering teams from BIT Mesra, NIT Jamshedpur & IIT-ISM Dhanbad, and CSR delivery squads. Guaranteed algorithmic authenticity with human administrative accountability.')}
               </p>
 
               {/* Action Console */}
@@ -210,7 +208,7 @@ export default function Landing() {
                   className="bg-accent hover:bg-accent-hover text-accent-foreground font-black shadow-md hover:shadow-xl transition-all h-12 px-6 rounded-xl cursor-pointer text-xs sm:text-sm gap-2 glow-accent"
                 >
                   <FileCheck className="h-4 w-4" />
-                  <span>File Grievance Docket</span>
+                  <span>{t('landing.hero.fileDocket', 'File Grievance Docket')}</span>
                 </Button>
 
                 <Button
@@ -220,23 +218,23 @@ export default function Landing() {
                   className="font-bold h-12 px-5 rounded-xl border-border bg-card hover:bg-secondary text-foreground gap-2 text-xs sm:text-sm shadow-xs"
                 >
                   <Compass className="h-4 w-4 text-primary" />
-                  <span>Academic Challenge Board</span>
+                  <span>{t('landing.hero.challengeBoard', 'Academic Challenge Board')}</span>
                 </Button>
               </div>
 
               {/* Tripartite Sovereign Verification Highlights */}
               <div className="pt-4 grid grid-cols-3 gap-2 text-left border-t border-border/70 text-xs">
                 <div className="p-2.5 rounded-lg bg-card/80 border border-border/80">
-                  <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">AI Pre-Check</span>
-                  <span className="font-bold text-foreground block mt-0.5 text-xs">0–100 Multi-Factor</span>
+                  <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">{t('landing.hero.aiPreCheck', 'AI Pre-Check')}</span>
+                  <span className="font-bold text-foreground block mt-0.5 text-xs">{t('landing.hero.aiFactor', '0–100 Multi-Factor')}</span>
                 </div>
                 <div className="p-2.5 rounded-lg bg-card/80 border border-border/80">
-                  <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">SLA Protection</span>
-                  <span className="font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5 text-xs">72-Hour Clock</span>
+                  <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">{t('landing.hero.slaProtection', 'SLA Protection')}</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5 text-xs">{t('landing.hero.slaClock', '72-Hour Clock')}</span>
                 </div>
                 <div className="p-2.5 rounded-lg bg-card/80 border border-border/80">
-                  <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">Public Audit</span>
-                  <span className="font-bold text-foreground block mt-0.5 text-xs">Permanent Token</span>
+                  <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">{t('landing.hero.publicAudit', 'Public Audit')}</span>
+                  <span className="font-bold text-foreground block mt-0.5 text-xs">{t('landing.hero.permanentToken', 'Permanent Token')}</span>
                 </div>
               </div>
             </div>
@@ -250,16 +248,16 @@ export default function Landing() {
                   <div className="flex items-center gap-2">
                     <Search className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
                     <span className="text-xs font-mono font-black uppercase tracking-wider text-foreground">
-                      PUBLIC CASE DOCKET INQUIRY
+                      {t('landing.tracker.title', 'PUBLIC CASE DOCKET INQUIRY')}
                     </span>
                   </div>
                   <div className="docket-stamp docket-stamp-action text-[10px] py-0.5">
-                    REGISTRY 2026
+                    {t('landing.tracker.badge', 'REGISTRY 2026')}
                   </div>
                 </div>
 
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Enter your official alphanumeric tracking code (format: <code className="text-primary font-bold">SS-YYYY-NNNNNN</code>) to inspect live field dispatches, officer orders, and AI diagnostic scorecards.
+                  {t('landing.tracker.desc', 'Enter your official alphanumeric tracking code (format: SS-YYYY-NNNNNN) to inspect live field dispatches, officer orders, and AI diagnostic scorecards.')}
                 </p>
 
                 <form onSubmit={handleTrackSubmit} className="space-y-3">
@@ -278,7 +276,7 @@ export default function Landing() {
                     type="submit"
                     className="w-full h-11 font-bold bg-primary hover:bg-primary-hover text-primary-foreground cursor-pointer shadow-sm rounded-xl transition-all text-xs"
                   >
-                    <span>Retrieve Verified Case Dossier</span>
+                    <span>{t('landing.tracker.button', 'Retrieve Verified Case Dossier')}</span>
                     <ArrowRight className="h-3.5 w-3.5 ml-1" />
                   </Button>
                 </form>
@@ -286,7 +284,7 @@ export default function Landing() {
                 {/* Sample Live Cases */}
                 <div className="pt-3 border-t border-dashed border-border/80">
                   <span className="text-[10.5px] font-mono text-muted-foreground block mb-2 uppercase font-bold">
-                    Sample Verified Incidents on Live Feed:
+                    {t('landing.tracker.sampleHeading', 'Sample Verified Incidents on Live Feed:')}
                   </span>
                   <div className="grid grid-cols-2 gap-1.5">
                     {sampleTrackingIds.map((item) => (
@@ -314,13 +312,13 @@ export default function Landing() {
           <div className="text-center space-y-2">
             <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-md border border-primary/20">
               <Sparkles className="h-3 w-3" />
-              <span>OFFICIAL INTAKE REGISTRY TERMINAL</span>
+              <span>{t('landing.quickReport.badge', 'OFFICIAL INTAKE REGISTRY TERMINAL')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-              File an Official Grievance Docket
+              {t('landing.quickReport.title', 'File an Official Grievance Docket')}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              Submit your complaint with street particulars and evidence. Our multi-factor AI engine validates authenticity, eliminates duplicates, and dispatches the file to the responsible Nodal Officer.
+              {t('landing.quickReport.desc', 'Submit your complaint with street particulars and evidence. Our multi-factor AI engine validates authenticity, eliminates duplicates, and dispatches the file to the responsible Nodal Officer.')}
             </p>
           </div>
 
@@ -333,7 +331,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto flex items-center">
           <div className="shrink-0 z-10 bg-emerald-950 pr-4 pl-4 font-mono text-xs font-black text-amber-300 flex items-center gap-2 border-r border-emerald-800/60">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            <span className="tracking-wider uppercase">LIVE DISPATCHES</span>
+            <span className="tracking-wider uppercase">{t('landing.liveDispatches', 'LIVE DISPATCHES')}</span>
           </div>
 
           <div className="overflow-hidden whitespace-nowrap w-full">
@@ -365,13 +363,13 @@ export default function Landing() {
             <div className="p-5 rounded-xl border border-border bg-secondary/20 docket-sheet card-hover-lift">
               <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 flex items-center justify-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4" />
-                Verified Redressals
+                {t('landing.telemetry.verifiedRedressals', 'Verified Redressals')}
               </span>
               <div className="text-3xl sm:text-4xl font-black text-emerald-700 dark:text-emerald-400 mt-1">
                 <AnimatedStatCounter value={stats.resolvedCount} />
               </div>
               <span className="text-[11px] text-muted-foreground font-mono">
-                Geotagged & Inspected
+                {t('landing.telemetry.geotagged', 'Geotagged & Inspected')}
               </span>
             </div>
 
@@ -379,13 +377,13 @@ export default function Landing() {
             <div className="p-5 rounded-xl border border-border bg-secondary/20 docket-sheet card-hover-lift">
               <span className="text-xs font-bold text-amber-700 dark:text-amber-400 flex items-center justify-center gap-1.5">
                 <Clock className="h-4 w-4" />
-                Active Nodal Scrutiny
+                {t('landing.telemetry.activeScrutiny', 'Active Nodal Scrutiny')}
               </span>
               <div className="text-3xl sm:text-4xl font-black text-amber-600 dark:text-amber-400 mt-1">
                 <AnimatedStatCounter value={stats.inReviewCount} />
               </div>
               <span className="text-[11px] text-muted-foreground font-mono">
-                Assigned to District Officers
+                {t('landing.telemetry.assignedOfficers', 'Assigned to District Officers')}
               </span>
             </div>
 
@@ -393,13 +391,13 @@ export default function Landing() {
             <div className="p-5 rounded-xl border border-border bg-secondary/20 docket-sheet card-hover-lift">
               <span className="text-xs font-bold text-sky-700 dark:text-sky-400 flex items-center justify-center gap-1.5">
                 <Zap className="h-4 w-4" />
-                Field & Innovation Squads
+                {t('landing.telemetry.fieldSquads', 'Field & Innovation Squads')}
               </span>
               <div className="text-3xl sm:text-4xl font-black text-sky-600 dark:text-sky-400 mt-1">
                 <AnimatedStatCounter value={stats.inProgressCount} />
               </div>
               <span className="text-[11px] text-muted-foreground font-mono">
-                University & CSR Execution
+                {t('landing.telemetry.universityCsr', 'University & CSR Execution')}
               </span>
             </div>
 
@@ -407,13 +405,13 @@ export default function Landing() {
             <div className="p-5 rounded-xl border border-border bg-secondary/20 docket-sheet card-hover-lift">
               <span className="text-xs font-bold text-primary dark:text-emerald-400 flex items-center justify-center gap-1.5">
                 <Award className="h-4 w-4" />
-                Avg. Nodal Turnaround
+                {t('landing.telemetry.turnaround', 'Avg. Nodal Turnaround')}
               </span>
               <div className="text-3xl sm:text-4xl font-black text-foreground mt-1">
-                <AnimatedStatCounter value={stats.avgResolutionTimeDays} decimals={1} suffix=" Days" />
+                <AnimatedStatCounter value={stats.avgResolutionTimeDays} decimals={1} suffix={` ${t('landing.telemetry.days', 'Days')}`} />
               </div>
               <span className="text-[11px] text-muted-foreground font-mono">
-                Within 72h Mandate
+                {t('landing.telemetry.slaMandate', 'Within 72h Mandate')}
               </span>
             </div>
           </div>
@@ -427,13 +425,13 @@ export default function Landing() {
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-primary bg-primary/10 px-3 py-0.5 rounded-md mb-2 border border-primary/20">
                 <MapPin className="h-3.5 w-3.5" />
-                <span>STATE TELEMETRY MAP</span>
+                <span>{t('landing.districts.badge', 'STATE TELEMETRY MAP')}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-                24-District Administrative Matrix
+                {t('landing.districts.title', '24-District Administrative Matrix')}
               </h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-prose">
-                Select any district to inspect live case registry volumes, resolution compliance, assigned engineering solver institutions, and nodal oversight.
+                {t('landing.districts.desc', 'Select any district to inspect live case registry volumes, resolution compliance, assigned engineering solver institutions, and nodal oversight.')}
               </p>
             </div>
 
@@ -442,7 +440,7 @@ export default function Landing() {
               onClick={() => navigate('/problems')}
               className="text-xs font-bold border-border"
             >
-              <span>View All District Challenges</span>
+              <span>{t('landing.districts.viewAll', 'View All District Challenges')}</span>
               <ChevronRight className="h-3.5 w-3.5 ml-1" />
             </Button>
           </div>
@@ -534,13 +532,13 @@ export default function Landing() {
         <div className="text-center space-y-2 max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-md border border-amber-500/20">
             <Scale className="h-3 w-3" />
-            <span>SIH 2026 ARCHITECTURAL BLUEPRINT</span>
+            <span>{t('landing.loop.badge', 'SIH 2026 ARCHITECTURAL BLUEPRINT')}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-            The Multi-Sector Resolution Loop
+            {t('landing.loop.title', 'The Multi-Sector Resolution Loop')}
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            How SamadhanSetu converts citizen grievances into sustainable ground infrastructure using university talent and industry funding.
+            {t('landing.loop.desc', 'How SamadhanSetu converts citizen grievances into sustainable ground infrastructure using university talent and industry funding.')}
           </p>
         </div>
 
@@ -548,33 +546,33 @@ export default function Landing() {
           {[
             {
               step: '01',
-              title: 'Citizen Grievance Docket',
-              desc: 'Geo-tagged photograph and field facts uploaded with GPS triangulation lock.',
-              tag: 'Public Intake',
+              title: t('landing.loop.step1Title', 'Citizen Grievance Docket'),
+              desc: t('landing.loop.step1Desc', 'Geo-tagged photograph and field facts uploaded with GPS triangulation lock.'),
+              tag: t('landing.loop.step1Tag', 'Public Intake'),
             },
             {
               step: '02',
-              title: 'AI Multi-Factor Shield',
-              desc: '0-100 diagnostic score checks clarity, image forensics, and district deduplication.',
-              tag: 'Automated Check',
+              title: t('landing.loop.step2Title', 'AI Multi-Factor Shield'),
+              desc: t('landing.loop.step2Desc', '0-100 diagnostic score checks clarity, image forensics, and district deduplication.'),
+              tag: t('landing.loop.step2Tag', 'Automated Check'),
             },
             {
               step: '03',
-              title: 'Nodal Officer Admittance',
-              desc: 'District administrative engineer verifies jurisdiction, assigns SLA and department order.',
-              tag: 'Official Oversight',
+              title: t('landing.loop.step3Title', 'Nodal Officer Admittance'),
+              desc: t('landing.loop.step3Desc', 'District administrative engineer verifies jurisdiction, assigns SLA and department order.'),
+              tag: t('landing.loop.step3Tag', 'Official Oversight'),
             },
             {
               step: '04',
-              title: 'University Solver Squads',
-              desc: 'Engineering students from BIT Mesra, NIT & IIT engineer sustainable field prototypes.',
-              tag: 'R&D Innovation',
+              title: t('landing.loop.step4Title', 'University Solver Squads'),
+              desc: t('landing.loop.step4Desc', 'Engineering students from BIT Mesra, NIT & IIT engineer sustainable field prototypes.'),
+              tag: t('landing.loop.step4Tag', 'R&D Innovation'),
             },
             {
               step: '05',
-              title: 'Verified Ground Redressal',
-              desc: 'Nodal inspector signs off with geotagged after-photo; permanent registry closure.',
-              tag: 'Permanent Record',
+              title: t('landing.loop.step5Title', 'Verified Ground Redressal'),
+              desc: t('landing.loop.step5Desc', 'Nodal inspector signs off with geotagged after-photo; permanent registry closure.'),
+              tag: t('landing.loop.step5Tag', 'Permanent Record'),
             },
           ].map((s, idx) => (
             <Card key={idx} className="docket-sheet rounded-xl p-4 space-y-2.5 border border-border flex flex-col justify-between">
@@ -599,13 +597,13 @@ export default function Landing() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-3 py-0.5 rounded-md mb-2 border border-emerald-500/20">
               <CheckCircle2 className="h-3.5 w-3.5" />
-              <span>OFFICIAL DISPATCH ARCHIVE</span>
+              <span>{t('landing.archive.badge', 'OFFICIAL DISPATCH ARCHIVE')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-              Verified Ground Redressals
+              {t('landing.archive.title', 'Verified Ground Redressals')}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-prose">
-              Inspection records signed off by District Nodal Engineers with permanent audit tokens.
+              {t('landing.archive.desc', 'Inspection records signed off by District Nodal Engineers with permanent audit tokens.')}
             </p>
           </div>
 
@@ -614,7 +612,7 @@ export default function Landing() {
             onClick={() => navigate('/problems')}
             className="text-xs font-bold shrink-0 border-border"
           >
-            <span>Browse All Case Files</span>
+            <span>{t('landing.archive.browseAll', 'Browse All Case Files')}</span>
           </Button>
         </div>
 
@@ -633,7 +631,7 @@ export default function Landing() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 right-3 docket-stamp docket-stamp-verified shadow-md">
-                    GROUND VERIFIED
+                    {t('landing.archive.groundVerified', 'GROUND VERIFIED')}
                   </div>
                   <div className="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-md bg-black/80 backdrop-blur-xs text-white text-[11px] font-mono font-bold">
                     {c.id}

@@ -38,25 +38,26 @@ import {
 import { HorizontalStepTracker } from '@/components/shared/HorizontalStepTracker';
 import {
   getComplaintById,
+  appealComplaint,
   getStoredComplaints,
   type Complaint,
 } from '@/lib/complaints';
-import { useGrievance } from '@/lib/grievanceStore';
+import api from '@/lib/api';
 import { cn, formatDate } from '@/lib/utils';
 
 export default function ComplaintTrackerPage() {
+  const { t } = useTranslation();
   const { complaintId } = useParams<{ complaintId?: string }>();
   const navigate = useNavigate();
 
-  const {
-    grievance: storeGrievance,
-    isLoading: isStoreLoading,
-    error: storeError,
-    appeal: storeAppeal,
-  } = useGrievance(complaintId);
-
-  const [searchInput, setSearchInput] = useState('');
-  const [complaint, setComplaint] = useState<Complaint | null>(null);
+  const [searchInput, setSearchInput] = useState(() => complaintId || '');
+  const [complaint, setComplaint] = useState<Complaint | null>(() => {
+    if (complaintId) {
+      return getComplaintById(complaintId) || null;
+    }
+    const all = getStoredComplaints();
+    return all.length > 0 ? all[0] : null;
+  });
   const [notFound, setNotFound] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
 
@@ -66,16 +67,7 @@ export default function ComplaintTrackerPage() {
   const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
 
   useEffect(() => {
-    if (complaintId) {
-      if (storeGrievance) {
-        setComplaint(storeGrievance);
-        setSearchInput(storeGrievance.id);
-        setNotFound(false);
-      } else if (!isStoreLoading && storeError) {
-        setComplaint(null);
-        setNotFound(true);
-      }
-    } else {
+    if (!complaintId) {
       // Default to first complaint if accessed at /track without param
       const all = getStoredComplaints();
       if (all.length > 0) {
@@ -83,8 +75,35 @@ export default function ComplaintTrackerPage() {
         setSearchInput(all[0].id);
         setNotFound(false);
       }
+      return;
     }
-  }, [complaintId, storeGrievance, isStoreLoading, storeError]);
+
+    const normalizedId = complaintId.trim().toUpperCase();
+
+    // Check local storage first for instantaneous rendering
+    const localFound = getComplaintById(normalizedId);
+    if (localFound) {
+      setComplaint(localFound);
+      setSearchInput(localFound.id);
+      setNotFound(false);
+    } else {
+      setComplaint(null);
+      setNotFound(true);
+    }
+
+    // Fetch latest live data from backend database API in background
+    api.get(`/complaints/${encodeURIComponent(normalizedId)}`)
+      .then((res) => {
+        if (res.data && res.data.id) {
+          setComplaint(res.data);
+          setSearchInput(res.data.id);
+          setNotFound(false);
+        }
+      })
+      .catch((err) => {
+        console.warn('Background tracker fetch notice:', err?.message || err);
+      });
+  }, [complaintId]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,8 +124,9 @@ export default function ComplaintTrackerPage() {
     setIsSubmittingAppeal(true);
     try {
       const note = appealReason.trim() || 'Citizen requested human officer review of automated rejection.';
-      const ok = await storeAppeal(note);
-      if (ok) {
+      const updated = appealComplaint(complaint.id, note);
+      if (updated) {
+        setComplaint({ ...updated });
         setAppealModalOpen(false);
         setAppealReason('');
         toast.success('Appeal submitted successfully! Assigned to Nodal Officer review queue.');
@@ -138,11 +158,11 @@ export default function ComplaintTrackerPage() {
               className="text-xs font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to Home</span>
+              <span>{t('tracker.backToHome', 'Back to Home')}</span>
             </Link>
             <span className="text-muted-foreground">•</span>
             <span className="text-xs font-semibold text-primary">
-              Public Grievance Tracker
+              {t('tracker.publicRegistry', 'Public Grievance Tracker')}
             </span>
           </div>
 
@@ -151,53 +171,41 @@ export default function ComplaintTrackerPage() {
             <div className="relative flex-1">
               <Search className="h-4 w-4 absolute left-3 top-2.5 text-muted-foreground" />
               <Input
-                placeholder="Enter Tracking ID (e.g. SS-2026-000481)..."
+                placeholder={t('tracker.searchPlaceholder', 'Enter Tracking ID (e.g. SS-2026-000481)...')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 className="pl-9 h-9 text-xs font-mono uppercase"
               />
             </div>
             <Button type="submit" size="sm" className="h-9 px-3 text-xs font-bold gap-1">
-              <span>Track</span>
+              <span>{t('tracker.trackBtn', 'Track')}</span>
             </Button>
           </form>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
-        {isStoreLoading && !complaint ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
-            <div className="h-10 w-10 animate-spin rounded-full border-3 border-primary border-t-transparent" />
-            <div className="space-y-1">
-              <span className="text-sm font-bold text-foreground block">
-                Loading Official Civic Docket...
-              </span>
-              <span className="text-xs font-mono text-muted-foreground block">
-                Synchronizing {complaintId || 'docket'} with Jharkhand Civic Registry
-              </span>
-            </div>
-          </div>
-        ) : notFound ? (
+        {notFound || !complaint ? (
           <Card className="p-8 text-center border-dashed rounded-2xl space-y-4">
             <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 mx-auto flex items-center justify-center">
               <AlertTriangle className="h-6 w-6" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-xl font-bold text-foreground">Complaint Not Found</h2>
+              <h2 className="text-xl font-bold text-foreground">{t('tracker.notFound', 'Complaint Not Found')}</h2>
               <p className="text-xs text-muted-foreground max-w-md mx-auto">
-                No civic complaint was found with ID <span className="font-mono font-bold text-foreground">{complaintId}</span>. Please verify the ID or submit a new grievance.
+                {t('tracker.notFoundDesc', { id: complaintId, defaultValue: `No civic complaint was found with ID ${complaintId}. Please verify the ID or submit a new grievance.` })}
               </p>
             </div>
             <div className="pt-2 flex justify-center gap-3">
               <Button variant="outline" size="sm" onClick={() => navigate('/track')}>
-                Try Another ID
+                {t('tracker.tryAnother', 'Try Another ID')}
               </Button>
               <Button size="sm" onClick={() => navigate('/#report')}>
-                Report a New Issue
+                {t('tracker.reportNew', 'Report a New Issue')}
               </Button>
             </div>
           </Card>
-        ) : complaint ? (
+        ) : (
           <>
             {/* Official Government Case Dossier Header Card */}
             <Card className="docket-sheet border-border rounded-2xl overflow-hidden shadow-xl">
@@ -210,10 +218,10 @@ export default function ComplaintTrackerPage() {
                   <StateSeal size="sm" />
                   <div>
                     <span className="text-[10px] font-mono tracking-widest text-emerald-300 uppercase block">
-                      झारखंड सरकार • GOVERNMENT OF JHARKHAND
+                      {t('tracker.govJharkhand', 'झारखंड सरकार • GOVERNMENT OF JHARKHAND')}
                     </span>
                     <span className="text-xs font-bold text-white tracking-tight">
-                      DEPARTMENT OF PUBLIC GRIEVANCES & CIVIC ACTION • REGISTRY DOSSIER
+                      {t('tracker.deptRegistry', 'DEPARTMENT OF PUBLIC GRIEVANCES & CIVIC ACTION • REGISTRY DOSSIER')}
                     </span>
                   </div>
                 </div>
@@ -226,10 +234,10 @@ export default function ComplaintTrackerPage() {
                     className="hidden sm:inline-flex gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 text-white border-white/20 h-8"
                   >
                     <Printer className="h-3.5 w-3.5" />
-                    <span>Print Action Order</span>
+                    <span>{t('tracker.printOrder', 'Print Action Order')}</span>
                   </Button>
                   <div className="docket-stamp docket-stamp-verified text-[10px] py-0.5">
-                    GAZETTE INDEXED
+                    {t('tracker.gazetteIndexed', 'GAZETTE INDEXED')}
                   </div>
                 </div>
               </div>
@@ -238,7 +246,7 @@ export default function ComplaintTrackerPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-5">
                   <div className="space-y-1.5">
                     <span className="text-[10.5px] font-mono uppercase tracking-widest text-muted-foreground font-bold block">
-                      OFFICIAL DOCKET IDENTIFIER & DISPATCH CODE
+                      {t('tracker.docketId', 'OFFICIAL DOCKET IDENTIFIER & DISPATCH CODE')}
                     </span>
                     <div className="flex items-center gap-3">
                       <h1 className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-primary">
@@ -253,12 +261,12 @@ export default function ComplaintTrackerPage() {
                         {hasCopied ? (
                           <>
                             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                            <span>Copied</span>
+                            <span>{t('tracker.copied', 'Copied')}</span>
                           </>
                         ) : (
                           <>
                             <Copy className="h-3.5 w-3.5" />
-                            <span>Copy Token</span>
+                            <span>{t('tracker.copyToken', 'Copy Token')}</span>
                           </>
                         )}
                       </Button>
@@ -284,15 +292,15 @@ export default function ComplaintTrackerPage() {
                           : 'docket-stamp-action'
                       )}
                     >
-                      {complaint.status === 'resolved' && 'GROUND RESOLUTION VERIFIED'}
-                      {complaint.status === 'verified_in_progress' && 'FIELD DISPATCH IN PROGRESS'}
-                      {(complaint.status === 'pending_officer' || complaint.status === 'officer_reviewing') && 'UNDER NODAL SCRUTINY'}
-                      {complaint.status === 'auto_approved' && 'AUTO-VALIDATED & QUEUED'}
-                      {(complaint.status === 'auto_rejected' || complaint.status === 'rejected_by_officer') && 'REJECTED (APPEAL ADMISSIBLE)'}
+                      {complaint.status === 'resolved' && t('tracker.stampGroundVerified', 'GROUND RESOLUTION VERIFIED')}
+                      {complaint.status === 'verified_in_progress' && t('tracker.stampFieldDispatch', 'FIELD DISPATCH IN PROGRESS')}
+                      {(complaint.status === 'pending_officer' || complaint.status === 'officer_reviewing') && t('tracker.stampUnderScrutiny', 'UNDER NODAL SCRUTINY')}
+                      {complaint.status === 'auto_approved' && t('tracker.stampAutoValidated', 'AUTO-VALIDATED & QUEUED')}
+                      {(complaint.status === 'auto_rejected' || complaint.status === 'rejected_by_officer') && t('tracker.stampRejected', 'REJECTED (APPEAL ADMISSIBLE)')}
                     </div>
 
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="font-mono text-muted-foreground">Target Nodal Agency:</span>
+                      <span className="font-mono text-muted-foreground">{t('tracker.targetNodalAgency', 'Target Nodal Agency:')}</span>
                       <span className="px-2 py-0.5 rounded bg-primary/10 text-primary font-bold uppercase font-mono">
                         {complaint.category}
                       </span>
@@ -317,12 +325,12 @@ export default function ComplaintTrackerPage() {
                     <span>•</span>
                     <span className="flex items-center gap-1.5">
                       <Calendar className="h-3.5 w-3.5" />
-                      Submitted: {formatDate(complaint.submitted_at)}
+                      {t('tracker.filingTimestamp', 'Submitted')}: {formatDate(complaint.submitted_at)}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold">
                       <ShieldCheck className="h-3.5 w-3.5" />
-                      Citizen ID: {complaint.citizen_id || 'VERIFIED-CITIZEN'}
+                      {t('tracker.citizenPetitioner', 'Citizen ID')}: {complaint.citizen_id || 'VERIFIED-CITIZEN'}
                     </span>
                   </div>
                 </div>
@@ -586,7 +594,7 @@ export default function ComplaintTrackerPage() {
               </div>
             </Card>
           </>
-        ) : null}
+        )}
       </div>
 
       {/* Appeal Dialog */}
@@ -594,10 +602,10 @@ export default function ComplaintTrackerPage() {
         <DialogContent className="max-w-md p-6 rounded-2xl">
           <DialogHeader className="space-y-1">
             <DialogTitle className="text-lg font-bold text-foreground">
-              Appeal Decision & Force Human Review
+              {t('tracker.appealDecision', 'Appeal Decision & Force Human Review')}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              If you believe this automated evaluation was incorrect, submit an appeal note. It will bypass automated filters and directly enter the District Nodal Officer review queue.
+              {t('tracker.appealDesc', 'If you believe this grievance was inappropriately categorized or closed without resolution, file a formal administrative appeal to the State Nodal Tribunal.')}
             </DialogDescription>
           </DialogHeader>
 
@@ -622,7 +630,7 @@ export default function ComplaintTrackerPage() {
               onClick={() => setAppealModalOpen(false)}
               className="text-xs"
             >
-              Cancel
+              {t('common.cancel', 'Cancel')}
             </Button>
             <Button
               type="button"
@@ -631,7 +639,7 @@ export default function ComplaintTrackerPage() {
               onClick={handleAppealSubmit}
               className="text-xs font-bold bg-accent hover:bg-accent-hover text-accent-foreground"
             >
-              {isSubmittingAppeal ? 'Submitting...' : 'Submit Formal Appeal'}
+              {isSubmittingAppeal ? t('common.loading', 'Submitting...') : t('common.submit', 'Submit Formal Appeal')}
             </Button>
           </DialogFooter>
         </DialogContent>

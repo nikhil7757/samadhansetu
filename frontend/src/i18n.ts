@@ -15,4 +15,14 @@ i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
 });
 
+if (typeof document !== 'undefined') {
+  document.documentElement.lang = savedLang;
+  i18n.on('languageChanged', (lng) => {
+    document.documentElement.lang = lng;
+    try {
+      localStorage.setItem('lang', lng);
+    } catch (_) {}
+  });
+}
+
 export default i18n;
