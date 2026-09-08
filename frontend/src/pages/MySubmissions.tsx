@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,15 +14,22 @@ import {
   Filter,
   Sparkles,
   Inbox,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { getStoredComplaints, type Complaint, type ComplaintStatus } from '@/lib/complaints';
+import {
+  getStoredComplaints,
+  getSessionSubmittedComplaintIds,
+  type Complaint,
+  type ComplaintStatus,
+} from '@/lib/complaints';
 import { formatDate, cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
+import api from '@/lib/api';
 
 export default function MySubmissions() {
   const { t } = useTranslation();
@@ -32,20 +39,69 @@ export default function MySubmissions() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateSort, setDateSort] = useState<'newest' | 'oldest'>('newest');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [complaints] = useState<Complaint[]>(() => {
-    const all = getStoredComplaints();
-    // If logged in citizen has specific complaints or priya.kumar
-    if (user?.id) {
-      const userComplaints = all.filter(
-        (c) =>
-          c.citizen_id === user.id ||
-          (user.email && c.citizen_email?.toLowerCase() === user.email.toLowerCase())
-      );
-      if (userComplaints.length > 0) return userComplaints;
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const reloadComplaints = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const localAll = getStoredComplaints();
+      const sessionIds = getSessionSubmittedComplaintIds();
+
+      // Fetch latest complaints from backend database if accessible
+      let remoteComplaints: Complaint[] = [];
+      try {
+        const res = await api.get('/complaints');
+        if (Array.isArray(res.data)) {
+          remoteComplaints = res.data;
+        }
+      } catch (e) {
+        // Fall back to local registry
+      }
+
+      // Merge and deduplicate by ID, preferring newest
+      const mergedMap = new Map<string, Complaint>();
+      for (const c of [...remoteComplaints, ...localAll]) {
+        if (c?.id && !mergedMap.has(c.id)) {
+          mergedMap.set(c.id, c);
+        }
+      }
+      const allMerged = Array.from(mergedMap.values());
+
+      // Filter to relevant complaints:
+      // 1. Matches logged-in citizen ID or citizen email
+      // 2. Or matches any tracking ID submitted in this browser session
+      const userComplaints = allMerged.filter((c) => {
+        const matchesSession = sessionIds.includes(c.id);
+        if (matchesSession) return true;
+
+        if (user?.id) {
+          const matchesId = c.citizen_id === user.id;
+          const matchesEmail = user.email && c.citizen_email?.toLowerCase() === user.email.toLowerCase();
+          return matchesId || matchesEmail;
+        }
+
+        return false;
+      });
+
+      setComplaints(userComplaints);
+    } finally {
+      setIsLoading(false);
     }
-    // Default fallback to first 4 complaints for demo
-    return all.slice(0, 4);
-  });
+  }, [user]);
+
+  useEffect(() => {
+    reloadComplaints();
+
+    const handleSubmitted = () => {
+      reloadComplaints();
+    };
+
+    window.addEventListener('samadhansetu:complaint-submitted', handleSubmitted);
+    return () => {
+      window.removeEventListener('samadhansetu:complaint-submitted', handleSubmitted);
+    };
+  }, [reloadComplaints]);
 
   const filteredComplaints = useMemo(() => {
     const list = complaints.filter((c) => {
@@ -161,7 +217,12 @@ export default function MySubmissions() {
       </div>
 
       {/* Complaints List */}
-      {filteredComplaints.length === 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <span className="text-sm font-semibold text-muted-foreground">Synchronizing citizen grievances registry...</span>
+        </div>
+      ) : filteredComplaints.length === 0 ? (
         <EmptyState
           icon={Inbox}
           title="No Complaints Found"

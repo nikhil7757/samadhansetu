@@ -59,7 +59,7 @@ export function TopNav() {
       <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between border-b border-white/10">
         <div className="flex items-center justify-between mx-auto max-w-7xl w-full">
           <div className="flex items-center gap-2.5">
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse ring-2 ring-emerald-400/30" />
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 ring-1 ring-emerald-400/40" />
             <span className="font-bold tracking-tight text-emerald-200">
               झारखंड सरकार • Government of Jharkhand
             </span>
@@ -71,8 +71,8 @@ export function TopNav() {
 
           <div className="flex items-center gap-4 text-[10.5px]">
             <span className="hidden sm:flex items-center gap-1.5 font-mono text-emerald-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-              24 District Registries Live
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              24 District Registries Active
             </span>
             <span className="hidden sm:inline text-white/30">•</span>
             <span className="flex items-center gap-1.5 text-white/90">

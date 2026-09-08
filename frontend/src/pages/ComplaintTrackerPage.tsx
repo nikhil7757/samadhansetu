@@ -332,6 +332,9 @@ export default function ComplaintTrackerPage() {
                   aiScore={complaint.ai_score}
                   history={complaint.history}
                   submittedAt={complaint.submitted_at}
+                  category={complaint.category}
+                  district={complaint.location.district}
+                  officerName={complaint.officer_name}
                 />
               </div>
             </Card>
@@ -342,7 +345,7 @@ export default function ComplaintTrackerPage() {
               <Card className="border-amber-500/30 bg-amber-500/5 rounded-2xl p-5 shadow-xs">
                 <div className="flex items-start gap-3.5">
                   <div className="h-9 w-9 rounded-full bg-amber-500/15 text-amber-600 flex items-center justify-center shrink-0">
-                    <Clock className="h-5 w-5 animate-pulse" />
+                    <Clock className="h-5 w-5" />
                   </div>
                   <div className="space-y-1">
                     <h3 className="text-sm font-bold text-foreground">

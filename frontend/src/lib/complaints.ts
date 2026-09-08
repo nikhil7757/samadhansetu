@@ -358,13 +358,58 @@ export function saveComplaints(complaints: Complaint[]): void {
   }
 }
 
+export const SESSION_COMPLAINT_IDS_KEY = 'samadhansetu_session_complaint_ids';
+
 /**
- * Find complaint by Tracking ID (SS-YYYY-NNNNNN)
+ * Retrieve tracking IDs submitted during the current citizen browser session
+ */
+export function getSessionSubmittedComplaintIds(): string[] {
+  try {
+    const raw = sessionStorage.getItem(SESSION_COMPLAINT_IDS_KEY) || localStorage.getItem(SESSION_COMPLAINT_IDS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Record a newly submitted complaint ID in the active session
+ */
+export function recordSessionSubmittedComplaint(id: string): void {
+  try {
+    const current = getSessionSubmittedComplaintIds();
+    if (!current.includes(id)) {
+      const updated = [id, ...current];
+      sessionStorage.setItem(SESSION_COMPLAINT_IDS_KEY, JSON.stringify(updated));
+      localStorage.setItem(SESSION_COMPLAINT_IDS_KEY, JSON.stringify(updated));
+    }
+  } catch (err) {
+    console.warn('Could not save session complaint ID:', err);
+  }
+}
+
+/**
+ * Normalize tracking ID for comparison (removes all non-alphanumeric characters)
+ */
+export function normalizeTrackingId(id: string): string {
+  return id.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+}
+
+/**
+ * Find complaint by Tracking ID (SS-YYYY-NNNNNN or fuzzy alphanumeric)
  */
 export function getComplaintById(id: string): Complaint | undefined {
-  const normalized = id.trim().toUpperCase();
+  if (!id) return undefined;
+  const rawUpper = id.trim().toUpperCase();
+  const normalized = normalizeTrackingId(rawUpper);
   const all = getStoredComplaints();
-  return all.find((c) => c.id.toUpperCase() === normalized || c.id.replace(/-/g, '') === normalized.replace(/-/g, ''));
+  return all.find((c) => {
+    if (c.id.toUpperCase() === rawUpper) return true;
+    if (normalizeTrackingId(c.id) === normalized) return true;
+    return false;
+  });
 }
 
 /**
@@ -465,10 +510,18 @@ export function submitNewComplaint(input: {
   const updated = [newComplaint, ...all];
   saveComplaints(updated);
 
+  // Record into active browser session so MySubmissions always reflects this grievance
+  recordSessionSubmittedComplaint(newComplaint.id);
+
   // Asynchronously persist to backend database API
   api.post('/complaints', newComplaint).catch((err) => {
     console.warn('Backend complaint database sync note:', err?.message || err);
   });
+
+  // Notify any active views via event
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('samadhansetu:complaint-submitted', { detail: newComplaint }));
+  }
 
   return newComplaint;
 }
@@ -592,9 +645,9 @@ export function getPlatformStats() {
       c.officer_id !== null
   ).length;
 
-  const autoApprovedPct = total > 0 ? Math.round((autoApproved / total) * 100) : 68;
-  const autoRejectedPct = total > 0 ? Math.round((autoRejected / total) * 100) : 12;
-  const overturnRatePct = total > 0 ? Math.round((overturnedCount / Math.max(1, inReview + overturnedCount)) * 100) : 24;
+  const autoApprovedPct = total > 0 ? Math.round((autoApproved / total) * 100) : 0;
+  const autoRejectedPct = total > 0 ? Math.round((autoRejected / total) * 100) : 0;
+  const overturnRatePct = (inReview + overturnedCount) > 0 ? Math.round((overturnedCount / (inReview + overturnedCount)) * 100) : 0;
 
   return {
     totalComplaints: total,

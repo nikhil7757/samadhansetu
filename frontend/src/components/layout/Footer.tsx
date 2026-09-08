@@ -1,35 +1,32 @@
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, HeartHandshake, Phone, Mail, MapPin, ExternalLink } from 'lucide-react';
+import { StateSeal } from '@/components/shared/StateSeal';
 
 export function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="border-t border-border/80 bg-card/90 backdrop-blur-md mt-auto text-muted-foreground relative z-10">
-      {/* Accent top gradient line */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-
+    <footer className="border-t border-border bg-card mt-auto text-muted-foreground relative z-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
           {/* Col 1: Platform identity */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-emerald-800 text-white font-black text-xs shadow-sm ring-1 ring-white/20">
-                SS
-              </div>
+              <StateSeal size="md" />
               <div className="flex flex-col">
                 <span className="font-black text-foreground text-base tracking-tight font-heading">
                   SamadhanSetu
                 </span>
-                <span className="text-[10px] text-muted-foreground">
-                  समाधान सेतु • Jharkhand
+                <span className="text-[10.5px] font-medium text-muted-foreground">
+                  समाधान सेतु • झारखण्ड सरकार
                 </span>
               </div>
             </div>
-            <p className="text-xs leading-relaxed">
-              Official Civic Challenge Resolution Platform for the Government of Jharkhand. Crowdsources infrastructure grievances with multi-factor AI verification, student innovation squads, and CSR ground execution.
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Official Sovereign Civic Redressal & Academic Solver Exchange for the Government of Jharkhand.
+              Connecting citizens across all 24 districts directly to administrative nodal officers, university solvers, and CSR field squads.
             </p>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-secondary text-[11px] font-mono text-foreground font-semibold border border-border/60">
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-secondary text-[11px] font-mono text-foreground font-semibold border border-border">
               <ShieldCheck className="h-3.5 w-3.5 text-primary" />
               <span>SIH 2026 • Problem Statement 043</span>
             </div>

@@ -1,7 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
+import { AIVerificationService } from '../services/aiVerification.service.js';
 
 const router = Router();
+
+export function normalizeId(id: string): string {
+  return id.toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
 
 /**
  * Safely persist complaint to PostgreSQL via Prisma with graceful fallback
@@ -217,36 +222,84 @@ const SERVER_COMPLAINTS: Record<string, any> = {
 
 /**
  * GET /api/complaints
- * Returns list of complaints (from DB if available, fallback to memory)
+ * Returns list of complaints with filtering by citizen, status, district, category, or search query
  */
-router.get('/', async (_req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
+  const { citizen_id, citizen_email, status, district, category, search } = req.query as Record<string, string>;
+
+  let list: any[] = [];
   try {
     if ((prisma as any)?.complaint) {
+      const where: any = {};
+      if (status && status !== 'all') where.status = status;
+      if (district && district !== 'all') where.district = district;
+      if (category && category !== 'all') where.category = category;
+      if (citizen_id) where.citizenId = citizen_id;
+      if (citizen_email) where.citizenEmail = citizen_email;
+
       const dbComplaints = await (prisma as any).complaint.findMany({
+        where,
         orderBy: { submittedAt: 'desc' },
       });
       if (dbComplaints && dbComplaints.length > 0) {
-        res.json(dbComplaints.map(mapDbComplaintToClient));
-        return;
+        list = dbComplaints.map(mapDbComplaintToClient);
       }
     }
   } catch (err: any) {
     console.warn('Prisma query error, falling back to memory:', err?.message || err);
   }
-  res.json(Object.values(SERVER_COMPLAINTS));
+
+  if (list.length === 0) {
+    list = Object.values(SERVER_COMPLAINTS);
+  }
+
+  // Apply filters to memory list if used
+  let filtered = list;
+  if (citizen_id || citizen_email) {
+    filtered = filtered.filter((c) =>
+      (citizen_id && c.citizen_id === citizen_id) ||
+      (citizen_email && c.citizen_email?.toLowerCase() === citizen_email.toLowerCase())
+    );
+  }
+  if (status && status !== 'all') {
+    filtered = filtered.filter((c) => c.status === status);
+  }
+  if (district && district !== 'all') {
+    filtered = filtered.filter((c) => c.location.district.toLowerCase() === district.toLowerCase());
+  }
+  if (category && category !== 'all') {
+    filtered = filtered.filter((c) => c.category === category);
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter((c) =>
+      c.id.toLowerCase().includes(q) ||
+      c.title.toLowerCase().includes(q) ||
+      c.description.toLowerCase().includes(q) ||
+      c.location.district.toLowerCase().includes(q)
+    );
+  }
+
+  res.json(filtered);
 });
 
 /**
  * GET /api/complaints/:id
- * Returns the full complaint + its history for public tracking
+ * Returns the full complaint + its history for public tracking with normalized ID support
  */
 router.get('/:id', async (req: Request, res: Response) => {
-  const id = req.params.id.toUpperCase();
+  const rawId = req.params.id.trim();
+  const normalized = normalizeId(rawId);
 
   try {
     if ((prisma as any)?.complaint) {
-      const dbComplaint = await (prisma as any).complaint.findUnique({
-        where: { id },
+      const dbComplaint = await (prisma as any).complaint.findFirst({
+        where: {
+          OR: [
+            { id: rawId.toUpperCase() },
+            { id: { contains: rawId, mode: 'insensitive' } },
+          ],
+        },
       });
       if (dbComplaint) {
         res.json(mapDbComplaintToClient(dbComplaint));
@@ -257,7 +310,11 @@ router.get('/:id', async (req: Request, res: Response) => {
     console.warn('Prisma findUnique error, falling back to memory:', err?.message || err);
   }
 
-  const found = SERVER_COMPLAINTS[id];
+  // Check in-memory store by exact or normalized ID
+  const found = Object.values(SERVER_COMPLAINTS).find(
+    (c: any) => c.id.toUpperCase() === rawId.toUpperCase() || normalizeId(c.id) === normalized
+  );
+
   if (found) {
     res.json(found);
     return;
@@ -300,7 +357,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 /**
  * POST /api/complaints
- * Create a new complaint submission, persist to database, return tracking ID
+ * Create a new complaint submission, calculate AI verification score/flags, persist, return tracking ID
  */
 router.post('/', async (req: Request, res: Response) => {
   const { title, description, category, district, address, ai_score, ai_flags, status, history, media } = req.body;
@@ -308,8 +365,33 @@ router.post('/', async (req: Request, res: Response) => {
   const randomNum = Math.floor(100000 + Math.random() * 900000);
   const id = req.body.id || `SS-${year}-${randomNum}`;
 
-  const score = typeof ai_score === 'number' ? ai_score : 82;
-  const initialStatus = status || (score >= 80 ? 'auto_approved' : score >= 40 ? 'pending_officer' : 'auto_rejected');
+  // Evaluate AI score & flags using backend service if not pre-computed or invalid
+  let evaluatedScore = typeof ai_score === 'number' ? ai_score : undefined;
+  let evaluatedFlags = Array.isArray(ai_flags) && ai_flags.length > 0 ? ai_flags : undefined;
+  let evaluatedStatus = status;
+
+  if (evaluatedScore === undefined || !evaluatedFlags) {
+    const aiResult = AIVerificationService.evaluateComplaint({
+      title: title || description?.slice(0, 60) || 'Civic Grievance',
+      description: description || '',
+      category: category || 'roads',
+      district: district || 'Ranchi',
+      address,
+      media: media || req.body.mediaUrls || [],
+      existingComplaints: Object.values(SERVER_COMPLAINTS).map((c: any) => ({
+        title: c.title,
+        description: c.description,
+        district: c.location?.district || 'Ranchi',
+        category: c.category,
+      })),
+    });
+    evaluatedScore = aiResult.ai_score;
+    evaluatedFlags = aiResult.ai_flags;
+    if (!evaluatedStatus) evaluatedStatus = aiResult.status;
+  }
+
+  const score = evaluatedScore;
+  const initialStatus = evaluatedStatus || (score >= 80 ? 'auto_approved' : score >= 40 ? 'pending_officer' : 'auto_rejected');
 
   const newComplaint = {
     id,
@@ -329,11 +411,11 @@ router.post('/', async (req: Request, res: Response) => {
     media: media || (req.body.mediaUrls ? req.body.mediaUrls : ['https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=1200&q=80']),
     submitted_at: req.body.submitted_at || new Date().toISOString(),
     ai_score: score,
-    ai_flags: ai_flags || ['clean_exif_metadata_passed', 'geo_consistency_verified'],
+    ai_flags: evaluatedFlags || ['clean_exif_metadata_passed', 'geo_consistency_verified'],
     status: initialStatus,
     officer_id: req.body.officer_id || null,
     officer_notes: req.body.officer_notes || null,
-    rejection_reason: req.body.rejection_reason || null,
+    rejection_reason: req.body.rejection_reason || (score < 40 ? 'Insufficient detail or locality landmarks. Citizen may appeal.' : null),
     appealed: !!req.body.appealed,
     history: history && history.length > 0
       ? history
@@ -342,7 +424,7 @@ router.post('/', async (req: Request, res: Response) => {
             status: initialStatus,
             actor: 'SamadhanSetu AI Core',
             timestamp: new Date().toISOString(),
-            note: `AI Score: ${score}/100. Verification complete. Status: ${initialStatus}.`,
+            note: `AI Score: ${score}/100. Verification complete. Status: ${initialStatus}. Flags: ${(evaluatedFlags || []).slice(0, 3).join(', ')}.`,
           },
         ],
   };
@@ -358,14 +440,25 @@ router.post('/', async (req: Request, res: Response) => {
  * Citizen appeal endpoint
  */
 router.post('/:id/appeal', async (req: Request, res: Response) => {
-  const id = req.params.id.toUpperCase();
+  const rawId = req.params.id.trim();
+  const normalized = normalizeId(rawId);
   const note = req.body.note || 'Citizen requested formal human officer review.';
-  let complaint = SERVER_COMPLAINTS[id];
+
+  let complaint = Object.values(SERVER_COMPLAINTS).find(
+    (c: any) => c.id.toUpperCase() === rawId.toUpperCase() || normalizeId(c.id) === normalized
+  );
 
   if (!complaint) {
     try {
       if ((prisma as any)?.complaint) {
-        const dbComplaint = await (prisma as any).complaint.findUnique({ where: { id } });
+        const dbComplaint = await (prisma as any).complaint.findFirst({
+          where: {
+            OR: [
+              { id: rawId.toUpperCase() },
+              { id: { contains: rawId, mode: 'insensitive' } },
+            ],
+          },
+        });
         if (dbComplaint) {
           complaint = mapDbComplaintToClient(dbComplaint);
         }
@@ -386,13 +479,13 @@ router.post('/:id/appeal', async (req: Request, res: Response) => {
       note: `Appeal filed: "${note}". Pushed to Nodal Officer review queue.`,
     });
 
-    SERVER_COMPLAINTS[id] = complaint;
+    SERVER_COMPLAINTS[complaint.id] = complaint;
     await persistComplaintToDatabase(complaint);
     res.json(complaint);
     return;
   }
 
-  res.json({ success: true, id, status: 'pending_officer' });
+  res.json({ success: true, id: rawId, status: 'pending_officer' });
 });
 
 /**
@@ -400,14 +493,25 @@ router.post('/:id/appeal', async (req: Request, res: Response) => {
  * Nodal Officer review determination
  */
 router.patch('/:id/officer-action', async (req: Request, res: Response) => {
-  const id = req.params.id.toUpperCase();
+  const rawId = req.params.id.trim();
+  const normalized = normalizeId(rawId);
   const { action, note, officerName, officerId } = req.body;
-  let complaint = SERVER_COMPLAINTS[id];
+
+  let complaint = Object.values(SERVER_COMPLAINTS).find(
+    (c: any) => c.id.toUpperCase() === rawId.toUpperCase() || normalizeId(c.id) === normalized
+  );
 
   if (!complaint) {
     try {
       if ((prisma as any)?.complaint) {
-        const dbComplaint = await (prisma as any).complaint.findUnique({ where: { id } });
+        const dbComplaint = await (prisma as any).complaint.findFirst({
+          where: {
+            OR: [
+              { id: rawId.toUpperCase() },
+              { id: { contains: rawId, mode: 'insensitive' } },
+            ],
+          },
+        });
         if (dbComplaint) {
           complaint = mapDbComplaintToClient(dbComplaint);
         }
@@ -439,13 +543,13 @@ router.patch('/:id/officer-action', async (req: Request, res: Response) => {
       note: note || `Officer action: ${action}`,
     });
 
-    SERVER_COMPLAINTS[id] = complaint;
+    SERVER_COMPLAINTS[complaint.id] = complaint;
     await persistComplaintToDatabase(complaint);
     res.json(complaint);
     return;
   }
 
-  res.json({ success: true, id, action });
+  res.json({ success: true, id: rawId, action });
 });
 
 export default router;

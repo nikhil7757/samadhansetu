@@ -169,19 +169,18 @@ export default function Landing() {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* 1. Sovereign Editorial Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-14 sm:pt-20 sm:pb-18 border-b border-border/80 bg-gradient-to-b from-emerald-950/10 via-background to-background px-4 sm:px-6">
-        <div className="absolute inset-0 hero-grid-pattern opacity-50 pointer-events-none" />
-        <div className="absolute top-1/6 left-1/2 -translate-x-1/2 w-4/5 h-80 bg-gradient-to-b from-emerald-600/10 to-transparent blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden pt-12 pb-14 sm:pt-20 sm:pb-18 border-b border-border bg-gradient-to-b from-primary/5 via-background to-background px-4 sm:px-6">
+        <div className="absolute inset-0 hero-grid-pattern opacity-40 pointer-events-none" />
 
         <div className="relative max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Column: Sovereign Authority & Mission */}
             <div className="lg:col-span-7 space-y-6 text-left">
               {/* Official Gazette Badge */}
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 text-xs font-bold tracking-tight border border-emerald-500/25 shadow-2xs">
+              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-bold tracking-tight border border-primary/25 shadow-2xs">
                 <StateSeal size="sm" />
                 <span>झारखंड सरकार • SIH 2026 Problem Statement 043</span>
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
               </div>
 
               {/* Editorial Display Heading */}
@@ -309,11 +308,31 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 2. Live Civic Resolution Telemetry Ribbon (Marquee Ticker) */}
-      <section className="bg-emerald-950 text-white border-y border-emerald-800/40 py-2.5 overflow-hidden relative">
+      {/* 2. Embedded Grievance Intake Docket (Front & Center) */}
+      <section ref={quickReportRef} className="py-12 sm:py-16 px-4 sm:px-6 bg-secondary/20 border-b border-border relative">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-primary bg-primary/10 px-3 py-1 rounded-md border border-primary/20">
+              <Sparkles className="h-3 w-3" />
+              <span>OFFICIAL INTAKE REGISTRY TERMINAL</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+              File an Official Grievance Docket
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
+              Submit your complaint with street particulars and evidence. Our multi-factor AI engine validates authenticity, eliminates duplicates, and dispatches the file to the responsible Nodal Officer.
+            </p>
+          </div>
+
+          <QuickReportWidget />
+        </div>
+      </section>
+
+      {/* 3. Live Civic Resolution Telemetry Ribbon (Marquee Ticker) */}
+      <section className="bg-emerald-950 text-white border-b border-emerald-800/40 py-2.5 overflow-hidden relative">
         <div className="max-w-7xl mx-auto flex items-center">
           <div className="shrink-0 z-10 bg-emerald-950 pr-4 pl-4 font-mono text-xs font-black text-amber-300 flex items-center gap-2 border-r border-emerald-800/60">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="h-2 w-2 rounded-full bg-emerald-400" />
             <span className="tracking-wider uppercase">LIVE DISPATCHES</span>
           </div>
 
@@ -338,8 +357,8 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* 3. Official Platform Telemetry Counters */}
-      <section className="py-10 bg-card border-b border-border/80 shadow-xs relative">
+      {/* 4. Official Platform Telemetry Counters (Real Database Metrics) */}
+      <section className="py-10 bg-card border-b border-border shadow-xs relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-center">
             {/* Metric 1 */}
@@ -398,26 +417,6 @@ export default function Landing() {
               </span>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 4. Embedded Grievance Intake Docket */}
-      <section ref={quickReportRef} className="py-16 px-4 sm:px-6 bg-secondary/25 border-b border-border/80 relative">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-500/10 px-3 py-1 rounded-md border border-emerald-500/20">
-              <Sparkles className="h-3 w-3" />
-              <span>OFFICIAL INTAKE REGISTRY TERMINAL</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-              File an Official Grievance Docket
-            </h2>
-            <p className="text-xs sm:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-              Submit your complaint with street particulars and evidence. Our multi-factor AI engine validates authenticity, eliminates duplicates, and dispatches the file to the responsible Nodal Officer.
-            </p>
-          </div>
-
-          <QuickReportWidget />
         </div>
       </section>
 

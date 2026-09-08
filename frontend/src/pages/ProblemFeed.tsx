@@ -13,6 +13,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { ErrorState } from '@/components/shared/ErrorState';
 import { JHARKHAND_DISTRICTS, CATEGORIES, STATUSES, formatDate } from '@/lib/utils';
 import { MOCK_PROBLEMS } from '@/lib/mockData';
+import { getStoredComplaints, type Complaint } from '@/lib/complaints';
 import api from '@/lib/api';
 
 interface ProblemSummary {
@@ -42,6 +43,47 @@ interface PaginationMeta {
   totalPages: number;
 }
 
+function mapComplaintToProblemSummary(c: Complaint): ProblemSummary {
+  const statusMap: Record<string, string> = {
+    resolved: 'SOLVED',
+    verified_in_progress: 'IN_PROGRESS',
+    auto_approved: 'AI_VERIFIED',
+    pending_officer: 'PENDING_APPROVAL',
+    officer_reviewing: 'IN_PROGRESS',
+    auto_rejected: 'REJECTED',
+    rejected_by_officer: 'REJECTED',
+  };
+
+  const categoryMap: Record<string, string> = {
+    roads: 'ROADS',
+    water: 'WATER',
+    electricity: 'ELECTRICITY',
+    sanitation: 'SANITATION',
+    corruption: 'OTHER',
+    other: 'OTHER',
+  };
+
+  return {
+    id: c.id,
+    title: c.title,
+    description: c.description,
+    category: categoryMap[c.category] || c.category.toUpperCase(),
+    district: c.location.district,
+    urgency: c.ai_score >= 80 ? 'HIGH' : c.ai_score >= 50 ? 'MEDIUM' : 'LOW',
+    status: statusMap[c.status] || 'SUBMITTED',
+    createdAt: c.submitted_at,
+    submittedBy: {
+      id: c.citizen_id || 'citizen',
+      name: c.citizen_name || 'Verified Citizen',
+      district: c.location.district,
+    },
+    _count: {
+      interests: Math.max(1, Math.floor(c.ai_score / 10)),
+      comments: c.history ? c.history.length : 1,
+    },
+  };
+}
+
 export default function ProblemFeed() {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -67,47 +109,92 @@ export default function ProblemFeed() {
     setIsLoading(true);
     setError(null);
     try {
-      const params: Record<string, string> = {
-        page: currentPage.toString(),
-        limit: '12',
-      };
-      if (searchQuery) params.search = searchQuery;
-      if (categoryFilter) params.category = categoryFilter;
-      if (districtFilter) params.district = districtFilter;
-      if (statusFilter) params.status = statusFilter;
-
-      const res = await api.get('/problems', { params });
-      if (res.data?.problems) {
-        setProblems(res.data.problems);
-        setPagination(res.data.pagination);
-      } else {
-        throw new Error('Invalid response');
+      // 1. Fetch complaints from local store & backend API
+      const localComplaints = getStoredComplaints();
+      let remoteComplaints: Complaint[] = [];
+      try {
+        const cRes = await api.get('/complaints');
+        if (Array.isArray(cRes.data)) {
+          remoteComplaints = cRes.data;
+        }
+      } catch {
+        // Fall back to localComplaints
       }
-    } catch (err: any) {
-      console.warn('API connecting, using baseline directory:', err);
-      let filtered = [...MOCK_PROBLEMS];
+
+      const mergedComplaintsMap = new Map<string, Complaint>();
+      for (const c of [...remoteComplaints, ...localComplaints]) {
+        if (c?.id && !mergedComplaintsMap.has(c.id)) {
+          mergedComplaintsMap.set(c.id, c);
+        }
+      }
+
+      // Convert complaints to problem summaries (exclude auto_rejected from public feed)
+      const complaintProblems = Array.from(mergedComplaintsMap.values())
+        .filter((c) => c.status !== 'auto_rejected')
+        .map(mapComplaintToProblemSummary);
+
+      // 2. Fetch problems from /problems API or mock baseline
+      let baseProblems: ProblemSummary[] = [];
+      try {
+        const res = await api.get('/problems');
+        if (res.data?.problems && Array.isArray(res.data.problems)) {
+          baseProblems = res.data.problems;
+        } else {
+          baseProblems = [...MOCK_PROBLEMS];
+        }
+      } catch {
+        baseProblems = [...MOCK_PROBLEMS];
+      }
+
+      // Combine complaints + problems, deduplicating by ID
+      const allProblemsMap = new Map<string, ProblemSummary>();
+      // Put complaints first so newly submitted grievances appear prominently
+      for (const p of [...complaintProblems, ...baseProblems]) {
+        if (!allProblemsMap.has(p.id)) {
+          allProblemsMap.set(p.id, p);
+        }
+      }
+
+      let filtered = Array.from(allProblemsMap.values());
+
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
         filtered = filtered.filter(
-          (p) => p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
+          (p) =>
+            p.id.toLowerCase().includes(q) ||
+            p.title.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q) ||
+            p.district.toLowerCase().includes(q)
         );
       }
       if (categoryFilter) {
-        filtered = filtered.filter((p) => p.category === categoryFilter);
+        filtered = filtered.filter((p) => p.category.toLowerCase() === categoryFilter.toLowerCase());
       }
       if (districtFilter) {
-        filtered = filtered.filter((p) => p.district === districtFilter);
+        filtered = filtered.filter((p) => p.district.toLowerCase() === districtFilter.toLowerCase());
       }
       if (statusFilter) {
-        filtered = filtered.filter((p) => p.status === statusFilter);
+        filtered = filtered.filter((p) => p.status.toLowerCase() === statusFilter.toLowerCase());
       }
-      setProblems(filtered);
+
+      // Sort newest first
+      filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+      // Paginate
+      const limit = 12;
+      const startIndex = (currentPage - 1) * limit;
+      const paginated = filtered.slice(startIndex, startIndex + limit);
+
+      setProblems(paginated);
       setPagination({
-        page: 1,
-        limit: 12,
+        page: currentPage,
+        limit,
         total: filtered.length,
-        totalPages: 1,
+        totalPages: Math.max(1, Math.ceil(filtered.length / limit)),
       });
+    } catch (err: any) {
+      console.warn('Error fetching problems:', err);
+      setError('Unable to load problems');
     } finally {
       setIsLoading(false);
     }
@@ -257,28 +344,37 @@ export default function ProblemFeed() {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {problems.map((problem) => (
-            <Link
-              key={problem.id}
-              to={`/problems/${problem.id}`}
-              className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5.5 specular-card card-hover-lift hover:border-primary/50 transition-all duration-200"
-            >
-              <div>
-                {/* Header metadata */}
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <div className="flex flex-wrap gap-1.5 items-center">
-                    <StatusBadge status={problem.status} />
-                    <UrgencyBadge urgency={problem.urgency} />
-                  </div>
-                  <span className="text-[11px] text-muted-foreground font-mono shrink-0">
-                    {formatDate(problem.createdAt)}
-                  </span>
-                </div>
+          {problems.map((problem) => {
+            const isDocket = problem.id.startsWith('SS-');
+            const targetUrl = isDocket ? `/track/${problem.id}` : `/problems/${problem.id}`;
 
-                {/* Title */}
-                <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2 mb-2">
-                  {problem.title}
-                </h3>
+            return (
+              <Link
+                key={problem.id}
+                to={targetUrl}
+                className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5.5 specular-card card-hover-lift hover:border-primary/50 transition-all duration-200"
+              >
+                <div>
+                  {/* Header metadata */}
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex flex-wrap gap-1.5 items-center">
+                      <StatusBadge status={problem.status} />
+                      <UrgencyBadge urgency={problem.urgency} />
+                      {isDocket && (
+                        <span className="font-mono text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+                          {problem.id}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[11px] text-muted-foreground font-mono shrink-0">
+                      {formatDate(problem.createdAt)}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="font-bold text-base text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2 mb-2">
+                    {problem.title}
+                  </h3>
 
                 {/* Description snippet */}
                 <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed mb-4">

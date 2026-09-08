@@ -7,6 +7,9 @@ interface HorizontalStepTrackerProps {
   aiScore: number;
   history: ComplaintHistoryItem[];
   submittedAt: string;
+  category?: string;
+  district?: string;
+  officerName?: string | null;
 }
 
 export function HorizontalStepTracker({
@@ -14,14 +17,11 @@ export function HorizontalStepTracker({
   aiScore,
   history,
   submittedAt,
+  category,
+  district,
+  officerName,
 }: HorizontalStepTrackerProps) {
   // Determine which steps are completed, active, or failed
-  // Step 1: Submitted (Always completed)
-  // Step 2: AI Verification (Completed or Failed if auto_rejected)
-  // Step 3: Officer Review (Completed if approved/in_progress/resolved, Active if pending_officer/officer_reviewing, Skipped if auto_approved, Rejected if rejected_by_officer)
-  // Step 4: In Progress (Active if verified_in_progress, Completed if resolved)
-  // Step 5: Resolved (Active/Completed if resolved)
-
   const isAutoRejected = status === 'auto_rejected';
   const isOfficerRejected = status === 'rejected_by_officer';
   const isPendingOfficer = status === 'pending_officer';
@@ -29,6 +29,40 @@ export function HorizontalStepTracker({
   const isInProgress = status === 'verified_in_progress';
   const isResolved = status === 'resolved';
   const isAutoApproved = status === 'auto_approved';
+
+  // Calculate 72-hour statutory SLA countdown
+  const submissionTime = new Date(submittedAt).getTime();
+  const slaDeadline = submissionTime + 72 * 60 * 60 * 1000;
+  const hoursLeft = Math.max(0, Math.round((slaDeadline - Date.now()) / (1000 * 60 * 60)));
+  const slaText = isResolved
+    ? 'Complied within 72H'
+    : isAutoRejected || isOfficerRejected
+    ? 'Docket Closed'
+    : hoursLeft > 0
+    ? `${hoursLeft}H remaining`
+    : 'SLA Elapsed (Pushed to Escalation)';
+
+  // Current physical/administrative file custodian
+  const currentCustodian = isResolved
+    ? 'State Archive & Public Gazette'
+    : isInProgress
+    ? 'Field Engineering Squad & CSR Solvers'
+    : isPendingOfficer || isOfficerReviewing
+    ? `${district || 'District'} Nodal Desk (${officerName || 'Assigned Officer'})`
+    : isAutoApproved
+    ? 'Dispatched to Department Works Section'
+    : 'Grievance Review & Appeal Registry';
+
+  // Department designation
+  const deptMap: Record<string, string> = {
+    roads: 'Road Construction Dept (RCD / PWD)',
+    water: 'Drinking Water & Sanitation Dept (DWSD)',
+    electricity: 'Jharkhand Bijli Vitran Nigam (JBVNL)',
+    sanitation: 'Urban Development & Housing (UD&HD)',
+    corruption: 'District Administration / Anti-Corruption',
+    other: 'Rural Development Dept',
+  };
+  const departmentName = (category && deptMap[category.toLowerCase()]) || 'District Works Division';
 
   const steps = [
     {
@@ -122,7 +156,35 @@ export function HorizontalStepTracker({
     : 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500';
 
   return (
-    <div className="w-full py-4">
+    <div className="w-full py-2">
+      {/* Sovereign File Movement Ledger Header */}
+      <div className="mb-6 p-4 rounded-xl border border-border bg-card/95 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs shadow-2xs">
+        <div className="space-y-0.5">
+          <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">
+            Current File Custodian
+          </span>
+          <span className="font-bold text-foreground truncate block font-mono text-[11px]">
+            {currentCustodian}
+          </span>
+        </div>
+        <div className="space-y-0.5">
+          <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">
+            Responsible Department
+          </span>
+          <span className="font-bold text-primary truncate block">
+            {departmentName}
+          </span>
+        </div>
+        <div className="space-y-0.5 sm:text-right">
+          <span className="text-[10px] uppercase font-mono font-bold text-muted-foreground block">
+            Statutory SLA Mandate
+          </span>
+          <span className="font-bold font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+            72H Standard • {slaText}
+          </span>
+        </div>
+      </div>
+
       {/* Desktop Stepper */}
       <div className="hidden md:grid md:grid-cols-5 gap-3 relative">
         {/* Background Track Line */}
