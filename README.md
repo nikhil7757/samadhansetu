@@ -16,10 +16,7 @@
 docker-compose up -d
 ```
 
-This starts PostgreSQL 17 on port `5432` with:
-- User: `samadhansetu`
-- Password: `samadhansetu_dev`
-- Database: `samadhansetu`
+
 
 ### 2. Setup Backend
 
