@@ -88,6 +88,22 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link to="/prototype" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all font-semibold text-emerald-700 dark:text-emerald-400">
+                  Interactive Prototype (State Machine)
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="/architecture-review.html"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-primary transition-colors flex items-center gap-1 group font-semibold text-teal-700 dark:text-teal-400"
+                >
+                  <span>Architecture Review Report</span>
+                  <ExternalLink className="h-3 w-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                </a>
+              </li>
+              <li>
                 <a
                   href="https://jharkhand.gov.in"
                   target="_blank"

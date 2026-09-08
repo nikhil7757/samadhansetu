@@ -35,10 +35,10 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
-  getStoredComplaints,
   executeOfficerAction,
   type Complaint,
 } from '@/lib/complaints';
+import { useGrievances } from '@/lib/grievanceStore';
 import { formatDate, cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 
@@ -47,7 +47,7 @@ export default function PendingApproval() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [complaints, setComplaints] = useState<Complaint[]>(() => getStoredComplaints());
+  const { grievances: complaints, isLoading, refresh } = useGrievances();
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [dateRangeFilter, setDateRangeFilter] = useState<string>('all');
@@ -86,7 +86,7 @@ export default function PendingApproval() {
     });
   }, [complaints, categoryFilter, dateRangeFilter, searchQuery]);
 
-  const handleActionConfirm = () => {
+  const handleActionConfirm = async () => {
     if (!selectedComplaint || !actionType) return;
     if (actionType === 'reject' && !officerNote.trim()) {
       toast.error('Rejection reason is mandatory');
@@ -113,7 +113,7 @@ export default function PendingApproval() {
       );
 
       if (updated) {
-        setComplaints(getStoredComplaints());
+        await refresh();
         toast.success(
           actionType === 'approve'
             ? 'Complaint Approved & Forwarded!'

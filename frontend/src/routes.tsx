@@ -60,6 +60,7 @@ const AllMatches = lazy(() => import('@/pages/admin/AllMatches'));
 const AboutPage = lazy(() => import('@/pages/AboutPage'));
 const FaqPage = lazy(() => import('@/pages/FaqPage'));
 const ContactPage = lazy(() => import('@/pages/ContactPage'));
+const PrototypePage = lazy(() => import('@/pages/PrototypePage'));
 
 function SuspenseFallback() {
   return (
@@ -112,6 +113,7 @@ export const router = createBrowserRouter([
       { path: 'about', element: <SuspenseWrapper><AboutPage /></SuspenseWrapper> },
       { path: 'faq', element: <SuspenseWrapper><FaqPage /></SuspenseWrapper> },
       { path: 'contact', element: <SuspenseWrapper><ContactPage /></SuspenseWrapper> },
+      { path: 'prototype', element: <SuspenseWrapper><PrototypePage /></SuspenseWrapper> },
 
       // Problem directory
       { path: 'problems', element: <SuspenseWrapper><ProblemFeed /></SuspenseWrapper> },

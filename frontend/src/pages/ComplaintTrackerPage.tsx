@@ -38,16 +38,22 @@ import {
 import { HorizontalStepTracker } from '@/components/shared/HorizontalStepTracker';
 import {
   getComplaintById,
-  appealComplaint,
   getStoredComplaints,
   type Complaint,
 } from '@/lib/complaints';
+import { useGrievance } from '@/lib/grievanceStore';
 import { cn, formatDate } from '@/lib/utils';
-import api from '@/lib/api';
 
 export default function ComplaintTrackerPage() {
   const { complaintId } = useParams<{ complaintId?: string }>();
   const navigate = useNavigate();
+
+  const {
+    grievance: storeGrievance,
+    isLoading: isStoreLoading,
+    error: storeError,
+    appeal: storeAppeal,
+  } = useGrievance(complaintId);
 
   const [searchInput, setSearchInput] = useState('');
   const [complaint, setComplaint] = useState<Complaint | null>(null);
@@ -60,42 +66,25 @@ export default function ComplaintTrackerPage() {
   const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
 
   useEffect(() => {
-    if (!complaintId) {
+    if (complaintId) {
+      if (storeGrievance) {
+        setComplaint(storeGrievance);
+        setSearchInput(storeGrievance.id);
+        setNotFound(false);
+      } else if (!isStoreLoading && storeError) {
+        setComplaint(null);
+        setNotFound(true);
+      }
+    } else {
       // Default to first complaint if accessed at /track without param
       const all = getStoredComplaints();
       if (all.length > 0) {
         setComplaint(all[0]);
         setSearchInput(all[0].id);
+        setNotFound(false);
       }
-      return;
     }
-
-    const normalizedId = complaintId.trim().toUpperCase();
-
-    // Check local storage first for instantaneous rendering
-    const localFound = getComplaintById(normalizedId);
-    if (localFound) {
-      setComplaint(localFound);
-      setSearchInput(localFound.id);
-      setNotFound(false);
-    }
-
-    // Fetch latest live data from backend database API
-    api.get(`/complaints/${encodeURIComponent(normalizedId)}`)
-      .then((res) => {
-        if (res.data && res.data.id) {
-          setComplaint(res.data);
-          setSearchInput(res.data.id);
-          setNotFound(false);
-        }
-      })
-      .catch((err) => {
-        if (!localFound) {
-          setComplaint(null);
-          setNotFound(true);
-        }
-      });
-  }, [complaintId]);
+  }, [complaintId, storeGrievance, isStoreLoading, storeError]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,16 +100,18 @@ export default function ComplaintTrackerPage() {
     setTimeout(() => setHasCopied(false), 2000);
   };
 
-  const handleAppealSubmit = () => {
+  const handleAppealSubmit = async () => {
     if (!complaint) return;
     setIsSubmittingAppeal(true);
     try {
-      const updated = appealComplaint(complaint.id, appealReason.trim() || 'Citizen requested human officer review of automated rejection.');
-      if (updated) {
-        setComplaint({ ...updated });
+      const note = appealReason.trim() || 'Citizen requested human officer review of automated rejection.';
+      const ok = await storeAppeal(note);
+      if (ok) {
         setAppealModalOpen(false);
         setAppealReason('');
         toast.success('Appeal submitted successfully! Assigned to Nodal Officer review queue.');
+      } else {
+        toast.error('Failed to submit appeal');
       }
     } catch {
       toast.error('Failed to submit appeal');
@@ -174,7 +165,19 @@ export default function ComplaintTrackerPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-8">
-        {notFound ? (
+        {isStoreLoading && !complaint ? (
+          <div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+            <div className="h-10 w-10 animate-spin rounded-full border-3 border-primary border-t-transparent" />
+            <div className="space-y-1">
+              <span className="text-sm font-bold text-foreground block">
+                Loading Official Civic Docket...
+              </span>
+              <span className="text-xs font-mono text-muted-foreground block">
+                Synchronizing {complaintId || 'docket'} with Jharkhand Civic Registry
+              </span>
+            </div>
+          </div>
+        ) : notFound ? (
           <Card className="p-8 text-center border-dashed rounded-2xl space-y-4">
             <div className="h-12 w-12 rounded-full bg-amber-500/10 text-amber-600 mx-auto flex items-center justify-center">
               <AlertTriangle className="h-6 w-6" />

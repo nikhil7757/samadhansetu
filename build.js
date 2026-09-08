@@ -176,17 +176,13 @@ const mirrorFiles = [
 
 for (const file of mirrorFiles) {
   const destPath = path.join(DIST_DIR, file);
-  if (!fs.existsSync(destPath)) {
-    const publicSource = path.join(FRONTEND_DIR, 'public', file);
-    const rootSource = path.join(ROOT_DIR, file);
+  const publicSource = path.join(FRONTEND_DIR, 'public', file);
+  const rootSource = path.join(ROOT_DIR, file);
 
-    if (fs.existsSync(publicSource)) {
-      fs.copyFileSync(publicSource, destPath);
-      console.log(`✓ Synchronized mirror: ${file} (from frontend/public)`);
-    } else if (fs.existsSync(rootSource)) {
-      fs.copyFileSync(rootSource, destPath);
-      console.log(`✓ Synchronized mirror: ${file} (from root)`);
-    }
+  const source = fs.existsSync(publicSource) ? publicSource : (fs.existsSync(rootSource) ? rootSource : null);
+  if (source) {
+    fs.copyFileSync(source, destPath);
+    console.log(`✓ Synchronized mirror: ${file} (from ${path.relative(ROOT_DIR, source)})`);
   }
 }
 

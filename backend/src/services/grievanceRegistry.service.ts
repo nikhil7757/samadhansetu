@@ -200,6 +200,108 @@ const MEMORY_REGISTRY: Record<string, GrievanceRecord> = {
       },
     ],
   },
+  'SS-2026-000484': {
+    id: 'SS-2026-000484',
+    citizen_id: 'u-citizen-4',
+    citizen_name: 'Anita Devi',
+    citizen_email: 'anita.devi@gmail.com',
+    title: 'Primary Health Center Solar Cold Chain Inverter Restored',
+    category: 'water',
+    description: 'Over 80 rural patients visiting the Dumri community center had no safe potable drinking water. The mechanical filter unit has been completely restored.',
+    location: {
+      lat: 23.0456,
+      lng: 84.5421,
+      address: 'Community Health Centre, Dumri Block',
+      district: 'Gumla',
+      block: 'Dumri',
+    },
+    media: ['https://images.unsplash.com/photo-1541888946425-d0fbb186f5f8?auto=format&fit=crop&w=1200&q=80'],
+    submitted_at: '2026-08-30T11:00:00.000Z',
+    ai_score: 89,
+    ai_flags: ['geo_consistency_verified', 'clean_exif_metadata_passed'],
+    status: 'resolved',
+    officer_id: 'u-admin',
+    officer_name: 'Vikram Singh (Nodal Officer)',
+    officer_notes: 'Community filter installed with CSR grant.',
+    history: [
+      {
+        status: 'resolved',
+        actor: 'District Water Engineer Gumla',
+        timestamp: '2026-09-04T15:00:00.000Z',
+        note: 'Independent water test verified. Grievance closed.',
+      },
+    ],
+  },
+  'SS-2026-000485': {
+    id: 'SS-2026-000485',
+    citizen_id: 'u-citizen-5',
+    citizen_name: 'Sunil Mahto',
+    citizen_email: 'sunil.mahto@gmail.com',
+    title: 'Fix this immediately very bad situation',
+    category: 'roads',
+    description: 'Bad road please fix immediately it is not good.',
+    location: {
+      lat: 23.3441,
+      lng: 85.3096,
+      address: 'Main Chowk, Namkum',
+      district: 'Ranchi',
+      block: 'Namkum',
+    },
+    media: [],
+    submitted_at: '2026-09-06T18:00:00.000Z',
+    ai_score: 28,
+    ai_flags: ['spam_text_too_short', 'no_media_evidence', 'generic_locality_no_geotag'],
+    status: 'auto_rejected',
+    officer_id: null,
+    officer_notes: null,
+    rejection_reason: 'Insufficient detail: The complaint contains fewer than 15 words and lacks specific landmark or infrastructure symptoms.',
+    history: [
+      {
+        status: 'auto_rejected',
+        actor: 'SamadhanSetu AI Core',
+        timestamp: '2026-09-06T18:00:05.000Z',
+        note: 'AI Score: 28/100 (<40). Flagged as invalid. Citizen may appeal with photo evidence.',
+      },
+    ],
+  },
+  'SS-2026-000495': {
+    id: 'SS-2026-000495',
+    citizen_id: 'u-citizen',
+    citizen_name: 'Verified Citizen',
+    citizen_email: 'citizen@samadhansetu.gov.in',
+    title: 'Severe Structural Fissure in Overpass Girder near Kanke Bazar',
+    category: 'roads',
+    description: 'Noticeable 3-inch diagonal fissure along the secondary concrete girder beneath the Kanke municipal bypass overpass. Daily heavy coal trucks and commuter buses causing noticeable vibration. Immediate structural audit requested.',
+    location: {
+      lat: 23.3441,
+      lng: 85.3096,
+      address: 'Pillar 14, Kanke Bypass Overpass, Kanke Road',
+      district: 'Ranchi',
+      block: 'Kanke',
+    },
+    media: ['https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=1200&q=80'],
+    submitted_at: '2026-09-07T11:15:00.000Z',
+    ai_score: 88,
+    ai_flags: ['geo_consistency_verified', 'clean_exif_metadata_passed', 'category_match_verified: bridge, girder', 'critical_safety_hazard'],
+    status: 'verified_in_progress',
+    officer_id: 'u-admin',
+    officer_name: 'Sri Vikram Singh (District Nodal Officer)',
+    officer_notes: 'Structural safety team dispatched from RCD Ranchi. Temporary 15-tonne axle load restriction posted.',
+    history: [
+      {
+        status: 'auto_approved',
+        actor: 'SamadhanSetu AI Core',
+        timestamp: '2026-09-07T11:15:04.000Z',
+        note: 'AI Score: 88/100. Critical safety hazard detected. Auto-forwarded to Executive Engineer (Roads).',
+      },
+      {
+        status: 'verified_in_progress',
+        actor: 'Sri Vikram Singh (District Nodal Officer)',
+        timestamp: '2026-09-07T13:40:00.000Z',
+        note: 'Ground inspection verified. Ultrasonic concrete testing underway by BIT Mesra civil engineering team.',
+      },
+    ],
+  },
 };
 
 export class GrievanceRegistryService {
@@ -328,20 +430,30 @@ export class GrievanceRegistryService {
   }
 
   /**
-   * List grievances with category, district, and status filtering
+   * List grievances with category, district, citizen, and status filtering
    */
   static async listGrievances(filters?: {
     category?: string;
     district?: string;
     status?: string;
     search?: string;
+    citizen_id?: string;
+    citizen_email?: string;
   }): Promise<GrievanceRecord[]> {
     let records = Object.values(MEMORY_REGISTRY);
 
     // Also pull from Prisma if connected
     try {
       if ((prisma as any)?.complaint) {
+        const where: any = {};
+        if (filters?.status && filters.status !== 'all') where.status = filters.status;
+        if (filters?.district && filters.district !== 'all') where.district = filters.district;
+        if (filters?.category && filters.category !== 'all') where.category = filters.category;
+        if (filters?.citizen_id) where.citizenId = filters.citizen_id;
+        if (filters?.citizen_email) where.citizenEmail = filters.citizen_email;
+
         const dbEntries = await (prisma as any).complaint.findMany({
+          where,
           orderBy: { submittedAt: 'desc' },
           take: 100,
         });
@@ -353,6 +465,14 @@ export class GrievanceRegistryService {
       }
     } catch {
       // Memory fallback holds
+    }
+
+    if (filters?.citizen_id) {
+      records = records.filter((r) => r.citizen_id === filters.citizen_id);
+    }
+
+    if (filters?.citizen_email) {
+      records = records.filter((r) => r.citizen_email?.toLowerCase() === filters.citizen_email?.toLowerCase());
     }
 
     if (filters?.category && filters.category !== 'all') {

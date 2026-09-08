@@ -39,7 +39,12 @@ export interface UseGrievanceResult {
   isLoading: boolean;
   error: string | null;
   appeal: (note: string) => Promise<boolean>;
-  takeOfficerAction: (action: 'approve' | 'reject' | 'escalate', note?: string) => Promise<boolean>;
+  takeOfficerAction: (
+    action: 'approve' | 'reject' | 'escalate' | 'resolve' | 'escalate_to_solver',
+    note?: string,
+    officerId?: string,
+    officerName?: string
+  ) => Promise<boolean>;
   refresh: () => Promise<void>;
 }
 
@@ -156,7 +161,21 @@ export function useGrievance(docketId?: string): UseGrievanceResult {
 
   useEffect(() => {
     fetchGrievance();
-  }, [fetchGrievance]);
+
+    const handleStoreChange = () => {
+      if (docketId) {
+        const local = getComplaintById(docketId);
+        if (local) {
+          setGrievance(local);
+        }
+      }
+    };
+
+    listeners.add(handleStoreChange);
+    return () => {
+      listeners.delete(handleStoreChange);
+    };
+  }, [fetchGrievance, docketId]);
 
   const appeal = useCallback(async (note: string): Promise<boolean> => {
     if (!docketId) return false;
@@ -175,17 +194,25 @@ export function useGrievance(docketId?: string): UseGrievanceResult {
   }, [docketId]);
 
   const takeOfficerAction = useCallback(
-    async (action: 'approve' | 'reject' | 'escalate', note?: string): Promise<boolean> => {
+    async (
+      action: 'approve' | 'reject' | 'escalate' | 'resolve' | 'escalate_to_solver',
+      note?: string,
+      officerId = 'u-admin',
+      officerName = 'District Nodal Officer'
+    ): Promise<boolean> => {
       if (!docketId) return false;
+      const notes = note || `Officer action: ${action}`;
       try {
-        const updated = libExecuteOfficerAction(docketId, action, note);
+        const updated = libExecuteOfficerAction(docketId, action, officerId, officerName, notes);
         if (updated) {
           setGrievance(updated);
           notifyListeners();
         }
         await api.patch(`/complaints/${encodeURIComponent(docketId)}/officer-action`, {
           action,
-          note,
+          note: notes,
+          officerId,
+          officerName,
         });
         return true;
       } catch (err: any) {
