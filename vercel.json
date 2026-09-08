@@ -17,7 +17,11 @@
       "destination": "/api/index.ts"
     },
     {
-      "source": "/(.*)",
+      "source": "/ironforge",
+      "destination": "/ironforge.html"
+    },
+    {
+      "source": "/((?!api|uploads|ironforge).*)",
       "destination": "/index.html"
     }
   ]
