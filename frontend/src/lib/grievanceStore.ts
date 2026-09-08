@@ -206,8 +206,10 @@ export function useGrievance(docketId?: string): UseGrievanceResult {
         const updated = libExecuteOfficerAction(docketId, action, officerId, officerName, notes);
         if (updated) {
           setGrievance(updated);
-          notifyListeners();
+        } else if (action === 'reject') {
+          setGrievance(null);
         }
+        notifyListeners();
         await api.patch(`/complaints/${encodeURIComponent(docketId)}/officer-action`, {
           action,
           note: notes,

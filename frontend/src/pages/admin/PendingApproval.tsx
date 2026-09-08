@@ -112,13 +112,13 @@ export default function PendingApproval() {
         officerNote.trim() || defaultNote
       );
 
-      if (updated) {
+      if (updated || actionType === 'reject') {
         await refresh();
         toast.success(
           actionType === 'approve'
             ? 'Complaint Approved & Forwarded!'
             : actionType === 'reject'
-            ? 'Complaint Rejected. Citizen notified.'
+            ? 'Complaint Rejected & Removed from Portal.'
             : 'Complaint Escalated to State Directorate.'
         );
         setSelectedComplaint(null);

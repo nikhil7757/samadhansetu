@@ -13,6 +13,7 @@ import {
   Calendar,
   User,
   ShieldAlert,
+  ShieldCheck,
   ArrowLeft,
   Share2,
   ExternalLink,

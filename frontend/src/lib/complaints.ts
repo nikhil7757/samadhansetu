@@ -680,14 +680,21 @@ export function executeOfficerAction(
       note: `Officer approved & forwarded: ${notes}`,
     });
   } else if (action === 'reject') {
-    complaint.status = 'rejected_by_officer';
-    complaint.rejection_reason = notes;
-    complaint.history.push({
-      status: 'rejected_by_officer',
-      actor: `${officerName} (Nodal Officer)`,
-      timestamp: now,
-      note: `Officer rejected complaint. Official Reason: "${notes}". Citizen may submit new evidence or request review.`,
+    // Officer rejection = permanent removal from the portal
+    const purged = all.filter((_, i) => i !== index);
+    saveComplaints(purged);
+
+    // Sync deletion with backend
+    api.patch(`/complaints/${encodeURIComponent(id)}/officer-action`, {
+      action,
+      note: notes,
+      officerId,
+      officerName,
+    }).catch((err) => {
+      console.warn('Backend officer action sync note:', err?.message || err);
     });
+
+    return null;
   } else if (action === 'escalate') {
     complaint.status = 'officer_reviewing';
     complaint.history.push({
