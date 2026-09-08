@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONFORGE — Elite Strength & Conditioning Studio</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-darker: #050505;
+    --bg-card: #121212;
+    --bg-card-hover: #181818;
+    --fg: #f5f5f5;
+    --fg-dim: #b0b0b0;
+    --muted: #585858;
+    --accent: #FF5400;
+    --accent-bright: #FF7024;
+    --accent-dim: #B33A00;
+    --accent-glow: rgba(255, 84, 0, 0.4);
+    --silver: #C8C8C8;
+    --silver-dim: #4a4a4a;
+    --border: #1f1f1f;
+    --border-light: #2c2c2c;
+  }
+  
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Archivo', sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  /* Typography */
+  .font-display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.015em; }
+  .font-heading { font-family: 'Oswald', sans-serif; }
+  .font-body { font-family: 'Archivo', sans-serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+  
+  /* Grain overlay */
+  .grain {
+    position: fixed;
+    inset: -10%;
+    pointer-events: none;
+    z-index: 200;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='250' height='250'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+  
+  /* Scan line overlay */
+  .scanline {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 190;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(0, 0, 0, 0.2) 2px,
+      rgba(0, 0, 0, 0.2) 4px
+    );
+    opacity: 0.65;
+  }
+
+  /* Section reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Hero reel frames */
+  .reel-frame {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.8s ease-in-out;
+  }
+  .reel-frame.active { opacity: 1; }
+  .reel-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(100%) contrast(1.6) brightness(0.42);
+    transform: scale(1.05);
+  }
+  .reel-frame.active img {
+    animation: kenburns 8s ease-out forwards;
+  }
+  @keyframes kenburns {
+    0% { transform: scale(1.05) translate(0, 0); }
+    100% { transform: scale(1.18) translate(-2.5%, -2%); }
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: 
+      linear-gradient(180deg, rgba(10,10,10,0.92) 0%, rgba(10,10,10,0.42) 30%, rgba(10,10,10,0.6) 70%, rgba(10,10,10,0.98) 100%),
+      linear-gradient(90deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.1) 50%, rgba(10,10,10,0.65) 100%),
+      radial-gradient(ellipse at 20% 70%, rgba(255, 84, 0, 0.2) 0%, transparent 55%);
+  }
+  
+  /* Coach flip card */
+  .flip-card {
+    perspective: 1600px;
+    height: 540px;
+  }
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  .flip-card:hover .flip-card-inner,
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+  .flip-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .flip-back {
+    transform: rotateY(180deg);
+    background: #111111;
+    border-color: var(--accent-dim);
+  }
+  
+  /* Pulse */
+  @keyframes pulse-cta {
+    0%, 100% { 
+      box-shadow: 0 0 0 0 rgba(255, 84, 0, 0.65), 0 0 35px rgba(255, 84, 0, 0.35);
+    }
+    50% { 
+      box-shadow: 0 0 0 16px rgba(255, 84, 0, 0), 0 0 45px rgba(255, 84, 0, 0.45);
+    }
+  }
+  .pulse-btn { animation: pulse-cta 2.2s ease-out infinite; }
+  
+  /* Sticky bottom bar */
+  .sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(110%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 100;
+  }
+  .sticky-cta.visible { transform: translateY(0); }
+  
+  /* Marquee */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .marquee-track {
+    display: flex;
+    animation: marquee 35s linear infinite;
+    width: max-content;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+  
+  /* Corner notch bracket decoration */
+  .notch-box {
+    position: relative;
+  }
+  .notch-box::before,
+  .notch-box::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--accent);
+    border-style: solid;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .notch-box::before {
+    top: -1px;
+    left: -1px;
+    border-width: 2px 0 0 2px;
+  }
+  .notch-box::after {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 2px 2px 0;
+  }
+
+  /* Sound bars animation */
+  @keyframes wave {
+    0%, 100% { height: 3px; }
+    50% { height: 16px; }
+  }
+  .wave-bar {
+    display: inline-block;
+    width: 2px;
+    background: var(--accent);
+    margin: 0 1.5px;
+    height: 3px;
+    vertical-align: bottom;
+  }
+  .unmuted .wave-bar { animation: wave 0.7s ease-in-out infinite; }
+  .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+  .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+  
+  /* High-contrast image styling */
+  .img-noir {
+    filter: grayscale(100%) contrast(1.45) brightness(0.75);
+    transition: filter 0.6s ease, transform 0.6s ease;
+  }
+  .card-hover:hover .img-noir {
+    filter: grayscale(80%) contrast(1.55) brightness(0.85);
+    transform: scale(1.05);
+  }
+  
+  /* Text stroke effect */
+  .text-stroke {
+    -webkit-text-stroke: 1.5px var(--silver-dim);
+    color: transparent;
+  }
+  
+  /* Form input */
+  .form-input {
+    background: rgba(20, 20, 20, 0.75);
+    border: 1px solid var(--border-light);
+    color: var(--fg);
+    padding: 0.85rem 1rem;
+    font-family: 'Archivo', sans-serif;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(28, 28, 28, 0.9);
+  }
+  .form-input::placeholder {
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  
+  /* Goal selector pill */
+  .goal-pill {
+    cursor: pointer;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--border-light);
+    background: rgba(18, 18, 18, 0.6);
+    color: var(--fg-dim);
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.25s;
+    user-select: none;
+  }
+  .goal-pill:hover {
+    border-color: var(--silver);
+    color: var(--fg);
+  }
+  .goal-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: 700;
+  }
+  
+  /* Drag-scroll carousel */
+  .carousel-container {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .carousel-container::-webkit-scrollbar { display: none; }
+  
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    top: 80px;
+    right: 24px;
+    background: #161616;
+    border: 1px solid var(--accent);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.5rem;
+    z-index: 250;
+    transform: translateX(130%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  }
+  .toast.visible { transform: translateX(0); }
+</style>
+</head>
+<body class="bg-[#0a0a0a] text-[#f5f5f5]">
+  <div class="grain"></div>
+  <div class="scanline"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <div class="flex items-start gap-3">
+      <div class="w-6 h-6 rounded-full bg-[var(--accent)] text-black flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+        <i class="fas fa-check"></i>
+      </div>
+      <div>
+        <div class="font-heading font-bold text-sm tracking-wide uppercase text-white" id="toastTitle">SESSION CONFIRMED</div>
+        <div class="text-xs text-[var(--fg-dim)] mt-0.5" id="toastMsg">Your trial docket has been registered. Our head coach will brief you within 2 hours.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telemetry Ticker Top Ribbon -->
+  <div class="bg-[#050505] border-b border-[#1c1c1c] py-1.5 px-4 font-mono text-[10.5px] text-[#888] flex items-center justify-between overflow-hidden z-50 relative">
+    <div class="flex items-center gap-4">
+      <span class="flex items-center gap-1.5 text-[var(--accent)] font-bold">
+        <span class="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-ping"></span>
+        IRONFORGE FACILITY TELEMETRY
+      </span>
+      <span class="hidden md:inline text-white/30">•</span>
+      <span class="hidden md:inline">O2 PURITY: 99.4%</span>
+      <span class="hidden md:inline text-white/30">•</span>
+      <span class="hidden md:inline">TEMPERATURE: 64°F REGULATED</span>
+      <span class="hidden lg:inline text-white/30">•</span>
+      <span class="hidden lg:inline">BAROMETRIC: 29.92 INHG</span>
+    </div>
+    <div class="flex items-center gap-4 text-[#aaa]">
+      <span class="font-bold text-white">47 EASTBOUND ALLEY · NYC</span>
+      <span class="text-white/30">•</span>
+      <span class="text-[var(--accent)] font-bold">LIMITED CAP: 80 ATHLETES MAX</span>
+    </div>
+  </div>
+
+  <!-- Header Nav -->
+  <header class="sticky top-0 left-0 right-0 z-40 backdrop-blur-xl bg-black/75 border-b border-white/5 transition-colors">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3.5 group">
+        <div class="w-10 h-10 bg-[var(--accent)] text-black flex items-center justify-center font-black text-xl tracking-tighter relative">
+          <span>IF</span>
+          <div class="absolute -inset-1 border border-[var(--accent)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+        <div>
+          <div class="font-display text-2xl sm:text-3xl leading-none tracking-wider text-white">IRONFORGE</div>
+          <div class="font-mono text-[9.5px] text-[var(--muted)] tracking-[0.3em] uppercase">ELITE ATHLETIC FORGE</div>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-10 font-heading text-xs uppercase tracking-[0.2em] text-[var(--fg-dim)]">
+        <a href="#curriculum" class="hover:text-white hover:text-[var(--accent)] transition-colors">Curriculum</a>
+        <a href="#coaches" class="hover:text-white hover:text-[var(--accent)] transition-colors">Coaches</a>
+        <a href="#stories" class="hover:text-white hover:text-[var(--accent)] transition-colors">Field Records</a>
+        <a href="#facility" class="hover:text-white hover:text-[var(--accent)] transition-colors">Facility Specs</a>
+        <a href="#booking" class="hover:text-white hover:text-[var(--accent)] transition-colors">Recruitment</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <a href="#booking" class="font-heading text-xs font-bold tracking-[0.2em] uppercase text-black bg-[var(--silver)] hover:bg-white px-5 py-2.5 transition-all shadow-sm">
+          Book Trial Class
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 1. HERO SECTION -->
+  <section class="relative h-[92vh] min-h-[740px] w-full overflow-hidden flex flex-col justify-end" id="hero">
+    <!-- Ken Burns Photo Reel -->
+    <div class="absolute inset-0" id="reelContainer">
+      <div class="reel-frame active">
+        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1920&q=80" alt="Deadlift barbell in ironforge">
+      </div>
+      <div class="reel-frame">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1920&q=80" alt="Heavy barbell row pull">
+      </div>
+      <div class="reel-frame">
+        <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=1920&q=80" alt="Heavy battle ropes training">
+      </div>
+      <div class="reel-frame">
+        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1920&q=80" alt="Textured iron dumbbell rack">
+      </div>
+      <div class="reel-frame">
+        <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1920&q=80" alt="Intense powerlifter prep">
+      </div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <!-- Audio Synth Control & Reel Index -->
+    <div class="absolute top-8 right-6 lg:right-12 flex items-center gap-4 z-30">
+      <div class="hidden sm:flex items-center gap-2.5 font-mono text-[11px] text-[var(--fg-dim)] bg-black/60 backdrop-blur-md px-3 py-1.5 border border-white/10">
+        <span class="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse"></span>
+        <span class="tracking-[0.2em]" id="reelIndex">REEL: 01 / 05</span>
+      </div>
+
+      <button id="muteToggle" class="flex items-center gap-3 px-4 py-2 border border-white/20 hover:border-[var(--accent)] bg-black/60 backdrop-blur-md transition-colors group cursor-pointer">
+        <div class="flex items-end gap-[2px] h-3.5">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+        <span class="font-mono text-[10px] tracking-[0.2em] uppercase text-white" id="muteLabel">AUDIO: MUTED</span>
+        <i class="fas fa-volume-xmark text-xs text-[var(--muted)] group-hover:text-[var(--accent)]" id="muteIcon"></i>
+      </button>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-20 max-w-[1600px] w-full mx-auto px-6 lg:px-12 pb-16 pt-24 space-y-8">
+      <div class="max-w-4xl space-y-4 reveal in-view">
+        <div class="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-[var(--accent)]">
+          <span class="w-8 h-[2px] bg-[var(--accent)]"></span>
+          <span>EST. 2012 · RECRUITMENT ACTIVE</span>
+        </div>
+
+        <h1 class="font-display text-5xl sm:text-7xl lg:text-9xl leading-[0.88] tracking-tight uppercase">
+          BUILT BY DISCIPLINE.<br>
+          <span class="text-stroke">FORGED IN</span> <span class="text-[var(--accent)]">IRON.</span>
+        </h1>
+
+        <p class="text-sm sm:text-base lg:text-lg text-[var(--fg-dim)] max-w-2xl leading-relaxed font-body">
+          A closed-roster strength & conditioning facility for competitive athletes and unyielding lifters. Zero cardio fluff, zero mirrored selfies. Just calibrated Olympic iron, biomechanical rigor, and verified human output.
+        </p>
+      </div>
+
+      <!-- Action Strip & Coach Preview -->
+      <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-t border-white/10 pt-6">
+        <div class="flex flex-wrap items-center gap-4">
+          <a href="#booking" class="pulse-btn font-heading text-sm font-bold uppercase tracking-[0.2em] bg-[var(--accent)] hover:bg-[var(--accent-bright)] text-black px-8 py-4 flex items-center gap-3 transition-all cursor-pointer">
+            <span>Book Assessment Trial</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+          </a>
+          <a href="#curriculum" class="font-heading text-sm font-semibold uppercase tracking-[0.2em] border border-white/20 hover:border-[var(--accent)] text-white bg-black/40 backdrop-blur-sm px-6 py-4 transition-all">
+            Explore 4 Protocols
+          </a>
+        </div>
+
+        <!-- Coach Roster Preview Strip -->
+        <div class="flex items-center gap-4 bg-black/50 backdrop-blur-sm p-2.5 px-4 border border-white/10">
+          <div class="flex -space-x-3">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full border-2 border-[#121212] object-cover grayscale" alt="Coach Marcus">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full border-2 border-[#121212] object-cover grayscale" alt="Coach Elena">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full border-2 border-[#121212] object-cover grayscale" alt="Coach Damian">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full border-2 border-[#121212] object-cover grayscale" alt="Coach Maya">
+          </div>
+          <div>
+            <span class="font-heading text-xs uppercase font-bold text-white block">Elite Head Coaching Staff</span>
+            <span class="font-mono text-[10px] text-[var(--accent)] uppercase block tracking-wider">4 Masters of Sport On-Duty</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marquee Banner -->
+  <div class="bg-[var(--accent)] text-black py-3 overflow-hidden font-heading font-black text-sm uppercase tracking-[0.3em] select-none border-y border-black">
+    <div class="marquee-track flex gap-12 items-center">
+      <span>NO MIRRORS</span><span>•</span>
+      <span>CALIBRATED ELEIKO PLATES</span><span>•</span>
+      <span>100% ATHLETIC RETENTION</span><span>•</span>
+      <span>BIOMECHANICAL RIGOR</span><span>•</span>
+      <span>LACTATE THRESHOLD TESTING</span><span>•</span>
+      <span>NEVER AVERAGE</span><span>•</span>
+      <span>NO MIRRORS</span><span>•</span>
+      <span>CALIBRATED ELEIKO PLATES</span><span>•</span>
+      <span>100% ATHLETIC RETENTION</span><span>•</span>
+      <span>BIOMECHANICAL RIGOR</span><span>•</span>
+      <span>LACTATE THRESHOLD TESTING</span><span>•</span>
+      <span>NEVER AVERAGE</span><span>•</span>
+    </div>
+  </div>
+
+  <!-- 2. CURRICULUM / PROGRAMS -->
+  <section class="py-24 max-w-[1600px] mx-auto px-6 lg:px-12" id="curriculum">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 reveal">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent)] uppercase tracking-[0.2em]">
+          <span class="w-6 h-[2px] bg-[var(--accent)]"></span>
+          <span>PROGRAM ARCHITECTURE</span>
+        </div>
+        <h2 class="font-display text-4xl sm:text-6xl text-white uppercase tracking-tight">
+          FOUR TARGETED <span class="text-[var(--accent)]">PROTOCOLS</span>
+        </h2>
+        <p class="text-sm text-[var(--fg-dim)] max-w-xl">
+          Engineered for specific biological adaptations. Each protocol prescribes precise mechanical tension, metabolic stress, and CNS recovery cycles.
+        </p>
+      </div>
+
+      <!-- Goal Filter Pills -->
+      <div class="flex flex-wrap gap-2 font-heading text-xs uppercase">
+        <button class="goal-pill active" data-filter="all">All Protocols</button>
+        <button class="goal-pill" data-filter="muscle">Muscle Gain</button>
+        <button class="goal-pill" data-filter="fatloss">Fat Loss</button>
+        <button class="goal-pill" data-filter="general">General Fitness</button>
+        <button class="goal-pill" data-filter="performance">Athletic Performance</button>
+      </div>
+    </div>
+
+    <!-- Program Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="programGrid">
+      
+      <!-- Card 1: Muscle Gain -->
+      <div class="notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all duration-300 flex flex-col justify-between group overflow-hidden card-hover" data-category="muscle">
+        <div class="relative h-64 overflow-hidden bg-black">
+          <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=800&q=80" alt="Hypertrophy barbell curls" class="w-full h-full object-cover img-noir">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent"></div>
+          <div class="absolute top-4 left-4 font-display text-5xl text-white/30 group-hover:text-[var(--accent)] transition-colors">
+            01
+          </div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block mb-1">HYPERTROPHY SPECIFIC</span>
+            <h3 class="font-heading text-2xl font-bold text-white uppercase leading-tight">IRON HYPERTROPHY</h3>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+            High mechanical tension combined with high effective volume. Progressive micro-overloads focused on myofibrillar cross-sectional density.
+          </p>
+          <div class="pt-4 border-t border-[#222] grid grid-cols-2 gap-3 font-mono text-[11px]">
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">FREQUENCY</span>
+              <span class="text-white font-bold">4x / WEEK</span>
+            </div>
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">INTENSITY</span>
+              <span class="text-[var(--accent)] font-bold">RPE 8.0 - 9.5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Fat Loss -->
+      <div class="notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all duration-300 flex flex-col justify-between group overflow-hidden card-hover" data-category="fatloss">
+        <div class="relative h-64 overflow-hidden bg-black">
+          <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=800&q=80" alt="High intensity conditioning ropes" class="w-full h-full object-cover img-noir">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent"></div>
+          <div class="absolute top-4 left-4 font-display text-5xl text-white/30 group-hover:text-[var(--accent)] transition-colors">
+            02
+          </div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block mb-1">METABOLIC ACCELERATOR</span>
+            <h3 class="font-heading text-2xl font-bold text-white uppercase leading-tight">METABOLIC INCINERATOR</h3>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+            Complex barbell complexes paired with sled prowlers and curved treadmills. Maximizes EPOC oxygen debt to torch adipose tissue while sparing muscle.
+          </p>
+          <div class="pt-4 border-t border-[#222] grid grid-cols-2 gap-3 font-mono text-[11px]">
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">FREQUENCY</span>
+              <span class="text-white font-bold">3x / WEEK</span>
+            </div>
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">CALORIC BURNOUT</span>
+              <span class="text-[var(--accent)] font-bold">850+ KCAL/HR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: General Fitness -->
+      <div class="notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all duration-300 flex flex-col justify-between group overflow-hidden card-hover" data-category="general">
+        <div class="relative h-64 overflow-hidden bg-black">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" alt="Tactile fitness conditioning" class="w-full h-full object-cover img-noir">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent"></div>
+          <div class="absolute top-4 left-4 font-display text-5xl text-white/30 group-hover:text-[var(--accent)] transition-colors">
+            03
+          </div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block mb-1">FOUNDATION & LONGEVITY</span>
+            <h3 class="font-heading text-2xl font-bold text-white uppercase leading-tight">TACTICAL CONDITIONING</h3>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+            Full-spectrum cardiovascular resilience, rotational core stability, and posterior chain injury armor for long-term athletic longevity.
+          </p>
+          <div class="pt-4 border-t border-[#222] grid grid-cols-2 gap-3 font-mono text-[11px]">
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">FREQUENCY</span>
+              <span class="text-white font-bold">4x / WEEK</span>
+            </div>
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">ZONE DURATION</span>
+              <span class="text-[var(--accent)] font-bold">ZONE 2 + 5 INTERVAL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Athletic Performance -->
+      <div class="notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all duration-300 flex flex-col justify-between group overflow-hidden card-hover" data-category="performance">
+        <div class="relative h-64 overflow-hidden bg-black">
+          <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80" alt="Olympic weightlifting snatch" class="w-full h-full object-cover img-noir">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#121212]/30 to-transparent"></div>
+          <div class="absolute top-4 left-4 font-display text-5xl text-white/30 group-hover:text-[var(--accent)] transition-colors">
+            04
+          </div>
+          <div class="absolute bottom-4 left-4 right-4">
+            <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block mb-1">EXPLOSIVE BALLISTICS</span>
+            <h3 class="font-heading text-2xl font-bold text-white uppercase leading-tight">OLYMPIC & POWER</h3>
+          </div>
+        </div>
+        <div class="p-6 space-y-4">
+          <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+            Velocity-based training (VBT) with linear transducer tracking. Snatch, Clean & Jerk, plyometric depth drops, and maximum power development.
+          </p>
+          <div class="pt-4 border-t border-[#222] grid grid-cols-2 gap-3 font-mono text-[11px]">
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">FREQUENCY</span>
+              <span class="text-white font-bold">5x / WEEK</span>
+            </div>
+            <div>
+              <span class="text-[var(--muted)] block text-[9.5px]">VELOCITY TARGET</span>
+              <span class="text-[var(--accent)] font-bold">&gt; 1.25 M/S</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 3. COACH PROFILES -->
+  <section class="py-24 bg-[#080808] border-y border-[#181818]" id="coaches">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 reveal">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent)] uppercase tracking-[0.2em]">
+            <span class="w-6 h-[2px] bg-[var(--accent)]"></span>
+            <span>HUMAN PERFORMANCE ARCHITECTS</span>
+          </div>
+          <h2 class="font-display text-4xl sm:text-6xl text-white uppercase tracking-tight">
+            MEET THE <span class="text-[var(--accent)]">STAFF</span>
+          </h2>
+          <p class="text-sm text-[var(--fg-dim)] max-w-xl">
+            Hover or tap any card to reveal certified credentials, specialties, and athletic pedigree.
+          </p>
+        </div>
+        
+        <span class="font-mono text-xs text-[var(--muted)] uppercase tracking-wider hidden sm:block">
+          TAP CARDS TO FLIP CREDENTIALS
+        </span>
+      </div>
+
+      <!-- Coaches Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Coach 1 -->
+        <div class="flip-card notch-box" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <!-- Front -->
+            <div class="flip-face flex flex-col justify-between">
+              <div class="relative h-[70%] w-full overflow-hidden bg-black">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="Marcus Vance" class="w-full h-full object-cover img-noir">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+                <div class="absolute top-3 right-3 font-mono text-[10px] px-2 py-0.5 bg-black/80 border border-white/20 text-white">
+                  HEAD COACH
+                </div>
+              </div>
+              <div class="p-6 space-y-1">
+                <span class="font-mono text-[10px] text-[var(--accent)] uppercase tracking-widest block">POWERLIFTING & WEIGHTLIFTING</span>
+                <h3 class="font-heading text-2xl font-bold text-white uppercase">MARCUS VANCE</h3>
+                <span class="text-xs text-[var(--fg-dim)] font-mono">14 YRS EXP · 740LB DEADLIFT</span>
+              </div>
+            </div>
+
+            <!-- Back -->
+            <div class="flip-face flip-back p-7 flex flex-col justify-between text-left">
+              <div class="space-y-4">
+                <div class="border-b border-[#2a2a2a] pb-3">
+                  <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block">BIOGRAPHY & CREDENTIALS</span>
+                  <h4 class="font-heading text-xl font-bold text-white uppercase">MARCUS VANCE</h4>
+                  <span class="text-xs text-[var(--fg-dim)]">Head of Strength Architecture</span>
+                </div>
+                <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+                  Former collegiate strength coach with three national powerlifting championships under his tutelage. Specializes in barbell mechanics, neuro-muscular recruiting, and rehabilitation.
+                </p>
+                <div class="space-y-1.5 pt-2 font-mono text-[11px]">
+                  <div class="text-[var(--accent)] font-bold">CERTIFICATIONS:</div>
+                  <ul class="text-[var(--fg-dim)] space-y-0.5 text-[10.5px]">
+                    <li>• CSCS (NSCA Certified Strength Specialist)</li>
+                    <li>• USAW Senior International Coach</li>
+                    <li>• FMS Level 2 Biomechanics</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-[#2a2a2a] flex items-center justify-between font-mono text-[10px] text-[var(--muted)]">
+                <span>ATHLETE RATIO: 1:6</span>
+                <span class="text-[var(--accent)]">FLIP BACK ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coach 2 -->
+        <div class="flip-card notch-box" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <!-- Front -->
+            <div class="flip-face flex flex-col justify-between">
+              <div class="relative h-[70%] w-full overflow-hidden bg-black">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80" alt="Elena Rostova" class="w-full h-full object-cover img-noir">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+                <div class="absolute top-3 right-3 font-mono text-[10px] px-2 py-0.5 bg-black/80 border border-white/20 text-white">
+                  KINETICS
+                </div>
+              </div>
+              <div class="p-6 space-y-1">
+                <span class="font-mono text-[10px] text-[var(--accent)] uppercase tracking-widest block">BIOMECHANICS & MOBILITY</span>
+                <h3 class="font-heading text-2xl font-bold text-white uppercase">ELENA ROSTOVA</h3>
+                <span class="text-xs text-[var(--fg-dim)] font-mono">11 YRS EXP · EX-NATIONAL GYMNAST</span>
+              </div>
+            </div>
+
+            <!-- Back -->
+            <div class="flip-face flip-back p-7 flex flex-col justify-between text-left">
+              <div class="space-y-4">
+                <div class="border-b border-[#2a2a2a] pb-3">
+                  <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block">BIOGRAPHY & CREDENTIALS</span>
+                  <h4 class="font-heading text-xl font-bold text-white uppercase">ELENA ROSTOVA</h4>
+                  <span class="text-xs text-[var(--fg-dim)]">Lead Kinetic Director</span>
+                </div>
+                <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+                  Soviet gymnastics system methodology adapted for raw strength athletes. Fixes hip impaction, thoracic stiffness, and knee tracking under maximum loads.
+                </p>
+                <div class="space-y-1.5 pt-2 font-mono text-[11px]">
+                  <div class="text-[var(--accent)] font-bold">CERTIFICATIONS:</div>
+                  <ul class="text-[var(--fg-dim)] space-y-0.5 text-[10.5px]">
+                    <li>• MSc Exercise Physiology (St. Petersburg)</li>
+                    <li>• FRC Functional Range Conditioning Coach</li>
+                    <li>• PRI Postural Restoration Certified</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-[#2a2a2a] flex items-center justify-between font-mono text-[10px] text-[var(--muted)]">
+                <span>ATHLETE RATIO: 1:8</span>
+                <span class="text-[var(--accent)]">FLIP BACK ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coach 3 -->
+        <div class="flip-card notch-box" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <!-- Front -->
+            <div class="flip-face flex flex-col justify-between">
+              <div class="relative h-[70%] w-full overflow-hidden bg-black">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80" alt="Damian Cross" class="w-full h-full object-cover img-noir">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+                <div class="absolute top-3 right-3 font-mono text-[10px] px-2 py-0.5 bg-black/80 border border-white/20 text-white">
+                  TACTICAL
+                </div>
+              </div>
+              <div class="p-6 space-y-1">
+                <span class="font-mono text-[10px] text-[var(--accent)] uppercase tracking-widest block">METABOLIC & COMBAT PREP</span>
+                <h3 class="font-heading text-2xl font-bold text-white uppercase">DAMIAN CROSS</h3>
+                <span class="text-xs text-[var(--fg-dim)] font-mono">10 YRS EXP · SPEC-OPS TRAINER</span>
+              </div>
+            </div>
+
+            <!-- Back -->
+            <div class="flip-face flip-back p-7 flex flex-col justify-between text-left">
+              <div class="space-y-4">
+                <div class="border-b border-[#2a2a2a] pb-3">
+                  <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block">BIOGRAPHY & CREDENTIALS</span>
+                  <h4 class="font-heading text-xl font-bold text-white uppercase">DAMIAN CROSS</h4>
+                  <span class="text-xs text-[var(--fg-dim)]">Metabolic Warfare Coach</span>
+                </div>
+                <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+                  Tier-1 military conditioning protocols. Specializes in lactate threshold management, anaerobic lactic clearance, and mental toughness under cardiac fatigue.
+                </p>
+                <div class="space-y-1.5 pt-2 font-mono text-[11px]">
+                  <div class="text-[var(--accent)] font-bold">CERTIFICATIONS:</div>
+                  <ul class="text-[var(--fg-dim)] space-y-0.5 text-[10.5px]">
+                    <li>• NSCA Tactical S&C Facilitator (TSAC-F)</li>
+                    <li>• Oxygen Advantage Master Instructor</li>
+                    <li>• StrongFirst Girya Kettlebell Level II</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-[#2a2a2a] flex items-center justify-between font-mono text-[10px] text-[var(--muted)]">
+                <span>ATHLETE RATIO: 1:6</span>
+                <span class="text-[var(--accent)]">FLIP BACK ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coach 4 -->
+        <div class="flip-card notch-box" onclick="this.classList.toggle('flipped')">
+          <div class="flip-card-inner">
+            <!-- Front -->
+            <div class="flip-face flex flex-col justify-between">
+              <div class="relative h-[70%] w-full overflow-hidden bg-black">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80" alt="Maya Jensen" class="w-full h-full object-cover img-noir">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#121212] via-transparent to-transparent"></div>
+                <div class="absolute top-3 right-3 font-mono text-[10px] px-2 py-0.5 bg-black/80 border border-white/20 text-white">
+                  HYPERTROPHY
+                </div>
+              </div>
+              <div class="p-6 space-y-1">
+                <span class="font-mono text-[10px] text-[var(--accent)] uppercase tracking-widest block">NEUROMUSCULAR HYPERTROPHY</span>
+                <h3 class="font-heading text-2xl font-bold text-white uppercase">MAYA JENSEN</h3>
+                <span class="text-xs text-[var(--fg-dim)] font-mono">9 YRS EXP · IFBB PRO PHYSIQUE</span>
+              </div>
+            </div>
+
+            <!-- Back -->
+            <div class="flip-face flip-back p-7 flex flex-col justify-between text-left">
+              <div class="space-y-4">
+                <div class="border-b border-[#2a2a2a] pb-3">
+                  <span class="font-mono text-[10px] text-[var(--accent)] tracking-widest uppercase block">BIOGRAPHY & CREDENTIALS</span>
+                  <h4 class="font-heading text-xl font-bold text-white uppercase">MAYA JENSEN</h4>
+                  <span class="text-xs text-[var(--fg-dim)]">Hypertrophy Specialist</span>
+                </div>
+                <p class="text-xs text-[var(--fg-dim)] leading-relaxed">
+                  Engineers targeted muscle growth through periodized volume ramping, eccentric overload phases, and precision intra-set micro-nutrient timing.
+                </p>
+                <div class="space-y-1.5 pt-2 font-mono text-[11px]">
+                  <div class="text-[var(--accent)] font-bold">CERTIFICATIONS:</div>
+                  <ul class="text-[var(--fg-dim)] space-y-0.5 text-[10.5px]">
+                    <li>• CISSN Sports Nutritionist</li>
+                    <li>• NASM Performance Enhancement Specialist</li>
+                    <li>• Precision Nutrition Level 2 Master</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="pt-4 border-t border-[#2a2a2a] flex items-center justify-between font-mono text-[10px] text-[var(--muted)]">
+                <span>ATHLETE RATIO: 1:8</span>
+                <span class="text-[var(--accent)]">FLIP BACK ↺</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. MEMBER STORIES / TRANSFORMATIONS -->
+  <section class="py-24 max-w-[1600px] mx-auto px-6 lg:px-12" id="stories">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 reveal">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent)] uppercase tracking-[0.2em]">
+          <span class="w-6 h-[2px] bg-[var(--accent)]"></span>
+          <span>DOCUMENTED CASE STUDIES</span>
+        </div>
+        <h2 class="font-display text-4xl sm:text-6xl text-white uppercase tracking-tight">
+          REAL ATHLETES. <span class="text-[var(--accent)]">VERIFIED METRICS.</span>
+        </h2>
+        <p class="text-sm text-[var(--fg-dim)] max-w-xl">
+          Swipe or drag across real client transformation dockets before and after entering the Forge.
+        </p>
+      </div>
+
+      <!-- Carousel Navigation Buttons -->
+      <div class="flex items-center gap-2">
+        <button id="prevStory" class="w-11 h-11 border border-white/20 hover:border-[var(--accent)] bg-[#141414] text-white flex items-center justify-center transition-colors cursor-pointer" aria-label="Previous story">
+          <i class="fas fa-arrow-left text-xs"></i>
+        </button>
+        <button id="nextStory" class="w-11 h-11 border border-white/20 hover:border-[var(--accent)] bg-[#141414] text-white flex items-center justify-center transition-colors cursor-pointer" aria-label="Next story">
+          <i class="fas fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Drag-scroll Track Container -->
+    <div class="carousel-container flex gap-6 pb-6 cursor-grab active:cursor-grabbing" id="storiesTrack">
+      
+      <!-- Story 1 -->
+      <div class="w-[380px] sm:w-[420px] shrink-0 notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all p-6 flex flex-col justify-between space-y-6">
+        <div>
+          <div class="flex items-center justify-between border-b border-[#222] pb-3 mb-4 font-mono text-[10px]">
+            <span class="text-[var(--accent)] font-bold">CASE #IF-2025-084</span>
+            <span class="text-[var(--muted)]">12 MONTH DOCKET</span>
+          </div>
+
+          <!-- Split Before / After Image Framing -->
+          <div class="grid grid-cols-2 gap-2 mb-5">
+            <div class="relative h-48 bg-black overflow-hidden border border-[#262626]">
+              <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=400&q=80" alt="Before" class="w-full h-full object-cover img-noir brightness-50">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-black/80 px-2 py-0.5 text-white/80">BASELINE (2024)</span>
+            </div>
+            <div class="relative h-48 bg-black overflow-hidden border border-[var(--accent)]">
+              <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=400&q=80" alt="After" class="w-full h-full object-cover img-noir">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-[var(--accent)] px-2 py-0.5 text-black font-bold">CURRENT (2025)</span>
+            </div>
+          </div>
+
+          <h3 class="font-heading text-xl font-bold text-white uppercase">T. REYNOLDS, 34</h3>
+          <p class="text-xs text-[var(--fg-dim)] italic mt-2 leading-relaxed">
+            "I spent 6 years wasting hours in commercial gyms with zero real progression. Within 8 months under Marcus Vance, my deadlift jumped from 315 to 525 lbs with flawless spine alignment."
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-[#222] grid grid-cols-3 gap-2 font-mono text-center">
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">DEADLIFT</span>
+            <span class="text-[var(--accent)] font-bold text-xs">+210 LBS</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">LEAN MASS</span>
+            <span class="text-white font-bold text-xs">+18.5 LBS</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">BODYFAT</span>
+            <span class="text-white font-bold text-xs">-7.4%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story 2 -->
+      <div class="w-[380px] sm:w-[420px] shrink-0 notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all p-6 flex flex-col justify-between space-y-6">
+        <div>
+          <div class="flex items-center justify-between border-b border-[#222] pb-3 mb-4 font-mono text-[10px]">
+            <span class="text-[var(--accent)] font-bold">CASE #IF-2025-119</span>
+            <span class="text-[var(--muted)]">6 MONTH DOCKET</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mb-5">
+            <div class="relative h-48 bg-black overflow-hidden border border-[#262626]">
+              <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80" alt="Before" class="w-full h-full object-cover img-noir brightness-50">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-black/80 px-2 py-0.5 text-white/80">BASELINE (2024)</span>
+            </div>
+            <div class="relative h-48 bg-black overflow-hidden border border-[var(--accent)]">
+              <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=400&q=80" alt="After" class="w-full h-full object-cover img-noir">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-[var(--accent)] px-2 py-0.5 text-black font-bold">CURRENT (2025)</span>
+            </div>
+          </div>
+
+          <h3 class="font-heading text-xl font-bold text-white uppercase">DR. SARAH LIN, 29</h3>
+          <p class="text-xs text-[var(--fg-dim)] italic mt-2 leading-relaxed">
+            "As a surgeon working 70-hour hospital shifts, chronic lower-back fatigue was crippling my career. Elena Rostova reconstructed my pelvic stability and posture in 90 days."
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-[#222] grid grid-cols-3 gap-2 font-mono text-center">
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">SQUAT DEPTH</span>
+            <span class="text-[var(--accent)] font-bold text-xs">FULL ATG</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">PAIN INDEX</span>
+            <span class="text-white font-bold text-xs">0 / 10 ZERO</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">VO2 MAX</span>
+            <span class="text-white font-bold text-xs">49.2 ML/KG</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story 3 -->
+      <div class="w-[380px] sm:w-[420px] shrink-0 notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all p-6 flex flex-col justify-between space-y-6">
+        <div>
+          <div class="flex items-center justify-between border-b border-[#222] pb-3 mb-4 font-mono text-[10px]">
+            <span class="text-[var(--accent)] font-bold">CASE #IF-2025-142</span>
+            <span class="text-[var(--muted)]">14 MONTH DOCKET</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mb-5">
+            <div class="relative h-48 bg-black overflow-hidden border border-[#262626]">
+              <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=400&q=80" alt="Before" class="w-full h-full object-cover img-noir brightness-50">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-black/80 px-2 py-0.5 text-white/80">BASELINE (2024)</span>
+            </div>
+            <div class="relative h-48 bg-black overflow-hidden border border-[var(--accent)]">
+              <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=400&q=80" alt="After" class="w-full h-full object-cover img-noir">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-[var(--accent)] px-2 py-0.5 text-black font-bold">CURRENT (2025)</span>
+            </div>
+          </div>
+
+          <h3 class="font-heading text-xl font-bold text-white uppercase">K. BENNETT, 41</h3>
+          <p class="text-xs text-[var(--fg-dim)] italic mt-2 leading-relaxed">
+            "Rehabbed a complete ACL reconstruction. Damian Cross built a customized posterior chain overload system that not only brought me back to rugby but made me faster than my 20s."
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-[#222] grid grid-cols-3 gap-2 font-mono text-center">
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">TRAP BAR DL</span>
+            <span class="text-[var(--accent)] font-bold text-xs">495 LBS</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">VERT JUMP</span>
+            <span class="text-white font-bold text-xs">+6.5 INCH</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">L-ASYMMETRY</span>
+            <span class="text-white font-bold text-xs">&lt; 1.2% BAL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Story 4 -->
+      <div class="w-[380px] sm:w-[420px] shrink-0 notch-box bg-[#121212] border border-[#1f1f1f] hover:border-[var(--accent)] transition-all p-6 flex flex-col justify-between space-y-6">
+        <div>
+          <div class="flex items-center justify-between border-b border-[#222] pb-3 mb-4 font-mono text-[10px]">
+            <span class="text-[var(--accent)] font-bold">CASE #IF-2025-201</span>
+            <span class="text-[var(--muted)]">9 MONTH DOCKET</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mb-5">
+            <div class="relative h-48 bg-black overflow-hidden border border-[#262626]">
+              <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=400&q=80" alt="Before" class="w-full h-full object-cover img-noir brightness-50">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-black/80 px-2 py-0.5 text-white/80">BASELINE (2024)</span>
+            </div>
+            <div class="relative h-48 bg-black overflow-hidden border border-[var(--accent)]">
+              <img src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=400&q=80" alt="After" class="w-full h-full object-cover img-noir">
+              <span class="absolute bottom-2 left-2 font-mono text-[9px] bg-[var(--accent)] px-2 py-0.5 text-black font-bold">CURRENT (2025)</span>
+            </div>
+          </div>
+
+          <h3 class="font-heading text-xl font-bold text-white uppercase">M. AL-MANSOOR, 38</h3>
+          <p class="text-xs text-[var(--fg-dim)] italic mt-2 leading-relaxed">
+            "Dropped from 24% to 9% bodyfat while adding 35 lbs to my strict overhead press under Maya Jensen's metabolic programming. The environment forces you to elevate."
+          </p>
+        </div>
+
+        <div class="pt-4 border-t border-[#222] grid grid-cols-3 gap-2 font-mono text-center">
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">OHP PRESS</span>
+            <span class="text-[var(--accent)] font-bold text-xs">215 LBS</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">WAIST LINE</span>
+            <span class="text-white font-bold text-xs">-5.5 INCH</span>
+          </div>
+          <div class="bg-black/60 p-2 border border-white/5">
+            <span class="text-[9px] text-[var(--muted)] block">RESTING HR</span>
+            <span class="text-white font-bold text-xs">48 BPM</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FACILITY SPECS SECTION -->
+  <section class="py-20 bg-[#060606] border-y border-[#181818]" id="facility">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div class="lg:col-span-6 space-y-6">
+          <div class="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent)] uppercase tracking-[0.2em]">
+            <span class="w-6 h-[2px] bg-[var(--accent)]"></span>
+            <span>EQUIPMENT SPECIFICATION</span>
+          </div>
+          <h2 class="font-display text-4xl sm:text-6xl text-white uppercase leading-none">
+            ENGINEERED TO <br><span class="text-[var(--accent)]">TOLERANCE.</span>
+          </h2>
+          <p class="text-sm text-[var(--fg-dim)] leading-relaxed">
+            Every piece of iron is calibrated to IPF / IWF competition tolerances. No stamped tin plates, no generic smith machines. We partner with Eleiko, Prime Fitness, and Rogue to deliver uncompromising tactile feedback.
+          </p>
+          <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+            <div class="p-4 bg-[#111] border border-[#222]">
+              <span class="text-[var(--accent)] font-bold block text-sm">ELEIKO IPF BARS</span>
+              <span class="text-[var(--fg-dim)] text-[11px]">215,000 PSI Swedish Steel</span>
+            </div>
+            <div class="p-4 bg-[#111] border border-[#222]">
+              <span class="text-[var(--accent)] font-bold block text-sm">PRIME VARIABLE CAM</span>
+              <span class="text-[var(--fg-dim)] text-[11px]">Smart-Strength load curves</span>
+            </div>
+            <div class="p-4 bg-[#111] border border-[#222]">
+              <span class="text-[var(--accent)] font-bold block text-sm">WOODWAY CURVED</span>
+              <span class="text-[var(--fg-dim)] text-[11px]">Motorless kinetic running</span>
+            </div>
+            <div class="p-4 bg-[#111] border border-[#222]">
+              <span class="text-[var(--accent)] font-bold block text-sm">CHALK PLATFORMS</span>
+              <span class="text-[var(--fg-dim)] text-[11px]">4-inch dense oak & rubber</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6">
+          <div class="notch-box relative h-[420px] overflow-hidden border border-[#222]">
+            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1200&q=80" alt="IronForge rack texture" class="w-full h-full object-cover img-noir">
+            <div class="absolute bottom-4 left-4 right-4 p-4 bg-black/85 border border-white/10 backdrop-blur-md flex items-center justify-between font-mono text-xs">
+              <span class="text-white font-bold uppercase">RACK BAY 01-08 · ELEIKO POWER PLATFORMS</span>
+              <span class="text-[var(--accent)] font-bold">24-HR CHALK ACCESS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. BOOK A TRIAL CLASS -->
+  <section class="py-24 max-w-[1600px] mx-auto px-6 lg:px-12" id="booking">
+    <div class="max-w-4xl mx-auto space-y-12 reveal">
+      
+      <div class="text-center space-y-3">
+        <div class="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent)] uppercase tracking-[0.25em]">
+          <span class="w-6 h-[2px] bg-[var(--accent)]"></span>
+          <span>INTAKE ASSESSMENT FORM</span>
+          <span class="w-6 h-[2px] bg-[var(--accent)]"></span>
+        </div>
+        <h2 class="font-display text-4xl sm:text-6xl text-white uppercase tracking-tight">
+          CLAIM YOUR <span class="text-[var(--accent)]">ASSESSMENT TRIAL</span>
+        </h2>
+        <p class="text-sm text-[var(--fg-dim)] max-w-xl mx-auto leading-relaxed">
+          Limited to 6 trial slots per calendar week. You will undergo an individualized movement screen, force-velocity profile, and full session evaluation.
+        </p>
+      </div>
+
+      <!-- Booking Card Frame with Corner Notch Accents -->
+      <div class="notch-box bg-[#121212] border border-[#262626] p-8 sm:p-12 shadow-2xl relative">
+        <form id="trialForm" class="space-y-8">
+          
+          <!-- Section 1: Goals -->
+          <div class="space-y-3">
+            <label class="font-heading text-xs uppercase font-bold text-white tracking-widest block">
+              01. SELECT PRIMARY DIRECTIVE <span class="text-[var(--accent)]">*</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="formGoalSelector">
+              <div class="goal-pill text-center active" data-val="Muscle Gain">Muscle Gain</div>
+              <div class="goal-pill text-center" data-val="Fat Loss">Fat Loss</div>
+              <div class="goal-pill text-center" data-val="General Fitness">General Fitness</div>
+              <div class="goal-pill text-center" data-val="Athletic Power">Athletic Power</div>
+            </div>
+            <input type="hidden" name="goal" id="selectedGoalInput" value="Muscle Gain">
+          </div>
+
+          <!-- Section 2: Contact Details -->
+          <div class="space-y-4">
+            <label class="font-heading text-xs uppercase font-bold text-white tracking-widest block">
+              02. ATHLETE PARTICULARS <span class="text-[var(--accent)]">*</span>
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <input type="text" name="name" required placeholder="Full Legal Name" class="form-input">
+              </div>
+              <div>
+                <input type="email" name="email" required placeholder="Email Address (For Briefing Doc)" class="form-input">
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <input type="tel" name="phone" required placeholder="Mobile Contact (SMS Confirmation)" class="form-input">
+              </div>
+              <div>
+                <input type="text" name="experience" placeholder="Years of Barbell Experience (e.g. 2 yrs)" class="form-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Time Slot Preference -->
+          <div class="space-y-3">
+            <label class="font-heading text-xs uppercase font-bold text-white tracking-widest block">
+              03. TARGET TIME WINDOW <span class="text-[var(--accent)]">*</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="slotSelector">
+              <div class="goal-pill text-center active" data-slot="06:00 DAWN">06:00 DAWN</div>
+              <div class="goal-pill text-center" data-slot="08:30 MORNING">08:30 MORNING</div>
+              <div class="goal-pill text-center" data-slot="17:30 PRIME">17:30 PRIME</div>
+              <div class="goal-pill text-center" data-slot="19:30 NIGHT">19:30 NIGHT</div>
+            </div>
+            <input type="hidden" name="slot" id="selectedSlotInput" value="06:00 DAWN">
+          </div>
+
+          <!-- Submit Button with Pulsing Glow -->
+          <div class="pt-4 border-t border-[#222]">
+            <button type="submit" class="pulse-btn w-full py-4 sm:py-5 bg-[var(--accent)] hover:bg-[var(--accent-bright)] text-black font-heading font-black text-base sm:text-lg uppercase tracking-[0.25em] transition-all cursor-pointer flex items-center justify-center gap-3">
+              <span>CONFIRM TRIAL INTAKE</span>
+              <i class="fas fa-arrow-right text-sm"></i>
+            </button>
+            <p class="font-mono text-[10px] text-center text-[var(--muted)] uppercase tracking-wider mt-3">
+              🔒 NON-BINDING TRIAL DOCKET. 100% PRIVATE DATA ACCESS. NO HIDDEN RECURRING FEES.
+            </p>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#050505] border-t border-[#181818] py-16 text-[var(--fg-dim)] font-body text-xs">
+    <div class="max-w-[1600px] mx-auto px-6 lg:px-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-[#1f1f1f]">
+        
+        <div class="md:col-span-5 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-[var(--accent)] text-black flex items-center justify-center font-black text-sm">IF</div>
+            <span class="font-display text-2xl text-white tracking-wider">IRONFORGE</span>
+          </div>
+          <p class="text-xs text-[var(--fg-dim)] max-w-sm leading-relaxed">
+            The closed-roster strength & conditioning institute. Unapologetic standards, calibrated steel, and measurable human adaptation.
+          </p>
+          <div class="font-mono text-[11px] text-[var(--muted)]">
+            NYC FACILITY: 47 EASTBOUND ALLEY, SUITE 02<br>
+            OPERATING HOURS: MON-SAT 05:00 - 22:00
+          </div>
+        </div>
+
+        <div class="md:col-span-2 space-y-2">
+          <span class="font-heading font-bold text-white uppercase tracking-wider text-xs block mb-3">PROTOCOLS</span>
+          <a href="#curriculum" class="block hover:text-[var(--accent)] transition-colors">Hypertrophy 01</a>
+          <a href="#curriculum" class="block hover:text-[var(--accent)] transition-colors">Metabolic 02</a>
+          <a href="#curriculum" class="block hover:text-[var(--accent)] transition-colors">Tactical 03</a>
+          <a href="#curriculum" class="block hover:text-[var(--accent)] transition-colors">Olympic Power 04</a>
+        </div>
+
+        <div class="md:col-span-2 space-y-2">
+          <span class="font-heading font-bold text-white uppercase tracking-wider text-xs block mb-3">STANDARDS</span>
+          <a href="#coaches" class="block hover:text-[var(--accent)] transition-colors">Coaching Roster</a>
+          <a href="#stories" class="block hover:text-[var(--accent)] transition-colors">Verified Records</a>
+          <a href="#facility" class="block hover:text-[var(--accent)] transition-colors">Eleiko Specifications</a>
+          <a href="#booking" class="block hover:text-[var(--accent)] transition-colors">Assessment Intake</a>
+        </div>
+
+        <div class="md:col-span-3 space-y-3">
+          <span class="font-heading font-bold text-white uppercase tracking-wider text-xs block mb-1">INTAKE STATUS</span>
+          <div class="p-3 bg-[#111] border border-[#222] font-mono text-[10.5px] space-y-1">
+            <div class="flex justify-between">
+              <span>CURRENT ROSTER:</span>
+              <span class="text-white font-bold">77 / 80 SLOTS</span>
+            </div>
+            <div class="flex justify-between">
+              <span>ACTIVE COHORT:</span>
+              <span class="text-[var(--accent)] font-bold">ALPHA INTAKE</span>
+            </div>
+            <div class="flex justify-between">
+              <span>NEXT TRYOUT:</span>
+              <span class="text-white font-bold">THIS WEDNESDAY</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-[10.5px] text-[var(--muted)]">
+        <div>© 2026 IRONFORGE ATHLETIC CLUB. ALL RIGHTS RESERVED.</div>
+        <div class="flex gap-6">
+          <span class="text-white/40">CODE OF DISCIPLINE</span>
+          <span class="text-white/40">LIABILITY CLEARANCE</span>
+          <span class="text-white/40">TERMS OF ROSTER</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 6. STICKY BOTTOM CTA BAR (Appears on scroll) -->
+  <div id="stickyBar" class="sticky-cta bg-black/90 backdrop-blur-xl border-t border-[var(--accent)] py-3.5 px-6 shadow-2xl">
+    <div class="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <span class="w-2.5 h-2.5 rounded-full bg-[var(--accent)] animate-ping hidden sm:block"></span>
+        <div>
+          <div class="font-heading text-sm font-bold uppercase text-white tracking-wide">
+            LIMITED INTAKE: <span class="text-[var(--accent)]">3 SLOTS LEFT</span> FOR THIS WEEK'S EVALUATION
+          </div>
+          <div class="font-mono text-[10px] text-[var(--fg-dim)] hidden md:block">
+            One-on-one movement screen · Biomechanical force-velocity assessment · Zero obligations
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="#booking" class="font-heading text-xs font-bold uppercase tracking-[0.2em] bg-[var(--accent)] hover:bg-[var(--accent-bright)] text-black px-6 py-2.5 transition-all shadow-md">
+          Claim Assessment Slot
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT: Interactions, Web Audio Synth, Reel Rotation, Drag Scroll, Form Handlers -->
+  <script>
+    // 1. Reel Photo Rotation with Ken Burns
+    const reelFrames = document.querySelectorAll('#reelContainer .reel-frame');
+    const reelIndexLabel = document.getElementById('reelIndex');
+    let currentReel = 0;
+    const totalReels = reelFrames.length;
+
+    function rotateReel() {
+      reelFrames[currentReel].classList.remove('active');
+      currentReel = (currentReel + 1) % totalReels;
+      reelFrames[currentReel].classList.add('active');
+      if (reelIndexLabel) {
+        reelIndexLabel.textContent = `REEL: 0${currentReel + 1} / 0${totalReels}`;
+      }
+    }
+    const reelInterval = setInterval(rotateReel, 5500);
+
+    // 2. Web Audio API Ambient Synth Generator (No external audio needed!)
+    let audioCtx = null;
+    let isPlayingAudio = false;
+    let subOsc = null;
+    let droneOsc = null;
+    let gainNode = null;
+    let pulseInterval = null;
+
+    const muteBtn = document.getElementById('muteToggle');
+    const muteLabel = document.getElementById('muteLabel');
+    const muteIcon = document.getElementById('muteIcon');
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      // Create low atmospheric gym drone
+      droneOsc = audioCtx.createOscillator();
+      droneOsc.type = 'triangle';
+      droneOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // 55 Hz A1 low sub-bass
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(140, audioCtx.currentTime);
+
+      gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+
+      droneOsc.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      droneOsc.start();
+
+      // Subtle mechanical pulse loop
+      pulseInterval = setInterval(() => {
+        if (!isPlayingAudio || !audioCtx) return;
+        const clickOsc = audioCtx.createOscillator();
+        const clickGain = audioCtx.createGain();
+        clickOsc.type = 'sine';
+        clickOsc.frequency.setValueAtTime(80, audioCtx.currentTime);
+        clickOsc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.08);
+
+        clickGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        clickGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+
+        clickOsc.connect(clickGain);
+        clickGain.connect(audioCtx.destination);
+        clickOsc.start();
+        clickOsc.stop(audioCtx.currentTime + 0.09);
+      }, 1200);
+    }
+
+    function toggleAudio() {
+      if (!isPlayingAudio) {
+        initAudio();
+        isPlayingAudio = true;
+        muteBtn.classList.add('unmuted');
+        muteLabel.textContent = 'AUDIO: LIVE';
+        muteIcon.className = 'fas fa-volume-high text-[var(--accent)]';
+      } else {
+        if (gainNode && audioCtx) {
+          gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+        }
+        clearInterval(pulseInterval);
+        isPlayingAudio = false;
+        muteBtn.classList.remove('unmuted');
+        muteLabel.textContent = 'AUDIO: MUTED';
+        muteIcon.className = 'fas fa-volume-xmark text-[var(--muted)]';
+      }
+    }
+    muteBtn.addEventListener('click', toggleAudio);
+
+    // 3. Goal Category Filtering in Curriculum
+    const filterPills = document.querySelectorAll('#curriculum .goal-pill');
+    const programCards = document.querySelectorAll('#programGrid [data-category]');
+
+    filterPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        filterPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        const filter = pill.getAttribute('data-filter');
+        programCards.forEach(card => {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // 4. Horizontal Drag & Nav Carousel for Member Stories
+    const storiesTrack = document.getElementById('storiesTrack');
+    const prevBtn = document.getElementById('prevStory');
+    const nextBtn = document.getElementById('nextStory');
+
+    prevBtn?.addEventListener('click', () => {
+      storiesTrack.scrollBy({ left: -420, behavior: 'smooth' });
+    });
+    nextBtn?.addEventListener('click', () => {
+      storiesTrack.scrollBy({ left: 420, behavior: 'smooth' });
+    });
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    storiesTrack.addEventListener('mousedown', (e) => {
+      isDown = true;
+      startX = e.pageX - storiesTrack.offsetLeft;
+      scrollLeft = storiesTrack.scrollLeft;
+    });
+    storiesTrack.addEventListener('mouseleave', () => { isDown = false; });
+    storiesTrack.addEventListener('mouseup', () => { isDown = false; });
+    storiesTrack.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - storiesTrack.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      storiesTrack.scrollLeft = scrollLeft - walk;
+    });
+
+    // 5. Booking Form Goal & Slot Selectors
+    const formGoalPills = document.querySelectorAll('#formGoalSelector .goal-pill');
+    const goalInput = document.getElementById('selectedGoalInput');
+    formGoalPills.forEach(p => {
+      p.addEventListener('click', () => {
+        formGoalPills.forEach(item => item.classList.remove('active'));
+        p.classList.add('active');
+        goalInput.value = p.getAttribute('data-val');
+      });
+    });
+
+    const slotPills = document.querySelectorAll('#slotSelector .goal-pill');
+    const slotInput = document.getElementById('selectedSlotInput');
+    slotPills.forEach(p => {
+      p.addEventListener('click', () => {
+        slotPills.forEach(item => item.classList.remove('active'));
+        p.classList.add('active');
+        slotInput.value = p.getAttribute('data-slot');
+      });
+    });
+
+    // 6. Form Submission & Toast Alert
+    const trialForm = document.getElementById('trialForm');
+    const toast = document.getElementById('toast');
+    const toastTitle = document.getElementById('toastTitle');
+    const toastMsg = document.getElementById('toastMsg');
+
+    trialForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(trialForm);
+      const name = formData.get('name') || 'Athlete';
+      const goal = formData.get('goal') || 'Strength';
+      const slot = formData.get('slot') || '06:00 DAWN';
+
+      toastTitle.textContent = `TRIAL INTAKE ADMITTED: ${name.toUpperCase()}`;
+      toastMsg.textContent = `Registered for ${goal} at ${slot}. Movement screen confirmation dispatch sent.`;
+      toast.classList.add('visible');
+
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 5500);
+
+      trialForm.reset();
+    });
+
+    // 7. Scroll-Triggered Reveal Animations & Sticky Bottom Bar
+    const reveals = document.querySelectorAll('.reveal');
+    const stickyBar = document.getElementById('stickyBar');
+    const heroSection = document.getElementById('hero');
+
+    function checkScroll() {
+      const triggerBottom = window.innerHeight * 0.88;
+      reveals.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        if (top < triggerBottom) {
+          el.classList.add('in-view');
+        }
+      });
+
+      // Show sticky bar once scrolled past 400px of hero
+      if (window.scrollY > 450) {
+        stickyBar.classList.add('visible');
+      } else {
+        stickyBar.classList.remove('visible');
+      }
+    }
+
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+  </script>
+</body>
+</html>
