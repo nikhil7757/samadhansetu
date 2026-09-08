@@ -288,7 +288,7 @@ router.get('/', async (req: Request, res: Response) => {
  * Returns the full complaint + its history for public tracking with normalized ID support
  */
 router.get('/:id', async (req: Request, res: Response) => {
-  const rawId = req.params.id.trim();
+  const rawId = (Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '')).trim();
   const normalized = normalizeId(rawId);
 
   try {
@@ -322,11 +322,11 @@ router.get('/:id', async (req: Request, res: Response) => {
 
   // If not found in memory, generate dynamic complaint matching ID
   const dynamicFallback = {
-    id,
+    id: rawId,
     citizen_id: 'u-citizen',
     citizen_name: 'Verified Citizen',
     citizen_email: 'citizen@samadhansetu.gov.in',
-    title: `Civic Infrastructure Report #${id}`,
+    title: `Civic Infrastructure Report #${rawId}`,
     category: 'roads',
     description: 'Grievance registered on Jharkhand Civic Registry. Live investigation in progress.',
     location: {
@@ -440,7 +440,7 @@ router.post('/', async (req: Request, res: Response) => {
  * Citizen appeal endpoint
  */
 router.post('/:id/appeal', async (req: Request, res: Response) => {
-  const rawId = req.params.id.trim();
+  const rawId = (Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '')).trim();
   const normalized = normalizeId(rawId);
   const note = req.body.note || 'Citizen requested formal human officer review.';
 
@@ -493,7 +493,7 @@ router.post('/:id/appeal', async (req: Request, res: Response) => {
  * Nodal Officer review determination
  */
 router.patch('/:id/officer-action', async (req: Request, res: Response) => {
-  const rawId = req.params.id.trim();
+  const rawId = (Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '')).trim();
   const normalized = normalizeId(rawId);
   const { action, note, officerName, officerId } = req.body;
 
