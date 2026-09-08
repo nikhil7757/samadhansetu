@@ -282,6 +282,7 @@ export function QuickReportWidget() {
               <span className="px-2.5 py-0.5 rounded-md border border-border bg-secondary/50 font-mono text-muted-foreground flex items-center gap-1">
                 <span>⏱️ Target SLA:</span>
                 <strong className="text-amber-600 dark:text-amber-400">72 Hours Max</strong>
+              </span>
             </div>
           </div>
 

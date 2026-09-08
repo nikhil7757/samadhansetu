@@ -401,7 +401,8 @@ export default function ProblemFeed() {
                 </div>
               </div>
             </Link>
-          ))}
+          );
+        })}
         </div>
       )}
 

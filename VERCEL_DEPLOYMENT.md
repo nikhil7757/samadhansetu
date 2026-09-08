@@ -48,7 +48,7 @@ Vercel serverless functions connect to a cloud PostgreSQL database:
 
 4. **Deploy**:
    - Click **Deploy**.
-   - Vercel will run `vercel-build`, generate Prisma client engines, compile the React SPA into `frontend/dist`, and mount the Express API under `/api/*`.
+   - Vercel will run `vercel-build` (`node build.js`), generate Prisma client engines, compile the React SPA into `frontend/dist`, and mount the Express API under `/api/*`.
 
 ---
 

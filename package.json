@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "postinstall": "cd backend && npm install && npx prisma generate",
-    "build": "cd backend && npm install && npx prisma generate && cd ../frontend && npm install && npm run build",
-    "vercel-build": "cd backend && npm install && npx prisma generate && cd ../frontend && npm install && npm run build"
+    "build": "node build.js",
+    "vercel-build": "node build.js"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
@@ -17,6 +20,7 @@
     "express-rate-limit": "^7.4.0",
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
+    "prisma": "^6.0.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
@@ -27,7 +31,6 @@
     "@types/multer": "^1.4.12",
     "@types/node": "^22.0.0",
     "@vercel/node": "^3.2.0",
-    "prisma": "^6.0.0",
     "typescript": "^5.6.0"
   }
 }
