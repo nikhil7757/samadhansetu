@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { JHARKHAND_DISTRICTS, CATEGORIES } from '@/lib/utils';
 import api from '@/lib/api';
+import { VoiceRecorder } from '@/components/shared/VoiceRecorder';
 
 export default function SubmitProblem() {
   const { t } = useTranslation();
@@ -21,7 +22,12 @@ export default function SubmitProblem() {
   const [district, setDistrict] = useState('');
   const [urgency, setUrgency] = useState<'LOW' | 'MEDIUM' | 'HIGH'>('MEDIUM');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [voiceNote, setVoiceNote] = useState<{ blob: Blob; dataUrl: string; duration: number; name: string } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleVoiceTranscript = (text: string) => {
+    setDescription((prev) => (prev ? `${prev.trim()} ${text}` : text));
+  };
 
   const districtOptions = JHARKHAND_DISTRICTS.map((d) => ({ value: d, label: d }));
   const categoryOptions = CATEGORIES.map((c) => ({ value: c.value, label: t(c.labelKey) }));
@@ -54,6 +60,9 @@ export default function SubmitProblem() {
       formData.append('urgency', urgency);
       if (selectedFile) {
         formData.append('image', selectedFile);
+      }
+      if (voiceNote?.blob) {
+        formData.append('voice_note', voiceNote.blob, voiceNote.name);
       }
 
       try {
@@ -180,6 +189,13 @@ export default function SubmitProblem() {
               <span className="text-[10px] text-muted-foreground block text-right">
                 {description.length} characters (minimum 20)
               </span>
+
+              {/* Voice Dictation & Audio Recording */}
+              <VoiceRecorder
+                onTranscript={handleVoiceTranscript}
+                onAudioReady={(audio) => setVoiceNote(audio)}
+                disabled={isSubmitting}
+              />
             </div>
 
             {/* Photo Upload */}

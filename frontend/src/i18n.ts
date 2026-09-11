@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import hi from './locales/hi.json';
 
-const savedLang = localStorage.getItem('lang') || 'en';
+const savedLang = (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null) || 'hi';
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -11,7 +11,7 @@ i18n.use(initReactI18next).init({
     hi: { translation: hi },
   },
   lng: savedLang,
-  fallbackLng: 'en',
+  fallbackLng: 'hi',
   interpolation: { escapeValue: false },
 });
 

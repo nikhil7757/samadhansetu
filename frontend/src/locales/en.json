@@ -475,5 +475,32 @@
     "tagline": "SamadhanSetu — Facilitating multi-stakeholder civic problem-solving across Jharkhand.",
     "govt": "Developed for Smart India Hackathon 2026 (SIH26043)",
     "problem": "Department of Higher and Technical Education & Information Technology, Government of Jharkhand"
+  },
+  "voice": {
+    "stopDictation": "Stop Dictation",
+    "startDictation": "Dictate via Voice",
+    "listening": "Listening...",
+    "dictateText": "Dictate via Voice",
+    "stopRecord": "Stop",
+    "recordClip": "Record Voice Note",
+    "speakNow": "Speak clearly (Hindi/English)",
+    "accessibleHelp": "File by voice (accessible civic input)",
+    "attachedVoiceNote": "Attached Voice Grievance Note",
+    "attachedNoteDesc": "Audio evidence attached for Nodal Officer and AI verification",
+    "discardAudio": "Discard"
+  },
+  "map": {
+    "liveLayerTitle": "Google Maps Sovereign Jharkhand Command Grid",
+    "activeKey": "Live Maps API Active",
+    "changeKey": "Change",
+    "configureKey": "Enter Maps Demo / Cloud Key",
+    "freeDemoKey": "Free Demo Key",
+    "keyDrawerTitle": "Quickstart: Connect Google Maps API Key",
+    "keyDrawerDesc": "Paste your Google Maps Platform API key or Maps Demo Key to view satellite, terrain, and high-precision district boundaries.",
+    "applyKey": "Activate Map",
+    "loadLiveTiles": "Load Live Google Map",
+    "legendSelected": "Selected Pin: Nodal Command",
+    "legendActive": "Active District Node",
+    "clickPrompt": "Click any pin or district card above to inspect"
   }
 }

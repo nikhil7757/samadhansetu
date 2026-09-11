@@ -27,6 +27,7 @@ import { QuickReportWidget } from '@/components/shared/QuickReportWidget';
 import { AnimatedStatCounter } from '@/components/shared/AnimatedStatCounter';
 import { PrototypeSwitcher } from '@/components/shared/PrototypeSwitcher';
 import { StateSeal } from '@/components/shared/StateSeal';
+import { DistrictTelemetryMap } from '@/components/shared/DistrictTelemetryMap';
 import { getPlatformStats, getStoredComplaints } from '@/lib/complaints';
 import { cn } from '@/lib/utils';
 
@@ -473,6 +474,13 @@ export default function Landing() {
               );
             })}
           </div>
+
+          {/* Interactive Google Map Telemetry Showcase */}
+          <DistrictTelemetryMap
+            districts={DISTRICT_TELEMETRY}
+            selectedDistrict={selectedDistrict}
+            onSelectDistrict={(d) => setSelectedDistrict(d)}
+          />
 
           {/* District Operational Deep-Dive Dossier */}
           <Card className="docket-sheet rounded-2xl p-6 sm:p-8 border border-border space-y-6">

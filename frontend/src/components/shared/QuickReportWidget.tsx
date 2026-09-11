@@ -36,6 +36,7 @@ import { JHARKHAND_DISTRICTS, cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 
 import { StateSeal } from '@/components/shared/StateSeal';
+import { VoiceRecorder } from '@/components/shared/VoiceRecorder';
 
 const CATEGORY_OPTIONS = [
   { value: 'roads', label: 'Roads & Bridges', icon: '🛣️', dept: 'RCD / PWD', desc: 'Potholes, culverts, broken tarmac' },
@@ -65,6 +66,16 @@ export function QuickReportWidget() {
   const [description, setDescription] = useState<string>('');
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [voiceNote, setVoiceNote] = useState<{ blob: Blob; dataUrl: string; duration: number; name: string } | null>(null);
+
+  const handleVoiceTranscript = (text: string) => {
+    setDescription((prev) => (prev ? `${prev.trim()} ${text}` : text));
+    toast.success(
+      i18n.language?.startsWith('hi')
+        ? 'आवाज़ से पाठ जोड़ा गया'
+        : 'Voice transcript added to description'
+    );
+  };
 
   // Expandable full-details toggle
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -137,15 +148,19 @@ export function QuickReportWidget() {
 
     setIsSubmitting(true);
     try {
+      const mediaList: string[] = [];
+      if (photoPreview) mediaList.push(photoPreview);
+      if (voiceNote?.dataUrl) mediaList.push(voiceNote.dataUrl);
+
       const result = submitNewComplaint({
         title: derivedTitle,
         description: description.trim(),
         category,
         district: district || 'Ranchi',
         address: address.trim() || `${district || 'Ranchi'} Ward Locality`,
-        imageFileName: selectedPhoto?.name,
-        imageFileSize: selectedPhoto?.size,
-        mediaUrls: photoPreview ? [photoPreview] : undefined,
+        imageFileName: selectedPhoto?.name || (voiceNote ? voiceNote.name : undefined),
+        imageFileSize: selectedPhoto?.size || (voiceNote ? voiceNote.blob.size : undefined),
+        mediaUrls: mediaList.length > 0 ? mediaList : undefined,
         citizen_id: user?.id || `u-${Date.now()}`,
         citizen_name: user?.name || 'Verified Citizen',
         citizen_email: user?.email || 'citizen@samadhansetu.gov.in',
@@ -160,6 +175,7 @@ export function QuickReportWidget() {
       setTitle('');
       setAddress('');
       handleRemovePhoto();
+      setVoiceNote(null);
       setIsExpanded(false);
     } catch {
       toast.error('Failed to submit grievance. Please check your network.');
@@ -272,6 +288,13 @@ export function QuickReportWidget() {
               required
               maxLength={500}
               className="resize-none text-xs sm:text-sm leading-relaxed bg-secondary/15 font-sans"
+            />
+
+            {/* Voice Dictation & Audio Note Recording */}
+            <VoiceRecorder
+              onTranscript={handleVoiceTranscript}
+              onAudioReady={(audio) => setVoiceNote(audio)}
+              disabled={isSubmitting}
             />
 
             {/* Live AI Telemetry HUD */}

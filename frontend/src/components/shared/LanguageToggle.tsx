@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 export function LanguageToggle() {
   const { i18n } = useTranslation();
-  const [current, setCurrent] = useState(() => i18n.language || (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : 'en') || 'en');
+  const [current, setCurrent] = useState(() => i18n.language || (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : 'hi') || 'hi');
 
   useEffect(() => {
     const handleLangChange = (lng: string) => setCurrent(lng);
