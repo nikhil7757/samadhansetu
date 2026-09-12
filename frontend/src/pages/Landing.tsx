@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
