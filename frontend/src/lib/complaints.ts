@@ -366,34 +366,83 @@ export const INITIAL_COMPLAINTS: Complaint[] = [
   },
 ];
 
+export const DELETED_COMPLAINT_IDS_KEY = 'samadhansetu_deleted_complaint_ids';
+
 /**
- * Loads all complaints from localStorage or initial seed
+ * Retrieve tracking IDs marked as permanently deleted/rejected from the portal
  */
-export function getStoredComplaints(): Complaint[] {
+export function getDeletedComplaintIds(): string[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_COMPLAINTS));
-      return INITIAL_COMPLAINTS;
-    }
+    const raw = localStorage.getItem(DELETED_COMPLAINT_IDS_KEY);
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_COMPLAINTS));
-    return INITIAL_COMPLAINTS;
-  } catch (err) {
-    console.warn('Failed to parse stored complaints, using initial baseline:', err);
-    return INITIAL_COMPLAINTS;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
   }
 }
 
 /**
- * Saves complaints to localStorage
+ * Check if a complaint ID has been permanently removed by an officer
+ */
+export function isComplaintDeleted(id: string): boolean {
+  if (!id) return false;
+  const normalized = normalizeTrackingId(id);
+  const deleted = getDeletedComplaintIds();
+  return deleted.some((d) => normalizeTrackingId(d) === normalized);
+}
+
+/**
+ * Permanently blacklist a complaint ID so it disappears everywhere
+ */
+export function markComplaintDeleted(id: string): void {
+  if (!id) return;
+  try {
+    const current = getDeletedComplaintIds();
+    const normalized = id.trim().toUpperCase();
+    if (!current.includes(normalized)) {
+      const updated = [normalized, ...current];
+      localStorage.setItem(DELETED_COMPLAINT_IDS_KEY, JSON.stringify(updated));
+    }
+  } catch (err) {
+    console.warn('Could not save deleted complaint ID:', err);
+  }
+}
+
+/**
+ * Loads all complaints from localStorage or initial seed, strictly excluding deleted complaints
+ */
+export function getStoredComplaints(): Complaint[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const filterValid = (arr: Complaint[]) =>
+      arr.filter((c) => c && c.id && !isComplaintDeleted(c.id) && c.status !== 'rejected_by_officer');
+
+    if (!raw) {
+      const initial = filterValid(INITIAL_COMPLAINTS);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+      return initial;
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return filterValid(parsed);
+    }
+    const initial = filterValid(INITIAL_COMPLAINTS);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    return initial;
+  } catch (err) {
+    console.warn('Failed to parse stored complaints, using initial baseline:', err);
+    return INITIAL_COMPLAINTS.filter((c) => !isComplaintDeleted(c.id) && c.status !== 'rejected_by_officer');
+  }
+}
+
+/**
+ * Saves complaints to localStorage (ensures deleted items are never preserved)
  */
 export function saveComplaints(complaints: Complaint[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(complaints));
+    const sanitized = complaints.filter((c) => c && c.id && !isComplaintDeleted(c.id) && c.status !== 'rejected_by_officer');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
   } catch (err) {
     console.error('Failed to save complaints to localStorage:', err);
   }
@@ -443,6 +492,7 @@ export function normalizeTrackingId(id: string): string {
  */
 export function getComplaintById(id: string): Complaint | undefined {
   if (!id) return undefined;
+  if (isComplaintDeleted(id)) return undefined; // Never return or synthesize deleted complaints
   const rawUpper = id.trim().toUpperCase();
   const normalized = normalizeTrackingId(rawUpper);
   const all = getStoredComplaints();
@@ -455,8 +505,10 @@ export function getComplaintById(id: string): Complaint | undefined {
   if (found) return found;
 
   // Resilient fallback for direct URL visits with valid tracking tokens (e.g. SS-2026-000495)
-  if (rawUpper.startsWith('SS-') || rawUpper.startsWith('SS')) {
+  // ONLY for complaints that have not been explicitly rejected/deleted
+  if (!isComplaintDeleted(rawUpper) && (rawUpper.startsWith('SS-') || rawUpper.startsWith('SS'))) {
     const formattedId = rawUpper.startsWith('SS-') ? rawUpper : `SS-${rawUpper.slice(2, 6)}-${rawUpper.slice(6)}`;
+    if (isComplaintDeleted(formattedId)) return undefined;
     const dynamicComplaint: Complaint = {
       id: formattedId,
       citizen_id: 'u-citizen',
@@ -681,10 +733,27 @@ export function executeOfficerAction(
     });
   } else if (action === 'reject') {
     // Officer rejection = permanent removal from the portal
+    markComplaintDeleted(id);
     const purged = all.filter((_, i) => i !== index);
     saveComplaints(purged);
 
-    // Sync deletion with backend
+    // Clean up from session IDs
+    try {
+      const currentSession = getSessionSubmittedComplaintIds().filter(
+        (sid) => normalizeTrackingId(sid) !== normalizeTrackingId(id)
+      );
+      sessionStorage.setItem(SESSION_COMPLAINT_IDS_KEY, JSON.stringify(currentSession));
+      localStorage.setItem(SESSION_COMPLAINT_IDS_KEY, JSON.stringify(currentSession));
+    } catch {}
+
+    // Dispatch global events so all components and views update immediately
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('samadhansetu:complaint-deleted', { detail: { id } }));
+      window.dispatchEvent(new CustomEvent('samadhansetu:complaint-submitted'));
+    }
+
+    // Sync deletion with backend (both DELETE and PATCH)
+    api.delete(`/complaints/${encodeURIComponent(id)}`).catch(() => {});
     api.patch(`/complaints/${encodeURIComponent(id)}/officer-action`, {
       action,
       note: notes,

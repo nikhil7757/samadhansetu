@@ -11,6 +11,8 @@ import {
   getStoredComplaints,
   saveComplaints,
   getComplaintById,
+  isComplaintDeleted,
+  markComplaintDeleted,
   submitComplaint as libSubmitComplaint,
   appealComplaint as libAppealComplaint,
   executeOfficerAction as libExecuteOfficerAction,
@@ -79,10 +81,18 @@ export function useGrievances(filters?: GrievanceFilterOptions): UseGrievancesRe
       // 2. Background synchronization with backend API
       const res = await api.get('/complaints');
       if (Array.isArray(res.data) && res.data.length > 0) {
-        // Merge without losing locally submitted pending items
+        // Merge without losing locally submitted pending items, excluding deleted/rejected items
         const mergedMap = new Map<string, Complaint>();
-        for (const item of local) mergedMap.set(item.id, item);
-        for (const item of res.data) mergedMap.set(item.id, item);
+        for (const item of local) {
+          if (item && item.id && !isComplaintDeleted(item.id) && item.status !== 'rejected_by_officer') {
+            mergedMap.set(item.id, item);
+          }
+        }
+        for (const item of res.data) {
+          if (item && item.id && !isComplaintDeleted(item.id) && item.status !== 'rejected_by_officer') {
+            mergedMap.set(item.id, item);
+          }
+        }
         const merged = Array.from(mergedMap.values());
         saveComplaints(merged);
         setGrievances(applyFilters(merged, filters));
@@ -100,10 +110,14 @@ export function useGrievances(filters?: GrievanceFilterOptions): UseGrievancesRe
     };
 
     listeners.add(handleStoreChange);
+    window.addEventListener('samadhansetu:complaint-deleted', handleStoreChange);
+    window.addEventListener('samadhansetu:complaint-submitted', handleStoreChange);
     sync();
 
     return () => {
       listeners.delete(handleStoreChange);
+      window.removeEventListener('samadhansetu:complaint-deleted', handleStoreChange);
+      window.removeEventListener('samadhansetu:complaint-submitted', handleStoreChange);
     };
   }, [sync]);
 
@@ -207,7 +221,9 @@ export function useGrievance(docketId?: string): UseGrievanceResult {
         if (updated) {
           setGrievance(updated);
         } else if (action === 'reject') {
+          markComplaintDeleted(docketId);
           setGrievance(null);
+          api.delete(`/complaints/${encodeURIComponent(docketId)}`).catch(() => {});
         }
         notifyListeners();
         await api.patch(`/complaints/${encodeURIComponent(docketId)}/officer-action`, {

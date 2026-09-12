@@ -73,18 +73,20 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5">
               <li>
-                <Link to="/about" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
-                  About SamadhanSetu
+                <Link to="/about" className="hover:text-primary hover:translate-x-0.5 inline-flex items-center gap-1.5 transition-all font-semibold text-foreground">
+                  <span>About SamadhanSetu (Gazette)</span>
+                  <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-primary/10 text-primary">Overview</span>
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
-                  Frequently Asked Questions
+                <Link to="/faq" className="hover:text-primary hover:translate-x-0.5 inline-flex items-center gap-1.5 transition-all font-semibold text-foreground">
+                  <span>Citizen's Redressal Guide & FAQ</span>
+                  <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">Help</span>
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
-                  District Nodal Directory
+                  District Nodal Directory (24 Districts)
                 </Link>
               </li>
               <li>

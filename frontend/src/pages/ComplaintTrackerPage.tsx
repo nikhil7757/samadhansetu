@@ -41,6 +41,7 @@ import {
   getComplaintById,
   appealComplaint,
   getStoredComplaints,
+  isComplaintDeleted,
   type Complaint,
 } from '@/lib/complaints';
 import api from '@/lib/api';
@@ -54,12 +55,15 @@ export default function ComplaintTrackerPage() {
   const [searchInput, setSearchInput] = useState(() => complaintId || '');
   const [complaint, setComplaint] = useState<Complaint | null>(() => {
     if (complaintId) {
+      if (isComplaintDeleted(complaintId)) return null;
       return getComplaintById(complaintId) || null;
     }
     const all = getStoredComplaints();
     return all.length > 0 ? all[0] : null;
   });
-  const [notFound, setNotFound] = useState(false);
+  const [notFound, setNotFound] = useState(() => {
+    return !!(complaintId && isComplaintDeleted(complaintId));
+  });
   const [hasCopied, setHasCopied] = useState(false);
 
   // Appeal modal state
@@ -81,6 +85,13 @@ export default function ComplaintTrackerPage() {
 
     const normalizedId = complaintId.trim().toUpperCase();
 
+    // Check if permanently rejected/deleted
+    if (isComplaintDeleted(normalizedId)) {
+      setComplaint(null);
+      setNotFound(true);
+      return;
+    }
+
     // Check local storage first for instantaneous rendering
     const localFound = getComplaintById(normalizedId);
     if (localFound) {
@@ -95,7 +106,7 @@ export default function ComplaintTrackerPage() {
     // Fetch latest live data from backend database API in background
     api.get(`/complaints/${encodeURIComponent(normalizedId)}`)
       .then((res) => {
-        if (res.data && res.data.id) {
+        if (res.data && res.data.id && !isComplaintDeleted(res.data.id)) {
           setComplaint(res.data);
           setSearchInput(res.data.id);
           setNotFound(false);

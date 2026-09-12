@@ -39,6 +39,11 @@ router.get('/:id', async (req: Request, res: Response) => {
   const rawId = (Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '')).trim();
   const normalized = normalizeId(rawId);
 
+  if (GrievanceRegistryService.isDeleted(rawId)) {
+    res.status(404).json({ error: 'Grievance docket has been permanently removed from the portal.' });
+    return;
+  }
+
   const record = await GrievanceRegistryService.getById(rawId);
   if (record) {
     res.json(record);
@@ -150,6 +155,16 @@ router.patch('/:id/officer-action', async (req: Request, res: Response) => {
   }
 
   res.json({ success: true, id: rawId, action });
+});
+
+/**
+ * DELETE /api/complaints/:id
+ * Permanently purge a grievance from the portal
+ */
+router.delete('/:id', async (req: Request, res: Response) => {
+  const rawId = (Array.isArray(req.params.id) ? req.params.id[0] : (req.params.id || '')).trim();
+  await GrievanceRegistryService.deleteGrievance(rawId);
+  res.json({ success: true, deleted: true, id: rawId });
 });
 
 export default router;

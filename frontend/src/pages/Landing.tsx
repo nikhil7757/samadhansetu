@@ -125,8 +125,21 @@ export default function Landing() {
 
   const [trackInput, setTrackInput] = useState('');
   const [selectedDistrict, setSelectedDistrict] = useState(DISTRICT_TELEMETRY[0]);
-  const [stats] = useState(() => getPlatformStats());
-  const [complaints] = useState(() => getStoredComplaints());
+  const [stats, setStats] = useState(() => getPlatformStats());
+  const [complaints, setComplaints] = useState(() => getStoredComplaints());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setComplaints(getStoredComplaints());
+      setStats(getPlatformStats());
+    };
+    window.addEventListener('samadhansetu:complaint-deleted', handleUpdate);
+    window.addEventListener('samadhansetu:complaint-submitted', handleUpdate);
+    return () => {
+      window.removeEventListener('samadhansetu:complaint-deleted', handleUpdate);
+      window.removeEventListener('samadhansetu:complaint-submitted', handleUpdate);
+    };
+  }, []);
 
   const resolvedComplaints = complaints
     .filter((c) => c.status === 'resolved')

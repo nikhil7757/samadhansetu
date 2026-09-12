@@ -43,8 +43,6 @@ export function TopNav() {
     { to: '/dashboard', label: t('nav.operations', 'Operations'), icon: BarChart3, show: true },
     { to: '/problems', label: t('nav.challengeBoard', 'Challenge Board'), icon: Compass, show: true },
     { to: '/admin', label: t('nav.nodalOfficer', 'Nodal Officer'), icon: ShieldAlert, show: user?.role === 'ADMIN' },
-    { to: '/about', label: t('nav.gazetteAbout', 'Gazette / About'), icon: Info, show: true },
-    { to: '/faq', label: t('nav.citizenGuide', 'Citizen Guide'), icon: HelpCircle, show: true },
   ].filter((l) => l.show);
 
   const isActive = (path: string) =>
@@ -69,14 +67,30 @@ export function TopNav() {
             </span>
           </div>
 
-          <div className="flex items-center gap-4 text-[10.5px]">
+          <div className="flex items-center gap-3 text-[10.5px]">
+            <Link
+              to="/about"
+              className="text-white/80 hover:text-amber-300 transition-colors flex items-center gap-1 font-medium"
+            >
+              <Info className="h-3 w-3 text-emerald-400" />
+              <span className="hidden sm:inline">{t('nav.gazetteAbout', 'Gazette / About')}</span>
+            </Link>
+            <span className="text-white/30 hidden sm:inline">•</span>
+            <Link
+              to="/faq"
+              className="text-white/80 hover:text-amber-300 transition-colors flex items-center gap-1 font-medium"
+            >
+              <HelpCircle className="h-3 w-3 text-emerald-400" />
+              <span>{t('nav.citizenGuide', "Citizen's Guide")}</span>
+            </Link>
+            <span className="text-white/30 hidden sm:inline">•</span>
             <span className="hidden sm:flex items-center gap-1.5 font-mono text-emerald-300">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              {t('nav.registriesActive', '24 District Registries Active')}
+              {t('nav.registriesActive', '24 District Registries')}
             </span>
             <span className="hidden sm:inline text-white/30">•</span>
             <span className="flex items-center gap-1.5 text-white/90">
-              {t('nav.helpline', 'Citizen Redressal Helpline:')}{' '}
+              <span className="hidden md:inline">{t('nav.helpline', 'Citizen Redressal Helpline:')}</span>{' '}
               <strong className="text-amber-400 font-mono font-bold bg-amber-400/20 px-1.5 py-0.2 rounded">181</strong>
             </span>
           </div>
@@ -130,6 +144,14 @@ export function TopNav() {
 
         {/* Right Action Bar */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          <Link
+            to="/faq"
+            className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors border border-border/50"
+            title={t('nav.citizenGuide', "Citizen's Guide & FAQ")}
+            aria-label="Citizen's Guide"
+          >
+            <HelpCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          </Link>
           <ThemeToggle />
           <LanguageToggle />
           <NotificationBell />
@@ -215,6 +237,26 @@ export function TopNav() {
               </Link>
             );
           })}
+
+          {/* Secondary Mobile Resources */}
+          <div className="pt-2 pb-1 grid grid-cols-2 gap-2 text-xs border-t border-border/60">
+            <Link
+              to="/about"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50 text-foreground font-semibold hover:bg-secondary transition-colors"
+            >
+              <Info className="h-3.5 w-3.5 text-primary" />
+              <span>{t('nav.gazetteAbout', 'Gazette / About')}</span>
+            </Link>
+            <Link
+              to="/faq"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2 p-2 rounded-lg bg-secondary/50 text-foreground font-semibold hover:bg-secondary transition-colors"
+            >
+              <HelpCircle className="h-3.5 w-3.5 text-primary" />
+              <span>{t('nav.citizenGuide', "Citizen's Guide")}</span>
+            </Link>
+          </div>
 
           <div className="pt-3 border-t border-border space-y-2">
             {user ? (

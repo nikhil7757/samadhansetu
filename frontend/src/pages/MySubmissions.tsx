@@ -24,6 +24,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import {
   getStoredComplaints,
   getSessionSubmittedComplaintIds,
+  isComplaintDeleted,
   type Complaint,
   type ComplaintStatus,
 } from '@/lib/complaints';
@@ -59,10 +60,10 @@ export default function MySubmissions() {
         // Fall back to local registry
       }
 
-      // Merge and deduplicate by ID, preferring newest
+      // Merge and deduplicate by ID, strictly excluding deleted/rejected complaints
       const mergedMap = new Map<string, Complaint>();
       for (const c of [...remoteComplaints, ...localAll]) {
-        if (c?.id && !mergedMap.has(c.id)) {
+        if (c?.id && !isComplaintDeleted(c.id) && c.status !== 'rejected_by_officer' && !mergedMap.has(c.id)) {
           mergedMap.set(c.id, c);
         }
       }
@@ -72,6 +73,7 @@ export default function MySubmissions() {
       // 1. Matches logged-in citizen ID or citizen email
       // 2. Or matches any tracking ID submitted in this browser session
       const userComplaints = allMerged.filter((c) => {
+        if (isComplaintDeleted(c.id) || c.status === 'rejected_by_officer') return false;
         const matchesSession = sessionIds.includes(c.id);
         if (matchesSession) return true;
 
@@ -98,8 +100,10 @@ export default function MySubmissions() {
     };
 
     window.addEventListener('samadhansetu:complaint-submitted', handleSubmitted);
+    window.addEventListener('samadhansetu:complaint-deleted', handleSubmitted);
     return () => {
       window.removeEventListener('samadhansetu:complaint-submitted', handleSubmitted);
+      window.removeEventListener('samadhansetu:complaint-deleted', handleSubmitted);
     };
   }, [reloadComplaints]);
 

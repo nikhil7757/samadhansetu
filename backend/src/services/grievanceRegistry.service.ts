@@ -305,6 +305,46 @@ const MEMORY_REGISTRY: Record<string, GrievanceRecord> = {
 };
 
 export class GrievanceRegistryService {
+  private static DELETED_IDS: Set<string> = new Set<string>();
+
+  /**
+   * Check if a tracking ID has been permanently deleted
+   */
+  static isDeleted(id: string): boolean {
+    if (!id) return false;
+    const norm = this.normalizeId(id);
+    for (const d of this.DELETED_IDS) {
+      if (this.normalizeId(d) === norm) return true;
+    }
+    return false;
+  }
+
+  /**
+   * Permanently delete a grievance from memory and database
+   */
+  static async deleteGrievance(rawId: string): Promise<boolean> {
+    if (!rawId) return false;
+    const norm = this.normalizeId(rawId);
+    this.DELETED_IDS.add(rawId);
+    for (const key of Object.keys(MEMORY_REGISTRY)) {
+      if (this.normalizeId(key) === norm) {
+        delete MEMORY_REGISTRY[key];
+      }
+    }
+    try {
+      if ((prisma as any)?.complaint) {
+        await (prisma as any).complaint.deleteMany({
+          where: {
+            id: { equals: rawId, mode: 'insensitive' },
+          },
+        });
+      }
+    } catch (err: any) {
+      console.warn('Prisma delete note:', err?.message || err);
+    }
+    return true;
+  }
+
   /**
    * Normalize tracking ID for deterministic matching (strips non-alphanumeric, uppercase)
    */
@@ -397,7 +437,7 @@ export class GrievanceRegistryService {
    * Find a grievance by ID (exact or normalized)
    */
   static async getById(rawId: string): Promise<GrievanceRecord | null> {
-    if (!rawId) return null;
+    if (!rawId || this.isDeleted(rawId)) return null;
     const cleanId = rawId.trim();
     const normalized = this.normalizeId(cleanId);
 
@@ -498,6 +538,9 @@ export class GrievanceRegistryService {
       );
     }
 
+    // Strictly exclude deleted and rejected records from public and internal registry lists
+    records = records.filter((r) => r && !this.isDeleted(r.id) && r.status !== 'rejected_by_officer');
+
     return records.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime());
   }
 
@@ -505,6 +548,11 @@ export class GrievanceRegistryService {
    * Process an administrative determination by a District Nodal Officer
    */
   static async processOfficerAction(rawId: string, input: OfficerActionInput): Promise<GrievanceRecord | null> {
+    if (input.action === 'reject') {
+      await this.deleteGrievance(rawId);
+      return null;
+    }
+
     const record = await this.getById(rawId);
     if (!record) return null;
 
@@ -517,9 +565,6 @@ export class GrievanceRegistryService {
     if (input.action === 'approve') {
       record.status = 'verified_in_progress';
       record.rejection_reason = null;
-    } else if (input.action === 'reject') {
-      record.status = 'rejected_by_officer';
-      record.rejection_reason = input.note || 'Site inspection did not substantiate reported civic defect.';
     } else if (input.action === 'escalate') {
       record.status = 'officer_reviewing';
     } else if (input.action === 'resolve') {

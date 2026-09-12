@@ -25,8 +25,21 @@ export default function AdminDashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [stats] = useState(() => getPlatformStats());
-  const [complaints] = useState(() => getStoredComplaints());
+  const [stats, setStats] = useState(() => getPlatformStats());
+  const [complaints, setComplaints] = useState(() => getStoredComplaints());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setComplaints(getStoredComplaints());
+      setStats(getPlatformStats());
+    };
+    window.addEventListener('samadhansetu:complaint-deleted', handleUpdate);
+    window.addEventListener('samadhansetu:complaint-submitted', handleUpdate);
+    return () => {
+      window.removeEventListener('samadhansetu:complaint-deleted', handleUpdate);
+      window.removeEventListener('samadhansetu:complaint-submitted', handleUpdate);
+    };
+  }, []);
 
   const pendingCount = complaints.filter(
     (c) => c.status === 'pending_officer' || c.status === 'officer_reviewing'

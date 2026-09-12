@@ -13,7 +13,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { ErrorState } from '@/components/shared/ErrorState';
 import { JHARKHAND_DISTRICTS, CATEGORIES, STATUSES, formatDate } from '@/lib/utils';
 import { MOCK_PROBLEMS } from '@/lib/mockData';
-import { getStoredComplaints, type Complaint } from '@/lib/complaints';
+import { getStoredComplaints, isComplaintDeleted, type Complaint } from '@/lib/complaints';
 import api from '@/lib/api';
 
 interface ProblemSummary {
@@ -123,14 +123,14 @@ export default function ProblemFeed() {
 
       const mergedComplaintsMap = new Map<string, Complaint>();
       for (const c of [...remoteComplaints, ...localComplaints]) {
-        if (c?.id && !mergedComplaintsMap.has(c.id)) {
+        if (c?.id && !isComplaintDeleted(c.id) && c.status !== 'rejected_by_officer' && !mergedComplaintsMap.has(c.id)) {
           mergedComplaintsMap.set(c.id, c);
         }
       }
 
-      // Convert complaints to problem summaries (exclude auto_rejected from public feed)
+      // Convert complaints to problem summaries (exclude auto_rejected and deleted from public feed)
       const complaintProblems = Array.from(mergedComplaintsMap.values())
-        .filter((c) => c.status !== 'auto_rejected')
+        .filter((c) => c.status !== 'auto_rejected' && c.status !== 'rejected_by_officer' && !isComplaintDeleted(c.id))
         .map(mapComplaintToProblemSummary);
 
       // 2. Fetch problems from /problems API or mock baseline
@@ -146,11 +146,11 @@ export default function ProblemFeed() {
         baseProblems = [...MOCK_PROBLEMS];
       }
 
-      // Combine complaints + problems, deduplicating by ID
+      // Combine complaints + problems, deduplicating by ID and filtering out deleted
       const allProblemsMap = new Map<string, ProblemSummary>();
       // Put complaints first so newly submitted grievances appear prominently
       for (const p of [...complaintProblems, ...baseProblems]) {
-        if (!allProblemsMap.has(p.id)) {
+        if (p?.id && !isComplaintDeleted(p.id) && !allProblemsMap.has(p.id)) {
           allProblemsMap.set(p.id, p);
         }
       }
@@ -202,6 +202,15 @@ export default function ProblemFeed() {
 
   useEffect(() => {
     fetchProblems();
+    const handleUpdate = () => {
+      fetchProblems();
+    };
+    window.addEventListener('samadhansetu:complaint-deleted', handleUpdate);
+    window.addEventListener('samadhansetu:complaint-submitted', handleUpdate);
+    return () => {
+      window.removeEventListener('samadhansetu:complaint-deleted', handleUpdate);
+      window.removeEventListener('samadhansetu:complaint-submitted', handleUpdate);
+    };
   }, [fetchProblems]);
 
   const updateParam = (key: string, value: string) => {
