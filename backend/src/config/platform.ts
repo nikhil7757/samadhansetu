@@ -5,14 +5,14 @@
  */
 
 export const PLATFORM_CONFIG = {
-  name: 'NavSetu',
-  fullName: 'NavSetu — Innovation Procurement Platform',
+  name: 'SamadhanSetu',
+  fullName: 'SamadhanSetu — Innovation Procurement Platform',
   tagline: 'Startup-Friendly Public Procurement & Scaling Pathway',
   orgName: 'Maharashtra State Innovation Society (MSInS)',
   deptName: 'Department of Skills, Employment, Entrepreneurship and Innovation',
   state: 'Maharashtra',
   problemStatementId: 'ID 26136',
-  refPrefix: 'NS',
+  refPrefix: 'SS',
   totalDistricts: 36,
   roles: {
     DEPARTMENT_USER: 'DEPARTMENT_USER',

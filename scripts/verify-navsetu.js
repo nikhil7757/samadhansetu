@@ -30,12 +30,12 @@ assert.ok(fs.existsSync(bePlatformPath), 'Backend platform config must exist');
 const fePlatformContent = fs.readFileSync(fePlatformPath, 'utf-8');
 const bePlatformContent = fs.readFileSync(bePlatformPath, 'utf-8');
 
-assert.ok(fePlatformContent.includes("name: 'NavSetu'"), "Frontend name must be 'NavSetu'");
-assert.ok(fePlatformContent.includes("refPrefix: 'NS'"), "Frontend refPrefix must be 'NS'");
-assert.ok(bePlatformContent.includes("name: 'NavSetu'"), "Backend name must be 'NavSetu'");
-assert.ok(bePlatformContent.includes("refPrefix: 'NS'"), "Backend refPrefix must be 'NS'");
+assert.ok(fePlatformContent.includes("name: 'SamadhanSetu'"), "Frontend name must be 'SamadhanSetu'");
+assert.ok(fePlatformContent.includes("refPrefix: 'SS'"), "Frontend refPrefix must be 'SS'");
+assert.ok(bePlatformContent.includes("name: 'SamadhanSetu'"), "Backend name must be 'SamadhanSetu'");
+assert.ok(bePlatformContent.includes("refPrefix: 'SS'"), "Backend refPrefix must be 'SS'");
 assert.ok(fePlatformContent.includes('totalDistricts: 36'), 'Must cover 36 Maharashtra districts');
-console.log('  ✓ Centralized NavSetu brand identity verified in frontend & backend');
+console.log('  ✓ Centralized SamadhanSetu brand identity verified in frontend & backend');
 
 // 2. Verify Trilingual Localization Synchronization
 console.log('\n[2/7] Verifying Trilingual Localization (en, hi, mr)...');
@@ -51,9 +51,9 @@ const en = JSON.parse(fs.readFileSync(enPath, 'utf-8'));
 const hi = JSON.parse(fs.readFileSync(hiPath, 'utf-8'));
 const mr = JSON.parse(fs.readFileSync(mrPath, 'utf-8'));
 
-assert.equal(en.app.name, 'NavSetu', "en.json app name must be 'NavSetu'");
-assert.equal(hi.app.name, 'नवसेतु', "hi.json app name must be 'नवसेतु'");
-assert.equal(mr.app.name, 'नवसेतू', "mr.json app name must be 'नवसेतू'");
+assert.equal(en.app.name, 'SamadhanSetu', "en.json app name must be 'SamadhanSetu'");
+assert.equal(hi.app.name, 'समाधानसेतु', "hi.json app name must be 'समाधानसेतु'");
+assert.equal(mr.app.name, 'समाधानसेतू', "mr.json app name must be 'समाधानसेतू'");
 
 function getKeys(obj, prefix = '') {
   let keys = [];
@@ -160,8 +160,8 @@ console.log('\n[7/7] Verifying Production Distribution Outputs...');
 const distIndex = path.join(ROOT_DIR, 'frontend/dist/index.html');
 assert.ok(fs.existsSync(distIndex), 'frontend/dist/index.html must exist from build');
 const distHtml = fs.readFileSync(distIndex, 'utf-8');
-assert.ok(distHtml.includes('NavSetu'), 'dist/index.html must include NavSetu');
-console.log('  ✓ Production build verified with NavSetu identity');
+assert.ok(distHtml.includes('SamadhanSetu'), 'dist/index.html must include SamadhanSetu');
+console.log('  ✓ Production build verified with SamadhanSetu identity');
 
 console.log('\n=================================================================');
 console.log('✅ ALL 7 NAVSETU VERIFICATION CHECKS PASSED SUCCESSFULLY!');
