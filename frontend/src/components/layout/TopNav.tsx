@@ -5,7 +5,6 @@ import {
   Menu,
   X,
   LogOut,
-  User as UserIcon,
   ShieldAlert,
   ShieldCheck,
   PlusCircle,
@@ -25,7 +24,11 @@ import { useAuth } from '@/lib/auth';
 import { PLATFORM_CONFIG } from '@/config/platform';
 import { cn } from '@/lib/utils';
 
-export function TopNav() {
+interface TopNavProps {
+  onOpenCommandPalette?: () => void;
+}
+
+export function TopNav({ onOpenCommandPalette }: TopNavProps) {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -65,8 +68,8 @@ export function TopNav() {
     location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-card/95 backdrop-blur-xl supports-[backdrop-filter]:bg-card/90 transition-colors">
-      {/* Tiranga Tricolor Micro-Ribbon */}
+    <header className="sticky top-0 z-40 w-full border-b border-border/80 glass-surface transition-colors">
+      {/* Sovereign Tricolor Micro-Ribbon */}
       <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-white to-emerald-600 dark:from-amber-600 dark:via-slate-200 dark:to-emerald-700" />
 
       {/* Sovereign Official Gazette Banner */}
@@ -99,7 +102,7 @@ export function TopNav() {
           <StateSeal size="md" className="group-hover:scale-105 transition-transform" />
           <div className="flex flex-col">
             <div className="flex items-center gap-2">
-              <span className="text-lg font-black tracking-tight text-foreground font-serif">
+              <span className="text-lg font-black tracking-tight text-foreground font-heading">
                 {PLATFORM_CONFIG.name}
               </span>
               <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-primary/10 text-primary border border-primary/20">
@@ -112,6 +115,20 @@ export function TopNav() {
           </div>
         </Link>
 
+        {/* Global Command Palette Quick Trigger */}
+        <button
+          type="button"
+          onClick={onOpenCommandPalette}
+          className="hidden md:flex items-center gap-2.5 px-3 py-1.5 rounded-xl border border-border/80 bg-background/60 hover:bg-background text-muted-foreground hover:text-foreground text-xs font-medium transition-all shadow-2xs hover:border-primary/40 cursor-pointer"
+          aria-label="Search platform or press Cmd+K"
+        >
+          <Search className="h-3.5 w-3.5 text-primary" />
+          <span>Search or jump to...</span>
+          <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted/70 text-muted-foreground border border-border">
+            ⌘K
+          </kbd>
+        </button>
+
         {/* Desktop Navigation Links */}
         <nav className="hidden lg:flex items-center gap-1">
           {navLinks.map((link) => {
@@ -122,7 +139,7 @@ export function TopNav() {
                 key={link.to}
                 to={link.to}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150',
+                  'relative flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-150',
                   active
                     ? 'bg-primary text-primary-foreground shadow-xs font-bold'
                     : 'text-muted-foreground hover:text-foreground hover:bg-secondary/70'
@@ -140,7 +157,7 @@ export function TopNav() {
           {/* Post Challenge CTA */}
           <Link
             to="/report"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-xs transition-all cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-xs hover:shadow-md transition-all active:scale-95 cursor-pointer"
           >
             <PlusCircle className="h-3.5 w-3.5" />
             <span>{t('nav.postChallenge', 'Post Challenge')}</span>
@@ -191,7 +208,7 @@ export function TopNav() {
                 </Button>
               </Link>
               <Link to="/signup" className="hidden sm:block">
-                <Button size="sm" className="text-xs font-bold cursor-pointer">
+                <Button size="sm" className="text-xs font-bold cursor-pointer bg-primary hover:bg-primary-hover text-white">
                   {t('nav.signup', 'Register')}
                 </Button>
               </Link>
@@ -203,7 +220,7 @@ export function TopNav() {
             variant="ghost"
             size="icon"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden h-8 w-8"
+            className="lg:hidden h-8 w-8 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -213,7 +230,22 @@ export function TopNav() {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-card px-4 pt-3 pb-6 space-y-3 animate-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden border-t border-border/80 glass-popover px-4 pt-3 pb-6 space-y-3 animate-in slide-in-from-top-2 duration-200">
+          <button
+            type="button"
+            onClick={() => {
+              setMobileOpen(false);
+              onOpenCommandPalette?.();
+            }}
+            className="flex items-center justify-between w-full p-2.5 rounded-lg border border-border/70 bg-background/50 text-xs font-medium text-muted-foreground"
+          >
+            <div className="flex items-center gap-2">
+              <Search className="h-4 w-4 text-primary" />
+              <span>Search platform...</span>
+            </div>
+            <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground">⌘K</kbd>
+          </button>
+
           <Link
             to="/report"
             onClick={() => setMobileOpen(false)}
@@ -233,8 +265,8 @@ export function TopNav() {
                   to={link.to}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                    active ? 'bg-primary text-primary-foreground font-bold' : 'hover:bg-secondary'
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                    active ? 'bg-primary text-primary-foreground font-bold shadow-xs' : 'hover:bg-secondary/60 text-foreground'
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -248,9 +280,9 @@ export function TopNav() {
             <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
               <div>
                 <div className="font-bold text-foreground">{user.name}</div>
-                <div className="text-muted-foreground">{user.email}</div>
+                <div className="text-muted-foreground text-[11px]">{user.email}</div>
               </div>
-              <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive gap-1 text-xs">
+              <Button variant="outline" size="sm" onClick={handleLogout} className="text-destructive gap-1 text-xs cursor-pointer">
                 <LogOut className="h-3.5 w-3.5" />
                 {t('nav.logout', 'Sign Out')}
               </Button>

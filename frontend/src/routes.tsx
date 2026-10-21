@@ -10,7 +10,7 @@ function RootErrorBoundary() {
       <div className="h-14 w-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl mb-4">
         🏛️
       </div>
-      <h1 className="text-xl font-bold text-foreground mb-2">NavSetu Platform Notice</h1>
+      <h1 className="text-xl font-bold text-foreground mb-2">SamadhanSetu Platform Notice</h1>
       <p className="text-sm text-muted-foreground max-w-md mb-6 leading-relaxed">
         The application encountered an unexpected client state. You can reload or navigate back to the portal home.
       </p>
@@ -63,6 +63,7 @@ const FaqPage = lazy(() => import('@/pages/FaqPage'));
 const ContactPage = lazy(() => import('@/pages/ContactPage'));
 const PrototypePage = lazy(() => import('@/pages/PrototypePage'));
 const MfaEnrollment = lazy(() => import('@/pages/MfaEnrollment'));
+const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
 function SuspenseFallback() {
   return (
@@ -239,7 +240,7 @@ export const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
-      { path: '*', element: <Navigate to="/" replace /> },
+      { path: '*', element: <SuspenseWrapper><NotFoundPage /></SuspenseWrapper> },
     ],
   },
 ]);
