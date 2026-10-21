@@ -27,6 +27,12 @@ pnpm-debug.log*
 # Uploads & Temporary files
 uploads/
 backend/uploads/
+secure_uploads/
+backend/secure_uploads/
+*.pem
+*.key
+*serviceAccount*.json
+*service-account*.json
 *.tsbuildinfo
 
 # OS Metadata
@@ -39,3 +45,4 @@ Thumbs.db
 agent/
 docs/
 skills-lock.json
+kabadiwala-connect/

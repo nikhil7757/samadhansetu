@@ -32,7 +32,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { submitNewComplaint, type Complaint, type ComplaintCategory } from '@/lib/complaints';
-import { JHARKHAND_DISTRICTS, cn } from '@/lib/utils';
+import { MAHARASHTRA_DISTRICTS, cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 
 import { StateSeal } from '@/components/shared/StateSeal';
@@ -417,7 +417,7 @@ export function QuickReportWidget() {
                   <Select
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    options={JHARKHAND_DISTRICTS.map((d) => ({ value: d, label: d }))}
+                    options={MAHARASHTRA_DISTRICTS.map((d) => ({ value: d, label: d }))}
                   />
                 </div>
 
@@ -502,7 +502,7 @@ export function QuickReportWidget() {
               <StateSeal size="sm" />
               <div>
                 <span className="text-[10px] font-mono tracking-widest text-emerald-300 uppercase block">
-                  {t('receipt.govJharkhand', 'GOVERNMENT OF JHARKHAND')}
+                  {t('receipt.govMaharashtra', 'GOVERNMENT OF MAHARASHTRA')}
                 </span>
                 <h3 className="text-base font-black tracking-tight text-white">
                   {t('receipt.title', 'Official Grievance Docket Receipt')}

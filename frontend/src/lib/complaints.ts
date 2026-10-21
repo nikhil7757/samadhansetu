@@ -512,33 +512,33 @@ export function getComplaintById(id: string): Complaint | undefined {
     const dynamicComplaint: Complaint = {
       id: formattedId,
       citizen_id: 'u-citizen',
-      citizen_name: 'Verified Citizen',
-      citizen_email: 'citizen@samadhansetu.gov.in',
-      title: `Civic Infrastructure Redressal Report #${formattedId}`,
+      citizen_name: 'Verified Department Officer',
+      citizen_email: 'department@samadhansetu.maharashtra.gov.in',
+      title: `Innovation Procurement Challenge #${formattedId}`,
       category: 'roads',
-      description: 'Grievance registered on the Jharkhand Civic Registry. Live field inspection dispatched to local district administration.',
+      description: 'Challenge registered on the SamadhanSetu Procurement Registry. Live pilot evaluation dispatched to state innovation panel.',
       location: {
-        lat: 23.3441,
-        lng: 85.3096,
-        address: 'Ward Administrative Center',
-        district: 'Ranchi',
+        lat: 18.5204,
+        lng: 73.8567,
+        address: 'District Innovation Center',
+        district: 'Pune',
       },
       media: [
         'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=1200&q=80',
       ],
       submitted_at: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
       ai_score: 82,
-      ai_flags: ['geo_consistency_verified', 'clean_exif_metadata_passed', 'category_match_verified: roads'],
+      ai_flags: ['outcome_orientation_verified', 'smart_kpi_defined', 'gfr_relaxation_compliant'],
       status: 'verified_in_progress',
       officer_id: 'u-admin',
-      officer_name: 'Vikram Singh (District Nodal Officer)',
-      officer_notes: 'Active field verification underway with municipal engineer.',
+      officer_name: 'Dr. Rahul Shinde (CEO, MSInS)',
+      officer_notes: 'Active pilot scoping underway with technical committee.',
       history: [
         {
           status: 'auto_approved',
           actor: 'SamadhanSetu AI Core',
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
-          note: 'AI Score: 82/100. High-authenticity signals verified. Gazette indexed.',
+          note: 'Challenge Quality Score: 82/100. Outcome criteria and KPI benchmarks verified.',
         },
         {
           status: 'verified_in_progress',
@@ -611,9 +611,9 @@ export function submitNewComplaint(input: {
   const initialHistory: ComplaintHistoryItem[] = [
     {
       status: 'auto_approved',
-      actor: 'Citizen Portal',
+      actor: 'Department Portal',
       timestamp: now,
-      note: `Grievance submitted by ${input.citizen_name || 'Citizen'} and indexed on Jharkhand Civic Registry.`,
+      note: `Challenge submitted by ${input.citizen_name || 'Department Officer'} and indexed on SamadhanSetu Innovation Registry.`,
     },
     {
       status: aiResult.status,
@@ -626,8 +626,8 @@ export function submitNewComplaint(input: {
   const newComplaint: Complaint = {
     id: trackingId,
     citizen_id: input.citizen_id || `u-${Date.now()}`,
-    citizen_name: input.citizen_name || 'Verified Citizen',
-    citizen_email: input.citizen_email || 'citizen@samadhansetu.gov.in',
+    citizen_name: input.citizen_name || 'Verified Officer',
+    citizen_email: input.citizen_email || 'department@samadhansetu.maharashtra.gov.in',
     title: input.title,
     category: input.category,
     description: input.description,

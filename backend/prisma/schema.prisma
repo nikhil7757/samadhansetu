@@ -8,13 +8,134 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
 enum Role {
+  DEPARTMENT_USER
+  STARTUP
+  INNOVATION_SOCIETY_ADMIN
+  EVALUATOR
+  VALIDATOR
+  // Legacy compatibility roles:
   CITIZEN
   UNIVERSITY
   INDUSTRY
   ADMIN
 }
 
+enum ChallengeStatus {
+  DRAFTED
+  PENDING_APPROVAL
+  APPROVED_PUBLISHED
+  STARTUP_DISCOVERY
+  ELIGIBILITY_SCREENING
+  EXPERT_EVALUATION
+  PILOT_DESIGN
+  CONTRACT_SIGNED
+  PILOT_RUNNING
+  INDEPENDENT_VALIDATION
+  PAYMENT_RELEASED
+  SCALE_UP_DECISION
+  REJECTED
+  COMPLETED
+}
+
+enum Sector {
+  HEALTHCARE
+  AGRICULTURE
+  URBAN_GOVERNANCE
+  WATER_SANITATION
+  CLEAN_ENERGY
+  EDUCATION_SKILLS
+  CYBERSECURITY
+  LOGISTICS_INFRA
+  OTHER
+}
+
+enum DataSensitivity {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum IpPreference {
+  STARTUP_OWNED
+  JOINT_IP
+  GOVT_EXCLUSIVE_LICENSE
+}
+
+enum EligibilityStatus {
+  PASS
+  NEEDS_REVIEW
+  FAIL
+}
+
+enum AppealStatus {
+  NONE
+  APPEALED
+  OVERRIDDEN
+  UPHELD
+}
+
+enum ProposalStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  SHORTLISTED
+  SELECTED_FOR_PILOT
+  REJECTED
+}
+
+enum PilotStatus {
+  DESIGN
+  CONTRACT_SIGNED
+  RUNNING
+  VALIDATING
+  PAYMENT_RELEASED
+  COMPLETED
+  STOPPED
+}
+
+enum MilestoneStatus {
+  PENDING
+  SUBMITTED
+  VALIDATED
+  PAID
+}
+
+enum PaymentStatus {
+  SCHEDULED
+  PROCESSING
+  RELEASED
+  DELAYED_FLAGGED
+}
+
+enum ValidationVerdict {
+  SCALE
+  EXTEND
+  STOP
+}
+
+enum ProcurementPathway {
+  DIRECT_PILOT_AWARD
+  LIMITED_TENDER
+  GEM_LISTING
+  DISCONTINUE
+}
+
+enum TemplateType {
+  PROBLEM_STATEMENT
+  EVALUATION_MATRIX
+  PILOT_AGREEMENT
+  IP_DATA_CLAUSES
+  CYBERSECURITY
+  RISK_REGISTER
+  PROCUREMENT_GUIDE
+}
+
+// Legacy enums
 enum ProblemStatus {
   PENDING_APPROVAL
   REJECTED
@@ -42,6 +163,20 @@ enum Category {
   OTHER
 }
 
+enum ComplaintStatus {
+  auto_approved
+  pending_officer
+  auto_rejected
+  officer_reviewing
+  verified_in_progress
+  resolved
+  rejected_by_officer
+}
+
+// ---------------------------------------------------------------------------
+// Core Models
+// ---------------------------------------------------------------------------
+
 model User {
   id                String    @id @default(uuid())
   name              String
@@ -49,11 +184,18 @@ model User {
   passwordHash      String
   role              Role
   organizationName  String?
+  department        String?
   district          String
   preferredLanguage String    @default("en")
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  startupProfile    StartupProfile?
+  postedChallenges  Challenge[]     @relation("PostedChallenges")
+  proposals         Proposal[]      @relation("StartupProposals")
+  evaluations       Evaluation[]    @relation("EvaluatorEvaluations")
+
+  // Legacy relations
   submittedProblems Problem[]       @relation("SubmittedProblems")
   interests         Interest[]
   statusChanges     StatusHistory[] @relation("StatusChanger")
@@ -63,6 +205,288 @@ model User {
 
   @@map("users")
 }
+
+model StartupProfile {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName         String
+  dpiitNumber         String   @unique
+  dpiitVerified       Boolean  @default(false)
+  sector              Sector   @default(OTHER)
+  foundingYear        Int      @default(2021)
+  annualTurnover      Float    @default(0) // In INR Lakhs
+  teamSize            Int      @default(5)
+  priorGovtExperience Boolean  @default(false)
+  techReadinessLevel  Int      @default(6) // TRL 1-9
+  coreKeywords        String[] @default([])
+  pastPilots          Json     @default("[]")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  proposals           Proposal[]
+  eligibilityChecks   EligibilityCheck[]
+  pilots              Pilot[]
+
+  @@map("startup_profiles")
+}
+
+model Challenge {
+  id                  String          @id // Format: NS-YYYY-NNNNNN
+  title               String
+  department          String
+  district            String
+  sector              Sector
+  desiredOutcome      String
+  successMetrics      Json            @default("[]") // KPIs
+  budgetMin           Float           @default(5.0)  // Lakhs
+  budgetMax           Float           @default(25.0) // Lakhs
+  pilotDurationMonths Int             @default(6)
+  dataSensitivity     DataSensitivity @default(INTERNAL)
+  ipPreference        IpPreference    @default(STARTUP_OWNED)
+  status              ChallengeStatus @default(PENDING_APPROVAL)
+  aiQualityScore      Int             @default(0)
+  aiQualityFlags      String[]        @default([])
+  aiSuggestions       String[]        @default([])
+  createdById         String
+  createdBy           User            @relation("PostedChallenges", fields: [createdById], references: [id])
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  proposals           Proposal[]
+  eligibilityChecks   EligibilityCheck[]
+  pilots              Pilot[]
+
+  @@index([sector])
+  @@index([district])
+  @@index([status])
+  @@index([createdAt])
+  @@map("challenges")
+}
+
+model Proposal {
+  id                    String         @id @default(uuid())
+  challengeId           String
+  challenge             Challenge      @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  startupId             String
+  startup               User           @relation("StartupProposals", fields: [startupId], references: [id])
+  startupProfileId      String?
+  startupProfile        StartupProfile? @relation(fields: [startupProfileId], references: [id])
+  approach              String
+  techDescription       String
+  proposedCost          Float
+  proposedTimelineWeeks Int
+  aiMatchScore          Int            @default(0)
+  aiMatchRationale      String?
+  status                ProposalStatus @default(SUBMITTED)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  evaluations           Evaluation[]
+  pilot                 Pilot?
+
+  @@index([challengeId])
+  @@index([startupId])
+  @@map("proposals")
+}
+
+model EligibilityCheck {
+  id                           String            @id @default(uuid())
+  challengeId                  String
+  challenge                    Challenge         @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  startupId                    String
+  startup                      StartupProfile    @relation(fields: [startupId], references: [id], onDelete: Cascade)
+  status                       EligibilityStatus @default(NEEDS_REVIEW)
+  turnoverRelaxationApplied    Boolean           @default(true)
+  experienceRelaxationApplied  Boolean           @default(true)
+  dpiitValid                   Boolean           @default(true)
+  sectorFit                    Boolean           @default(true)
+  score                        Int               @default(80)
+  reasons                      String[]          @default([])
+  appealStatus                 AppealStatus      @default(NONE)
+  appealNote                   String?
+  reviewedById                 String?
+  createdAt                    DateTime          @default(now())
+  updatedAt                    DateTime          @updatedAt
+
+  @@unique([challengeId, startupId])
+  @@map("eligibility_checks")
+}
+
+model Evaluation {
+  id                    String   @id @default(uuid())
+  proposalId            String
+  proposal              Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  evaluatorId           String
+  evaluator             User     @relation("EvaluatorEvaluations", fields: [evaluatorId], references: [id])
+  innovationScore       Int      @default(0) // Max 20
+  feasibilityScore      Int      @default(0) // Max 20
+  teamCapabilityScore   Int      @default(0) // Max 20
+  costValueScore        Int      @default(0) // Max 15
+  dataSecurityScore     Int      @default(0) // Max 10
+  scalabilityScore      Int      @default(0) // Max 15
+  totalScore            Int      @default(0) // Max 100
+  conflictOfInterestFlag Boolean @default(false)
+  comments              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([proposalId])
+  @@index([evaluatorId])
+  @@map("evaluations")
+}
+
+model Pilot {
+  id               String      @id @default(uuid())
+  challengeId      String
+  challenge        Challenge   @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  proposalId       String      @unique
+  proposal         Proposal    @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  startupId        String
+  startup          StartupProfile @relation(fields: [startupId], references: [id])
+  department       String
+  district         String
+  sandboxScope     String
+  agreementRef     String      // Format: AGR-MSINS-YYYY-NNN
+  startDate        DateTime
+  endDate          DateTime
+  kpis             Json        @default("[]")
+  totalBudget      Float
+  disbursedBudget  Float       @default(0)
+  currentStage     String      @default("Pilot Running")
+  status           PilotStatus @default(RUNNING)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  milestones       Milestone[]
+  payments         Payment[]
+  validationReport ValidationReport?
+  scaleUpDecision  ScaleUpDecision?
+
+  @@index([challengeId])
+  @@index([startupId])
+  @@index([district])
+  @@map("pilots")
+}
+
+model Milestone {
+  id                 String          @id @default(uuid())
+  pilotId            String
+  pilot              Pilot           @relation(fields: [pilotId], references: [id], onDelete: Cascade)
+  milestoneNumber    Int
+  title              String
+  deliverable        String
+  dueDate            DateTime
+  paymentAmount      Float
+  status             MilestoneStatus @default(PENDING)
+  submissionUrl      String?
+  submissionNotes    String?
+  submittedAt        DateTime?
+  validatedAt        DateTime?
+  approvedAt         DateTime?
+  paidAt             DateTime?
+  daysSinceApproval  Int             @default(0)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  payment            Payment?
+
+  @@index([pilotId])
+  @@map("milestones")
+}
+
+model Payment {
+  id                 String        @id @default(uuid())
+  milestoneId        String        @unique
+  milestone          Milestone     @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  pilotId            String
+  pilot              Pilot         @relation(fields: [pilotId], references: [id], onDelete: Cascade)
+  amount             Float
+  invoiceRef         String
+  status             PaymentStatus @default(PROCESSING)
+  paymentRef         String?
+  releasedAt         DateTime?
+  daysSinceApproval  Int           @default(0)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([pilotId])
+  @@map("payments")
+}
+
+model ValidationReport {
+  id                  String            @id @default(uuid())
+  pilotId             String            @unique
+  pilot               Pilot             @relation(fields: [pilotId], references: [id], onDelete: Cascade)
+  validatorId         String
+  validatorName       String
+  kpiAchievementScore Int               @default(90)
+  methodology         String
+  findings            String
+  recommendation      ValidationVerdict @default(SCALE)
+  reportUrl           String?
+  submittedAt         DateTime          @default(now())
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@map("validation_reports")
+}
+
+model ScaleUpDecision {
+  id                  String             @id @default(uuid())
+  pilotId             String             @unique
+  pilot               Pilot              @relation(fields: [pilotId], references: [id], onDelete: Cascade)
+  decision            ValidationVerdict  @default(SCALE)
+  procurementPathway  ProcurementPathway @default(DIRECT_PILOT_AWARD)
+  rationale           String
+  decidedById         String
+  decidedAt           DateTime           @default(now())
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@map("scale_up_decisions")
+}
+
+model TemplateDocument {
+  id          String       @id @default(uuid())
+  type        TemplateType
+  title       String
+  version     String       @default("v1.0")
+  description String
+  content     String
+  downloadUrl String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([type])
+  @@map("template_documents")
+}
+
+model StatusHistory {
+  id         String   @id @default(uuid())
+  entityType String   @default("CHALLENGE") // CHALLENGE, PROPOSAL, PILOT, MILESTONE
+  entityId   String
+  oldStatus  String
+  newStatus  String
+  actor      String
+  action     String
+  note       String   // Mandatory note
+  timestamp  DateTime @default(now())
+
+  // Legacy fields
+  problemId   String?
+  problem     Problem? @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  changedById String?
+  changedBy   User?    @relation("StatusChanger", fields: [changedById], references: [id])
+
+  @@index([entityId])
+  @@index([timestamp])
+  @@map("status_history")
+}
+
+// ---------------------------------------------------------------------------
+// Legacy Models for full backward compatibility
+// ---------------------------------------------------------------------------
 
 model Problem {
   id          String        @id @default(uuid())
@@ -84,10 +508,6 @@ model Problem {
   comments      Comment[]
   projectTeam   ProjectTeam?
 
-  @@index([category])
-  @@index([district])
-  @@index([status])
-  @@index([createdAt])
   @@map("problems")
 }
 
@@ -149,23 +569,6 @@ model TeamNote {
   @@map("team_notes")
 }
 
-model StatusHistory {
-  id        String        @id @default(uuid())
-  oldStatus ProblemStatus
-  newStatus ProblemStatus
-  note      String?
-  createdAt DateTime      @default(now())
-
-  problem   Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
-  problemId String
-
-  changedBy   User   @relation("StatusChanger", fields: [changedById], references: [id])
-  changedById String
-
-  @@index([problemId])
-  @@map("status_history")
-}
-
 model Comment {
   id          String   @id @default(uuid())
   commentText String
@@ -177,7 +580,6 @@ model Comment {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  @@index([problemId, createdAt])
   @@map("comments")
 }
 
@@ -191,31 +593,19 @@ model Notification {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  @@index([userId, isRead])
-  @@index([userId, createdAt])
   @@map("notifications")
 }
 
-enum ComplaintStatus {
-  auto_approved
-  pending_officer
-  auto_rejected
-  officer_reviewing
-  verified_in_progress
-  resolved
-  rejected_by_officer
-}
-
 model Complaint {
-  id              String          @id // Public tracking ID format: SS-YYYY-NNNNNN
+  id              String          @id // Format: NS-YYYY-NNNNNN
   citizenId       String          @map("citizen_id")
   citizenName     String?         @map("citizen_name")
   citizenEmail    String?         @map("citizen_email")
   title           String
   category        String
   description     String
-  lat             Float           @default(23.3441)
-  lng             Float           @default(85.3096)
+  lat             Float           @default(18.5204) // Pune coords
+  lng             Float           @default(73.8567)
   address         String
   district        String
   block           String?
@@ -233,9 +623,5 @@ model Complaint {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  @@index([status])
-  @@index([district])
-  @@index([category])
-  @@index([citizenId])
   @@map("complaints")
 }

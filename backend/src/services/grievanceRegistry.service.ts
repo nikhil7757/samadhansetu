@@ -1,5 +1,5 @@
 /**
- * GrievanceRegistryService — Deep Module Seam for Civic Redressal in Jharkhand
+ * GrievanceRegistryService — Deep Module Seam for Innovation Procurement in Maharashtra
  * 
  * Unifies the previously disjoint Complaint and Problem lifecycles into a single authoritative seam.
  * Enforces:
@@ -398,14 +398,14 @@ export class GrievanceRegistryService {
       id: trackingId,
       citizen_id: input.citizen_id || `u-${Date.now()}`,
       citizen_name: input.citizen_name || 'Verified Citizen',
-      citizen_email: input.citizen_email || 'citizen@samadhansetu.gov.in',
+      citizen_email: input.citizen_email || 'citizen@samadhansetu.maharashtra.gov.in',
       title: input.title,
       category: input.category,
       description: input.description,
       location: {
-        lat: input.lat || 23.3441,
-        lng: input.lng || 85.3096,
-        address: input.address || `${input.district}, Jharkhand`,
+        lat: input.lat || 18.5204,
+        lng: input.lng || 73.8567,
+        address: input.address || `${input.district}, Maharashtra`,
         district: input.district,
         block: input.block || null,
       },

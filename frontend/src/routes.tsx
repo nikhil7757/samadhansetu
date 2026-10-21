@@ -10,7 +10,7 @@ function RootErrorBoundary() {
       <div className="h-14 w-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl mb-4">
         🏛️
       </div>
-      <h1 className="text-xl font-bold text-foreground mb-2">SamadhanSetu Platform Notice</h1>
+      <h1 className="text-xl font-bold text-foreground mb-2">NavSetu Platform Notice</h1>
       <p className="text-sm text-muted-foreground max-w-md mb-6 leading-relaxed">
         The application encountered an unexpected client state. You can reload or navigate back to the portal home.
       </p>
@@ -48,6 +48,7 @@ const ComplaintTrackerPage = lazy(() => import('@/pages/ComplaintTrackerPage'));
 const ProblemFeed = lazy(() => import('@/pages/ProblemFeed'));
 const ProblemDetail = lazy(() => import('@/pages/ProblemDetail'));
 const SubmitProblem = lazy(() => import('@/pages/SubmitProblem'));
+const TemplatesPage = lazy(() => import('@/pages/TemplatesPage'));
 const MySubmissions = lazy(() => import('@/pages/MySubmissions'));
 const MyInterests = lazy(() => import('@/pages/MyInterests'));
 const MyTeams = lazy(() => import('@/pages/MyTeams'));
@@ -61,13 +62,14 @@ const AboutPage = lazy(() => import('@/pages/AboutPage'));
 const FaqPage = lazy(() => import('@/pages/FaqPage'));
 const ContactPage = lazy(() => import('@/pages/ContactPage'));
 const PrototypePage = lazy(() => import('@/pages/PrototypePage'));
+const MfaEnrollment = lazy(() => import('@/pages/MfaEnrollment'));
 
 function SuspenseFallback() {
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
       <div className="flex flex-col items-center gap-3">
         <div className="h-8 w-8 animate-spin rounded-full border-3 border-primary border-t-transparent" />
-        <span className="text-xs text-muted-foreground font-mono">Loading module...</span>
+        <span className="text-xs text-muted-foreground font-mono">Verifying authorization...</span>
       </div>
     </div>
   );
@@ -78,22 +80,46 @@ function SuspenseWrapper({ children }: { children: ReactNode }) {
 }
 
 function RequireAuth({ children, roles }: { children: ReactNode; roles?: string[] }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isMfaRequired } = useAuth();
   if (isLoading) {
     return <SuspenseFallback />;
   }
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+
+  // Enforce MFA enrollment for Administrator accounts before granting access to admin consoles
+  if (isMfaRequired && window.location.pathname !== '/mfa/enroll') {
+    return <Navigate to="/mfa/enroll" replace />;
+  }
+
+  if (roles && roles.length > 0) {
+    const adminRoles = ['ADMIN', 'INNOVATION_SOCIETY_ADMIN'];
+    const evalRoles = ['ADMIN', 'INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR'];
+    const deptRoles = ['DEPARTMENT_USER', 'CITIZEN', 'ADMIN', 'INNOVATION_SOCIETY_ADMIN'];
+    const startupRoles = ['STARTUP', 'UNIVERSITY', 'INDUSTRY', 'CITIZEN', 'ADMIN', 'INNOVATION_SOCIETY_ADMIN'];
+
+    const userRole = user.role;
+    const hasAccess = roles.some((r) => {
+      if (r === userRole) return true;
+      if (adminRoles.includes(userRole) && adminRoles.includes(r)) return true;
+      if (evalRoles.includes(userRole) && evalRoles.includes(r)) return true;
+      if (roles.includes('ADMIN') && adminRoles.includes(userRole)) return true;
+      if (roles.includes('CITIZEN') && deptRoles.includes(userRole)) return true;
+      if ((roles.includes('UNIVERSITY') || roles.includes('INDUSTRY')) && startupRoles.includes(userRole)) return true;
+      return false;
+    });
+
+    if (!hasAccess) {
+      return <Navigate to="/" replace />;
+    }
   }
   return <>{children}</>;
 }
 
 function RoleAwareDashboard() {
   const { user } = useAuth();
-  if (user?.role === 'ADMIN') {
+  if (user?.role === 'ADMIN' || user?.role === 'INNOVATION_SOCIETY_ADMIN' || user?.role === 'EVALUATOR' || user?.role === 'VALIDATOR') {
     return <PendingApproval />;
   }
   return <MySubmissions />;
@@ -108,6 +134,7 @@ export const router = createBrowserRouter([
       { path: 'login', element: <SuspenseWrapper><Login /></SuspenseWrapper> },
       { path: 'signup', element: <SuspenseWrapper><Signup /></SuspenseWrapper> },
       { path: 'report', element: <SuspenseWrapper><ReportPage /></SuspenseWrapper> },
+      { path: 'templates', element: <SuspenseWrapper><TemplatesPage /></SuspenseWrapper> },
       { path: 'track', element: <SuspenseWrapper><ComplaintTrackerPage /></SuspenseWrapper> },
       { path: 'track/:complaintId', element: <SuspenseWrapper><ComplaintTrackerPage /></SuspenseWrapper> },
       { path: 'about', element: <SuspenseWrapper><AboutPage /></SuspenseWrapper> },
@@ -115,20 +142,33 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <SuspenseWrapper><ContactPage /></SuspenseWrapper> },
       { path: 'prototype', element: <SuspenseWrapper><PrototypePage /></SuspenseWrapper> },
 
-      // Problem directory
+      // MFA Enrollment
+      {
+        path: 'mfa/enroll',
+        element: (
+          <RequireAuth>
+            <SuspenseWrapper><MfaEnrollment /></SuspenseWrapper>
+          </RequireAuth>
+        ),
+      },
+
+      // Challenge & Discovery directory
       { path: 'problems', element: <SuspenseWrapper><ProblemFeed /></SuspenseWrapper> },
       { path: 'problems/:id', element: <SuspenseWrapper><ProblemDetail /></SuspenseWrapper> },
       { path: 'problems/submit', element: <SuspenseWrapper><ReportPage /></SuspenseWrapper> },
+      { path: 'challenges', element: <SuspenseWrapper><ProblemFeed /></SuspenseWrapper> },
+      { path: 'challenges/:id', element: <SuspenseWrapper><ProblemDetail /></SuspenseWrapper> },
+      { path: 'marketplace', element: <SuspenseWrapper><ProblemFeed /></SuspenseWrapper> },
 
       // Dashboard (Role-aware)
       { path: 'dashboard', element: <SuspenseWrapper><RoleAwareDashboard /></SuspenseWrapper> },
       { path: 'dashboard/analytics', element: <SuspenseWrapper><ImpactDashboard /></SuspenseWrapper> },
 
-      // Citizen workspaces
+      // User workspaces
       {
         path: 'my/submissions',
         element: (
-          <RequireAuth roles={['CITIZEN', 'ADMIN']}>
+          <RequireAuth roles={['CITIZEN', 'DEPARTMENT_USER', 'STARTUP', 'ADMIN', 'INNOVATION_SOCIETY_ADMIN']}>
             <SuspenseWrapper><MySubmissions /></SuspenseWrapper>
           </RequireAuth>
         ),
@@ -136,7 +176,7 @@ export const router = createBrowserRouter([
       {
         path: 'my/interests',
         element: (
-          <RequireAuth roles={['UNIVERSITY', 'INDUSTRY', 'ADMIN']}>
+          <RequireAuth roles={['UNIVERSITY', 'INDUSTRY', 'STARTUP', 'ADMIN', 'INNOVATION_SOCIETY_ADMIN']}>
             <SuspenseWrapper><MyInterests /></SuspenseWrapper>
           </RequireAuth>
         ),
@@ -170,7 +210,7 @@ export const router = createBrowserRouter([
       {
         path: 'admin',
         element: (
-          <RequireAuth roles={['ADMIN']}>
+          <RequireAuth roles={['ADMIN', 'INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR']}>
             <SuspenseWrapper><AdminDashboard /></SuspenseWrapper>
           </RequireAuth>
         ),
@@ -178,7 +218,15 @@ export const router = createBrowserRouter([
       {
         path: 'admin/pending',
         element: (
-          <RequireAuth roles={['ADMIN']}>
+          <RequireAuth roles={['ADMIN', 'INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR']}>
+            <SuspenseWrapper><PendingApproval /></SuspenseWrapper>
+          </RequireAuth>
+        ),
+      },
+      {
+        path: 'admin/approvals',
+        element: (
+          <RequireAuth roles={['ADMIN', 'INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR']}>
             <SuspenseWrapper><PendingApproval /></SuspenseWrapper>
           </RequireAuth>
         ),
@@ -186,7 +234,7 @@ export const router = createBrowserRouter([
       {
         path: 'admin/matches',
         element: (
-          <RequireAuth roles={['ADMIN']}>
+          <RequireAuth roles={['ADMIN', 'INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR']}>
             <SuspenseWrapper><AllMatches /></SuspenseWrapper>
           </RequireAuth>
         ),

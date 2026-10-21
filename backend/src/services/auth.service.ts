@@ -1,198 +1,229 @@
-import bcrypt from 'bcryptjs';
+import { adminAuth } from '../lib/firebaseAdmin.js';
 import { prisma } from '../lib/prisma.js';
-import { signToken } from '../lib/jwt.js';
 import { Role } from '@prisma/client';
 
-interface SignupData {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-  organizationName?: string;
-  district: string;
-  preferredLanguage?: string;
+export const ALLOWED_ROLES = [
+  'DEPARTMENT_USER',
+  'STARTUP',
+  'INNOVATION_SOCIETY_ADMIN',
+  'EVALUATOR',
+  'VALIDATOR',
+] as const;
+
+export type AppRole = typeof ALLOWED_ROLES[number];
+
+export interface SessionResult {
+  sessionCookie: string;
+  expiresIn: number;
+  user: {
+    id: string;
+    uid: string;
+    email: string;
+    name: string;
+    role: AppRole;
+    department?: string;
+    district?: string;
+    organizationName?: string;
+    emailVerified: boolean;
+    mfaEnrolled: boolean;
+  };
 }
 
-const SEED_USERS_MAP: Record<string, any> = {
-  'admin@samadhansetu.gov.in': {
-    id: 'u-admin',
-    name: 'Vikram Singh (Nodal Admin)',
-    email: 'admin@samadhansetu.gov.in',
-    role: 'ADMIN',
-    organizationName: 'Department of Higher & Technical Education, Govt. of Jharkhand',
-    district: 'Ranchi',
-    preferredLanguage: 'en',
-  },
-  'priya.kumar@gmail.com': {
-    id: 'u-priya',
-    name: 'Priya Kumar',
-    email: 'priya.kumar@gmail.com',
-    role: 'CITIZEN',
-    district: 'Dhanbad',
-    preferredLanguage: 'en',
-  },
-  'iit.ism.team@gmail.com': {
-    id: 'u-iit',
-    name: 'Prof. Anirudh Sen',
-    email: 'iit.ism.team@gmail.com',
-    role: 'UNIVERSITY',
-    organizationName: 'IIT (ISM) Dhanbad',
-    district: 'Dhanbad',
-    preferredLanguage: 'en',
-  },
-  'tata.steel.csr@gmail.com': {
-    id: 'u-tata',
-    name: 'Siddharth Roy',
-    email: 'tata.steel.csr@gmail.com',
-    role: 'INDUSTRY',
-    organizationName: 'Tata Steel CSR',
-    district: 'East Singhbhum',
-    preferredLanguage: 'en',
-  },
-};
-
 export class AuthService {
-  static async signup(data: SignupData) {
-    try {
-      const existing = await prisma.user.findUnique({ where: { email: data.email } });
-      if (existing) {
-        throw new Error('Email already registered');
-      }
+  /**
+   * Exchanges a client Firebase ID token for an httpOnly, Secure, SameSite session cookie.
+   * Verifies the token cryptographically and checks for revocation.
+   */
+  static async createSession(idToken: string): Promise<SessionResult> {
+    // 1. Verify ID token with revocation check
+    const decoded = await adminAuth.verifyIdToken(idToken, true);
+    const uid = decoded.uid;
+    const email = decoded.email || '';
+    const emailVerified = decoded.email_verified || false;
 
-      const passwordHash = await bcrypt.hash(data.password, 12);
-      const user = await prisma.user.create({
-        data: {
-          name: data.name,
-          email: data.email,
-          passwordHash,
-          role: data.role as Role,
-          organizationName: data.organizationName,
-          district: data.district,
-          preferredLanguage: data.preferredLanguage || 'en',
-        },
-      });
-
-      const token = signToken({
-        userId: user.id,
-        email: user.email,
-        role: user.role,
-        name: user.name,
-      });
-
-      return {
-        token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          organizationName: user.organizationName,
-          district: user.district,
-          preferredLanguage: user.preferredLanguage,
-        },
-      };
-    } catch (err: any) {
-      if (err.message === 'Email already registered') throw err;
-      console.warn('Database offline, generating session for new user:', err);
-      const fakeId = `u-${Date.now()}`;
-      const token = signToken({
-        userId: fakeId,
-        email: data.email,
-        role: data.role,
-        name: data.name,
-      });
-      return {
-        token,
-        user: {
-          id: fakeId,
-          name: data.name,
-          email: data.email,
-          role: data.role,
-          organizationName: data.organizationName,
-          district: data.district,
-          preferredLanguage: data.preferredLanguage || 'en',
-        },
-      };
-    }
-  }
-
-  static async login(email: string, password: string) {
-    let user = null;
-    try {
-      user = await prisma.user.findUnique({ where: { email } });
-    } catch (err) {
-      console.warn('Database offline, checking baseline seed accounts:', err);
-    }
-
-    if (!user) {
-      const seed = SEED_USERS_MAP[email.toLowerCase().trim()];
-      if (seed && (password === 'Test@1234' || password.length >= 6)) {
-        const token = signToken({
-          userId: seed.id,
-          email: seed.email,
-          role: seed.role,
-          name: seed.name,
-        });
-        return { token, user: seed };
-      }
-      throw new Error('Invalid email or password');
-    }
-
-    const valid = await bcrypt.compare(password, user.passwordHash);
-    if (!valid) {
-      throw new Error('Invalid email or password');
-    }
-
-    const token = signToken({
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-      name: user.name,
+    // 2. Fetch or initialize user in database
+    let dbUser = await prisma.user.findFirst({
+      where: { email },
     });
 
+    // Determine role from custom claims or existing record; default to DEPARTMENT_USER for new accounts
+    let role: AppRole = (decoded.role as AppRole) || (dbUser?.role as AppRole) || 'DEPARTMENT_USER';
+    const mfaEnrolled = Boolean(decoded.mfaEnrolled);
+
+    if (!decoded.role) {
+      // Set custom claim on Firebase user
+      await adminAuth.setCustomUserClaims(uid, {
+        role,
+        department: dbUser?.department || undefined,
+        district: dbUser?.district || 'Pune',
+        mfaEnrolled,
+      });
+    }
+
+    if (!dbUser) {
+      dbUser = await prisma.user.create({
+        data: {
+          email,
+          name: decoded.name || email.split('@')[0] || 'User',
+          passwordHash: 'FIREBASE_AUTH_MANAGED',
+          role: role as Role,
+          district: (decoded.district as string) || 'Pune',
+          department: (decoded.department as string) || undefined,
+          preferredLanguage: 'en',
+        },
+      });
+    }
+
+    // 3. Create Firebase session cookie (5 days expiry)
+    const expiresIn = 1000 * 60 * 60 * 24 * 5;
+    const sessionCookie = await adminAuth.createSessionCookie(idToken, { expiresIn });
+
     return {
-      token,
+      sessionCookie,
+      expiresIn,
       user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        organizationName: user.organizationName,
-        district: user.district,
-        preferredLanguage: user.preferredLanguage,
+        id: dbUser.id,
+        uid,
+        email,
+        name: dbUser.name,
+        role,
+        department: dbUser.department || undefined,
+        district: dbUser.district || undefined,
+        organizationName: dbUser.organizationName || undefined,
+        emailVerified,
+        mfaEnrolled,
       },
     };
   }
 
-  static async getMe(userId: string) {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          organizationName: true,
-          district: true,
-          preferredLanguage: true,
-        },
-      });
-      if (user) return user;
-    } catch (err) {
-      console.warn('Database offline during getMe:', err);
+  /**
+   * Assigns role custom claim. Enforces that only administrators can assign privileged roles.
+   */
+  static async assignRole(targetUid: string, role: AppRole, actorRole: string): Promise<void> {
+    if (!ALLOWED_ROLES.includes(role)) {
+      throw new Error(`Invalid role requested: ${role}`);
     }
 
-    const seed = Object.values(SEED_USERS_MAP).find((u: any) => u.id === userId);
-    if (seed) return seed;
+    // Only INNOVATION_SOCIETY_ADMIN can assign EVALUATOR, VALIDATOR, or ADMIN roles
+    const privilegedRoles: AppRole[] = ['INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR'];
+    if (privilegedRoles.includes(role) && actorRole !== 'INNOVATION_SOCIETY_ADMIN') {
+      throw new Error('Only State Innovation Society Administrators can grant privileged roles.');
+    }
+
+    // Update Firebase Custom Claims
+    const currentClaims = (await adminAuth.getUser(targetUid)).customClaims || {};
+    await adminAuth.setCustomUserClaims(targetUid, {
+      ...currentClaims,
+      role,
+    });
+
+    // Update local database record if matched by email
+    const firebaseUser = await adminAuth.getUser(targetUid);
+    if (firebaseUser.email) {
+      await prisma.user.updateMany({
+        where: { email: firebaseUser.email },
+        data: { role: role as Role },
+      });
+    }
+  }
+
+  /**
+   * Registers/updates profile data during signup
+   */
+  static async registerProfile(uid: string, profile: {
+    name: string;
+    role: AppRole;
+    department?: string;
+    district: string;
+    organizationName?: string;
+    preferredLanguage?: string;
+  }) {
+    const firebaseUser = await adminAuth.getUser(uid);
+    const email = firebaseUser.email;
+    if (!email) throw new Error('Firebase user has no verified email address');
+
+    // Restrict self-registration: non-admins cannot self-assign ADMIN, EVALUATOR, or VALIDATOR
+    const restrictedRoles: AppRole[] = ['INNOVATION_SOCIETY_ADMIN', 'EVALUATOR', 'VALIDATOR'];
+    const safeRole: AppRole = restrictedRoles.includes(profile.role) ? 'STARTUP' : profile.role;
+
+    // Set claims in Firebase
+    await adminAuth.setCustomUserClaims(uid, {
+      role: safeRole,
+      department: profile.department,
+      district: profile.district,
+      mfaEnrolled: false,
+    });
+
+    // Upsert database profile
+    const existing = await prisma.user.findFirst({ where: { email } });
+    if (existing) {
+      return await prisma.user.update({
+        where: { id: existing.id },
+        data: {
+          name: profile.name,
+          role: safeRole as Role,
+          department: profile.department,
+          district: profile.district,
+          organizationName: profile.organizationName,
+          preferredLanguage: profile.preferredLanguage || 'en',
+        },
+      });
+    } else {
+      return await prisma.user.create({
+        data: {
+          email,
+          name: profile.name,
+          passwordHash: 'FIREBASE_AUTH_MANAGED',
+          role: safeRole as Role,
+          department: profile.department,
+          district: profile.district,
+          organizationName: profile.organizationName,
+          preferredLanguage: profile.preferredLanguage || 'en',
+        },
+      });
+    }
+  }
+
+  /**
+   * Enrolls MFA TOTP flag on user
+   */
+  static async recordMfaEnrollment(uid: string): Promise<void> {
+    const user = await adminAuth.getUser(uid);
+    const currentClaims = user.customClaims || {};
+    await adminAuth.setCustomUserClaims(uid, {
+      ...currentClaims,
+      mfaEnrolled: true,
+    });
+  }
+
+  /**
+   * Revokes all refresh tokens and active sessions for a user.
+   */
+  static async revokeUserSessions(uid: string): Promise<void> {
+    await adminAuth.revokeRefreshTokens(uid);
+  }
+
+  /**
+   * Retrieves authenticated profile for the current user.
+   */
+  static async getMe(uid: string, email: string) {
+    const userRecord = await adminAuth.getUser(uid);
+    const dbUser = await prisma.user.findFirst({ where: { email } });
+
+    const role = (userRecord.customClaims?.role as AppRole) || (dbUser?.role as AppRole) || 'DEPARTMENT_USER';
 
     return {
-      id: userId,
-      name: 'Authorized User',
-      email: 'user@samadhansetu.gov.in',
-      role: 'CITIZEN',
-      district: 'Ranchi',
-      preferredLanguage: 'en',
+      id: dbUser?.id || uid,
+      uid,
+      email: userRecord.email || email,
+      name: dbUser?.name || userRecord.displayName || email.split('@')[0],
+      role,
+      department: dbUser?.department || undefined,
+      district: dbUser?.district || 'Pune',
+      organizationName: dbUser?.organizationName || undefined,
+      emailVerified: userRecord.emailVerified,
+      mfaEnrolled: Boolean(userRecord.customClaims?.mfaEnrolled),
+      disabled: userRecord.disabled,
     };
   }
 }

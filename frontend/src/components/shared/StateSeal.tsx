@@ -1,4 +1,5 @@
 import React from 'react';
+import { PLATFORM_CONFIG } from '@/config/platform';
 
 interface StateSealProps {
   className?: string;
@@ -6,13 +7,14 @@ interface StateSealProps {
 }
 
 /**
- * Official Emblem of SamadhanSetu (समाधान सेतु) • Government of Jharkhand
+ * Official Emblem of SamadhanSetu (समाधानसेतू)
+ * Maharashtra State Innovation Society (MSInS) • Government of Maharashtra
  * 
  * Features:
- * - Sovereign Tri-Ring Seal (Jharkhand Emerald, Imperial Gold & Saffron)
- * - The "Setu" (Civic Suspension & Arch Bridge) bridging citizens to resolution
- * - Radiant 24-Spoked Ashoka Chakra rising above the bridge (representing Jharkhand's 24 districts)
- * - Tribal motifs & Palash flower petal heraldry on the outer crest
+ * - Sovereign Double Gold & Deep Indigo Ring Seal
+ * - The "Setu" (Innovation Arch & Launchpad) bridging departmental demand to startups
+ * - Radiant 36-Pointed Starburst & Ashoka Chakra (representing Maharashtra's 36 districts)
+ * - Innovation Gear & Shield Heraldry with Saffron & Forest Green accents
  */
 export function StateSeal({ className = '', size = 'md' }: StateSealProps) {
   const dimension = {
@@ -27,7 +29,7 @@ export function StateSeal({ className = '', size = 'md' }: StateSealProps) {
   return (
     <div
       className={`relative inline-flex items-center justify-center shrink-0 ${dimension} ${className}`}
-      aria-label="समाधान सेतु • SamadhanSetu Sovereign Civic Emblem"
+      aria-label={`${PLATFORM_CONFIG.fullName} Sovereign Emblem`}
     >
       <svg
         viewBox="0 0 120 120"
@@ -37,30 +39,31 @@ export function StateSeal({ className = '', size = 'md' }: StateSealProps) {
       >
         <defs>
           {/* Gradients */}
-          <linearGradient id="ss-emblem-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="ns-emblem-gold" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#F59E0B" />
             <stop offset="50%" stopColor="#D97706" />
             <stop offset="100%" stopColor="#B45309" />
           </linearGradient>
 
-          <linearGradient id="ss-emblem-emerald" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10B981" />
-            <stop offset="40%" stopColor="#059669" />
-            <stop offset="100%" stopColor="#064E3B" />
+          <linearGradient id="ns-emblem-royal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1E3A8A" />
+            <stop offset="50%" stopColor="#0F172A" />
+            <stop offset="100%" stopColor="#0284C7" />
           </linearGradient>
 
-          <radialGradient id="ss-sky-glow" cx="50%" cy="40%" r="50%">
-            <stop offset="0%" stopColor="#FEF3C7" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#047857" stopOpacity="0.05" />
+          <radialGradient id="ns-sky-glow" cx="50%" cy="45%" r="55%">
+            <stop offset="0%" stopColor="#FEF3C7" stopOpacity="0.45" />
+            <stop offset="60%" stopColor="#E0F2FE" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#0F172A" stopOpacity="0.05" />
           </radialGradient>
 
-          <linearGradient id="ss-bridge-grad" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stopColor="#064E3B" />
-            <stop offset="50%" stopColor="#059669" />
-            <stop offset="100%" stopColor="#34D399" />
+          <linearGradient id="ns-bridge-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#D97706" />
+            <stop offset="50%" stopColor="#2563EB" />
+            <stop offset="100%" stopColor="#059669" />
           </linearGradient>
 
-          <linearGradient id="ss-ring-metal" x1="20%" y1="0%" x2="80%" y2="100%">
+          <linearGradient id="ns-ring-metal" x1="20%" y1="0%" x2="80%" y2="100%">
             <stop offset="0%" stopColor="#FDE68A" />
             <stop offset="25%" stopColor="#F59E0B" />
             <stop offset="50%" stopColor="#D97706" />
@@ -70,145 +73,122 @@ export function StateSeal({ className = '', size = 'md' }: StateSealProps) {
         </defs>
 
         {/* 1. Outer Concentric Shield Ring with Gold Rim */}
-        <circle cx="60" cy="60" r="57" fill="url(#ss-emblem-emerald)" stroke="url(#ss-ring-metal)" strokeWidth="3" />
-        <circle cx="60" cy="60" r="51.5" stroke="#FDE68A" strokeWidth="0.75" strokeDasharray="2.5 1.5" opacity="0.85" />
-        <circle cx="60" cy="60" r="48" fill="#064E3B" stroke="url(#ss-ring-metal)" strokeWidth="1.2" />
+        <circle cx="60" cy="60" r="57" fill="url(#ns-emblem-royal)" stroke="url(#ns-ring-metal)" strokeWidth="3" />
+        <circle cx="60" cy="60" r="51.5" stroke="#FDE68A" strokeWidth="0.75" strokeDasharray="3 1.5" opacity="0.85" />
+        <circle cx="60" cy="60" r="48" fill="#0B132B" stroke="url(#ns-ring-metal)" strokeWidth="1.2" />
 
-        {/* 2. Inner Sky Canvas with Sunburst Radiance */}
-        <circle cx="60" cy="60" r="47" fill="url(#ss-sky-glow)" />
+        {/* 2. Inner Sky Canvas */}
+        <circle cx="60" cy="60" r="47" fill="url(#ns-sky-glow)" />
 
-        {/* 3. Radiant Ashoka Sun Rays (16 outward subtle rays) */}
-        <g stroke="#FDE68A" strokeWidth="0.8" opacity="0.4" strokeLinecap="round">
-          <line x1="60" y1="20" x2="60" y2="25" />
-          <line x1="60" y1="51" x2="60" y2="47" />
-          <line x1="44" y1="36" x2="48" y2="36" />
-          <line x1="76" y1="36" x2="72" y2="36" />
-          <line x1="49" y1="25" x2="52" y2="28" />
-          <line x1="71" y1="25" x2="68" y2="28" />
-          <line x1="49" y1="47" x2="52" y2="44" />
-          <line x1="71" y1="47" x2="68" y2="44" />
-        </g>
+        {/* 3. 36 District Beads on Outer Ring (Maharashtra's 36 Districts) */}
+        {Array.from({ length: 36 }).map((_, i) => {
+          const angle = (i * 360) / 36;
+          const rad = (angle * Math.PI) / 180;
+          const cx = 60 + 49.8 * Math.cos(rad);
+          const cy = 60 + 49.8 * Math.sin(rad);
+          return (
+            <circle
+              key={i}
+              cx={cx}
+              cy={cy}
+              r="0.9"
+              fill={i % 3 === 0 ? '#F59E0B' : '#93C5FD'}
+              opacity="0.9"
+            />
+          );
+        })}
 
-        {/* 4. Radiant Ashoka Chakra (24 Districts of Jharkhand) */}
+        {/* 4. Ashoka Chakra / Innovation Hub (Center Top) */}
         <g id="ashoka-chakra">
-          {/* Chakra Halo Ring */}
-          <circle cx="60" cy="36" r="13" fill="#FFFBEB" stroke="url(#ss-ring-metal)" strokeWidth="1.5" />
-          <circle cx="60" cy="36" r="11" fill="none" stroke="#047857" strokeWidth="0.75" />
-          <circle cx="60" cy="36" r="3.2" fill="#D97706" stroke="#B45309" strokeWidth="0.6" />
+          <circle cx="60" cy="38" r="14" fill="#FFFFFF" stroke="url(#ns-ring-metal)" strokeWidth="1.6" />
+          <circle cx="60" cy="38" r="11.5" fill="none" stroke="#1E3A8A" strokeWidth="0.75" />
+          <circle cx="60" cy="38" r="3" fill="#D97706" stroke="#B45309" strokeWidth="0.5" />
 
-          {/* Chakra Spokes (24 Spokes) */}
-          <g stroke="#047857" strokeWidth="0.7" opacity="0.85">
-            <line x1="60" y1="25" x2="60" y2="47" />
-            <line x1="49" y1="36" x2="71" y2="36" />
-            <line x1="52.2" y1="28.2" x2="67.8" y2="43.8" />
-            <line x1="52.2" y1="43.8" x2="67.8" y2="28.2" />
-            {/* Intermediate spokes */}
-            <line x1="55.5" y1="25.5" x2="64.5" y2="46.5" strokeWidth="0.5" />
-            <line x1="64.5" y1="25.5" x2="55.5" y2="46.5" strokeWidth="0.5" />
-            <line x1="49.5" y1="31.5" x2="70.5" y2="40.5" strokeWidth="0.5" />
-            <line x1="49.5" y1="40.5" x2="70.5" y2="31.5" strokeWidth="0.5" />
+          {/* 24 Spoked Core Wheel */}
+          <g stroke="#1E3A8A" strokeWidth="0.7" opacity="0.85">
+            {Array.from({ length: 24 }).map((_, idx) => {
+              const rad = ((idx * 15) * Math.PI) / 180;
+              const x2 = 60 + 11.5 * Math.sin(rad);
+              const y2 = 38 - 11.5 * Math.cos(rad);
+              return <line key={idx} x1="60" y1="38" x2={x2} y2={y2} />;
+            })}
           </g>
         </g>
 
-        {/* 5. The "Setu" (Suspension & Arch Bridge of Governance & Resolution) */}
-        <g id="samadhan-setu-bridge">
-          {/* Left Civic Pillar */}
-          <path d="M28 85 L32 58 L37 58 L41 85 Z" fill="url(#ss-ring-metal)" stroke="#78350F" strokeWidth="0.75" />
-          <rect x="27" y="83" width="15" height="3" rx="1" fill="#B45309" />
-          <rect x="30" y="56" width="9" height="2.5" rx="0.5" fill="#FDE68A" />
-
-          {/* Right Civic Pillar */}
-          <path d="M79 85 L83 58 L88 58 L92 85 Z" fill="url(#ss-ring-metal)" stroke="#78350F" strokeWidth="0.75" />
-          <rect x="78" y="83" width="15" height="3" rx="1" fill="#B45309" />
-          <rect x="81" y="56" width="9" height="2.5" rx="0.5" fill="#FDE68A" />
-
-          {/* Main Suspension Cable (Catenary curve) */}
+        {/* 5. The "Setu" (Suspension Arch Bridge & Innovation Gateway) */}
+        <g id="setu-gateway">
+          {/* Main Suspension Arc */}
           <path
-            d="M28 66 Q60 84 92 66"
+            d="M 22 76 Q 60 48 98 76"
+            stroke="url(#ns-emblem-gold)"
+            strokeWidth="3.2"
             fill="none"
-            stroke="url(#ss-ring-metal)"
-            strokeWidth="2.2"
             strokeLinecap="round"
           />
+
+          {/* Secondary Support Cable */}
           <path
-            d="M28 66 Q60 84 92 66"
+            d="M 25 79 Q 60 54 95 79"
+            stroke="#93C5FD"
+            strokeWidth="1.2"
             fill="none"
-            stroke="#FFFBEB"
-            strokeWidth="0.6"
-            opacity="0.8"
+            opacity="0.7"
           />
 
-          {/* Vertical Stay Cables */}
+          {/* Suspension Cables */}
           <g stroke="#FDE68A" strokeWidth="0.7" opacity="0.75">
-            <line x1="44" y1="71" x2="44" y2="79" />
-            <line x1="52" y1="74" x2="52" y2="79" />
-            <line x1="60" y1="75" x2="60" y2="79" />
-            <line x1="68" y1="74" x2="68" y2="79" />
-            <line x1="76" y1="71" x2="76" y2="79" />
+            <line x1="32" y1="71" x2="32" y2="82" />
+            <line x1="42" y1="62" x2="42" y2="82" />
+            <line x1="52" y1="56" x2="52" y2="82" />
+            <line x1="60" y1="54" x2="60" y2="82" />
+            <line x1="68" y1="56" x2="68" y2="82" />
+            <line x1="78" y1="62" x2="78" y2="82" />
+            <line x1="88" y1="71" x2="88" y2="82" />
           </g>
 
-          {/* Horizontal Bridge Deck (The Path of Redressal) */}
-          <rect x="20" y="79" width="80" height="4.5" rx="1.5" fill="url(#ss-bridge-grad)" stroke="url(#ss-ring-metal)" strokeWidth="1" />
-
-          {/* Bridge Center Medallion / Keystone */}
-          <circle cx="60" cy="81.2" r="2.2" fill="#F59E0B" stroke="#78350F" strokeWidth="0.5" />
-
-          {/* Lower Keystone Arch Support */}
+          {/* Roadway / Pipeline Deck */}
           <path
-            d="M34 85 Q60 98 86 85"
-            fill="none"
-            stroke="url(#ss-ring-metal)"
-            strokeWidth="1.8"
+            d="M 20 82 L 100 82"
+            stroke="url(#ns-ring-metal)"
+            strokeWidth="2.8"
             strokeLinecap="round"
           />
-        </g>
-
-        {/* 6. Flanking Palash Petal / Laurel Wreath (State Heritage) */}
-        <g id="laurel-palash" fill="url(#ss-emblem-gold)" opacity="0.9">
-          {/* Left floral sprays */}
-          <path d="M16 50 C18 45 23 48 21 53 C19 54 16 53 16 50 Z" />
-          <path d="M14 62 C16 57 21 60 19 65 C17 66 14 65 14 62 Z" />
-          <path d="M17 74 C19 69 24 72 22 77 C20 78 17 77 17 74 Z" />
-
-          {/* Right floral sprays */}
-          <path d="M104 50 C102 45 97 48 99 53 C101 54 104 53 104 50 Z" />
-          <path d="M106 62 C104 57 99 60 101 65 C103 66 106 65 106 62 Z" />
-          <path d="M103 74 C101 69 96 72 98 77 C100 78 103 77 103 74 Z" />
-        </g>
-
-        {/* 7. Bottom Seal Ribbon Base with "झारखंड • SETU" Inscription */}
-        <g id="base-ribbon">
           <path
-            d="M38 101 L42 97 L78 97 L82 101 L78 105 L42 105 Z"
-            fill="url(#ss-ring-metal)"
-            stroke="#78350F"
-            strokeWidth="0.8"
+            d="M 22 84 L 98 84"
+            stroke="#059669"
+            strokeWidth="1.5"
+            strokeLinecap="round"
           />
-          <text
-            x="60"
-            y="102.5"
-            textAnchor="middle"
-            fill="#451A03"
-            fontSize="5.2"
-            fontWeight="900"
-            fontFamily="sans-serif"
-            letterSpacing="0.8"
-          >
-            समाधान सेतु
-          </text>
+
+          {/* Pier Foundations */}
+          <rect x="29" y="82" width="6" height="10" rx="1" fill="#1E293B" stroke="#D97706" strokeWidth="0.8" />
+          <rect x="85" y="82" width="6" height="10" rx="1" fill="#1E293B" stroke="#D97706" strokeWidth="0.8" />
         </g>
 
-        {/* 8. Four Cardinal Diamond Motifs (Jharkhand Tribal Art Tradition) */}
-        <g fill="#FDE68A">
-          <polygon points="60,6 62,9 60,12 58,9" />
-          <polygon points="6,60 9,62 12,60 9,58" />
-          <polygon points="114,60 111,62 108,60 111,58" />
-        </g>
+        {/* 6. Base Ribbon with Saffron & Green Accent */}
+        <path
+          d="M 32 96 Q 60 99 88 96 L 85 101 Q 60 104 35 101 Z"
+          fill="url(#ns-ring-metal)"
+          stroke="#78350F"
+          strokeWidth="0.5"
+        />
+
+        {/* Text Ribbon */}
+        <text
+          x="60"
+          y="100.5"
+          fill="#1E1B4B"
+          fontSize="4.8"
+          fontWeight="900"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          textAnchor="middle"
+          letterSpacing="0.8"
+        >
+          {`${PLATFORM_CONFIG.name.toUpperCase()} • MSInS`}
+        </text>
       </svg>
     </div>
   );
 }
 
-// Named alias for convenience
-export const SamadhanSetuLogo = StateSeal;
-
+export default StateSeal;

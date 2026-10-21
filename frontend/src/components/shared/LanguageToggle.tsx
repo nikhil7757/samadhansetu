@@ -4,7 +4,9 @@ import { cn } from '@/lib/utils';
 
 export function LanguageToggle() {
   const { i18n } = useTranslation();
-  const [current, setCurrent] = useState(() => i18n.language || (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : 'hi') || 'hi');
+  const [current, setCurrent] = useState(
+    () => i18n.language || (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : 'en') || 'en'
+  );
 
   useEffect(() => {
     const handleLangChange = (lng: string) => setCurrent(lng);
@@ -27,6 +29,7 @@ export function LanguageToggle() {
 
   const isEn = current.startsWith('en');
   const isHi = current.startsWith('hi');
+  const isMr = current.startsWith('mr');
 
   return (
     <div
@@ -38,7 +41,7 @@ export function LanguageToggle() {
         type="button"
         onClick={() => toggle('en')}
         className={cn(
-          'rounded-md px-2.5 py-1 transition-all duration-150 cursor-pointer',
+          'rounded-md px-2 py-1 transition-all duration-150 cursor-pointer',
           isEn
             ? 'bg-primary text-primary-foreground shadow-xs font-bold'
             : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
@@ -50,18 +53,34 @@ export function LanguageToggle() {
       </button>
       <button
         type="button"
+        onClick={() => toggle('mr')}
+        className={cn(
+          'rounded-md px-2 py-1 transition-all duration-150 cursor-pointer font-medium',
+          isMr
+            ? 'bg-primary text-primary-foreground shadow-xs font-bold'
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+        )}
+        aria-pressed={isMr}
+        aria-label="मराठी (Marathi)"
+      >
+        मराठी
+      </button>
+      <button
+        type="button"
         onClick={() => toggle('hi')}
         className={cn(
-          'rounded-md px-2.5 py-1 transition-all duration-150 cursor-pointer font-medium',
+          'rounded-md px-2 py-1 transition-all duration-150 cursor-pointer font-medium',
           isHi
             ? 'bg-primary text-primary-foreground shadow-xs font-bold'
             : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
         )}
         aria-pressed={isHi}
-        aria-label="हिन्दी"
+        aria-label="हिंदी (Hindi)"
       >
-        हिं
+        हिंदी
       </button>
     </div>
   );
 }
+
+export default LanguageToggle;

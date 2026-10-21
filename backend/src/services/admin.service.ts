@@ -51,11 +51,15 @@ export class AdminService {
         where: { id: problemId },
         data: { status: 'OPEN' },
       }),
-      prisma.statusHistory.create({
+      (prisma as any).statusHistory.create({
         data: {
+          entityType: 'PROBLEM',
+          entityId: problemId,
           problemId,
           oldStatus: 'PENDING_APPROVAL',
           newStatus: 'OPEN',
+          actor: 'MSInS Administrator',
+          action: 'PROBLEM_APPROVED',
           changedById: adminId,
           note: note || 'Approved by admin',
         },
@@ -82,11 +86,15 @@ export class AdminService {
         where: { id: problemId },
         data: { status: 'REJECTED' },
       }),
-      prisma.statusHistory.create({
+      (prisma as any).statusHistory.create({
         data: {
+          entityType: 'PROBLEM',
+          entityId: problemId,
           problemId,
           oldStatus: 'PENDING_APPROVAL',
           newStatus: 'REJECTED',
+          actor: 'MSInS Administrator',
+          action: 'PROBLEM_REJECTED',
           changedById: adminId,
           note,
         },
@@ -133,11 +141,15 @@ export class AdminService {
         data: { status: 'TEAM_FORMED' },
       });
 
-      await tx.statusHistory.create({
+      await (tx as any).statusHistory.create({
         data: {
+          entityType: 'PROBLEM',
+          entityId: problemId,
           problemId,
           oldStatus: problem.status,
           newStatus: 'TEAM_FORMED',
+          actor: 'MSInS Administrator',
+          action: 'TEAM_MATCHED',
           changedById: adminId,
           note: 'Team formed by admin match',
         },

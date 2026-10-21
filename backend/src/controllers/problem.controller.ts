@@ -3,7 +3,8 @@ import { ProblemService } from '../services/problem.service.js';
 
 export class ProblemController {
   static async create(req: Request, res: Response) {
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    // Serve authenticated upload route rather than unauthenticated static directory
+    const imageUrl = req.file ? `/api/uploads/${req.file.filename}` : undefined;
     const problem = await ProblemService.create({
       ...req.body,
       submittedById: req.user!.userId,

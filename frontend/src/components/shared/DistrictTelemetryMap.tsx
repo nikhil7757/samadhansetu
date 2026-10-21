@@ -40,33 +40,47 @@ export interface DistrictData {
   lng?: number;
 }
 
-// Complete geographic coordinates for Jharkhand districts
-export const JHARKHAND_DISTRICT_COORDS: Record<string, { lat: number; lng: number }> = {
-  ranchi: { lat: 23.3441, lng: 85.3096 },
-  dhanbad: { lat: 23.7957, lng: 86.4304 },
-  east_singhbhum: { lat: 22.8046, lng: 86.2029 },
-  bokaro: { lat: 23.6693, lng: 86.1511 },
-  deoghar: { lat: 24.4826, lng: 86.7001 },
-  hazaribagh: { lat: 23.9925, lng: 85.3637 },
-  giridih: { lat: 24.1868, lng: 86.3023 },
-  ramgarh: { lat: 23.6334, lng: 85.5147 },
-  palamu: { lat: 24.0416, lng: 84.0722 },
-  west_singhbhum: { lat: 22.5539, lng: 85.8078 },
-  dumka: { lat: 24.2698, lng: 87.2471 },
-  garhwa: { lat: 24.1612, lng: 83.8055 },
-  chatra: { lat: 24.2104, lng: 84.8706 },
-  gumla: { lat: 23.0435, lng: 84.5414 },
-  simdega: { lat: 22.6163, lng: 84.5098 },
-  lohardaga: { lat: 23.4414, lng: 84.6811 },
-  koderma: { lat: 24.4695, lng: 85.5947 },
-  jamtara: { lat: 23.9622, lng: 86.8016 },
-  godda: { lat: 24.8291, lng: 87.2144 },
-  sahibganj: { lat: 25.2425, lng: 87.6438 },
-  pakur: { lat: 24.6342, lng: 87.8493 },
-  latehar: { lat: 23.7437, lng: 84.4988 },
-  khunti: { lat: 23.0727, lng: 85.2796 },
-  saraikela_kharsawan: { lat: 22.7006, lng: 85.9304 },
+// Geographic coordinates for Maharashtra districts
+export const MAHARASHTRA_DISTRICT_COORDS: Record<string, { lat: number; lng: number }> = {
+  mumbai_city: { lat: 18.9388, lng: 72.8354 },
+  mumbai_suburban: { lat: 19.0760, lng: 72.8777 },
+  pune: { lat: 18.5204, lng: 73.8567 },
+  nagpur: { lat: 21.1458, lng: 79.0882 },
+  nashik: { lat: 19.9975, lng: 73.7898 },
+  thane: { lat: 19.2183, lng: 72.9781 },
+  chhatrapati_sambhajinagar: { lat: 19.8762, lng: 75.3433 },
+  kolhapur: { lat: 16.7050, lng: 74.2433 },
+  amravati: { lat: 20.9374, lng: 77.7796 },
+  solapur: { lat: 17.6599, lng: 75.9064 },
+  jalgaon: { lat: 21.0077, lng: 75.5626 },
+  nanded: { lat: 19.1383, lng: 77.3210 },
+  sangli: { lat: 16.8524, lng: 74.5815 },
+  akola: { lat: 20.7002, lng: 77.0082 },
+  latur: { lat: 18.4088, lng: 76.5604 },
+  dhule: { lat: 20.9042, lng: 74.7749 },
+  ahmednagar: { lat: 19.0952, lng: 74.7496 },
+  chandrapur: { lat: 19.9615, lng: 79.2961 },
+  parbhani: { lat: 19.2686, lng: 76.7725 },
+  jalna: { lat: 19.8410, lng: 75.8864 },
+  beed: { lat: 18.9891, lng: 75.7601 },
+  yavatmal: { lat: 20.3888, lng: 78.1204 },
+  satara: { lat: 17.6805, lng: 73.9930 },
+  raigad: { lat: 18.5158, lng: 73.1812 },
+  ratnagiri: { lat: 16.9902, lng: 73.3120 },
+  sindhudurg: { lat: 16.1180, lng: 73.6934 },
+  bhandara: { lat: 21.1714, lng: 79.6540 },
+  gondia: { lat: 21.4598, lng: 80.1961 },
+  gadchiroli: { lat: 20.1849, lng: 80.0035 },
+  wardha: { lat: 20.7453, lng: 78.6022 },
+  washim: { lat: 20.1118, lng: 77.1354 },
+  hingoli: { lat: 19.7180, lng: 77.1485 },
+  nandurbar: { lat: 21.3734, lng: 74.2403 },
+  osmanabad: { lat: 18.1861, lng: 76.0419 },
+  palghar: { lat: 19.6967, lng: 72.7699 },
+  buldhana: { lat: 20.5312, lng: 76.1843 },
 };
+
+export const JHARKHAND_DISTRICT_COORDS = MAHARASHTRA_DISTRICT_COORDS;
 
 // Map camera controller component to smoothly pan when active district changes
 function MapCameraController({ selectedDistrict }: { selectedDistrict: DistrictData }) {
@@ -74,7 +88,7 @@ function MapCameraController({ selectedDistrict }: { selectedDistrict: DistrictD
 
   useEffect(() => {
     if (!map || !selectedDistrict) return;
-    const coords = JHARKHAND_DISTRICT_COORDS[selectedDistrict.id];
+    const coords = MAHARASHTRA_DISTRICT_COORDS[selectedDistrict.id];
     if (coords) {
       map.panTo(coords);
       map.setZoom(9.5);
@@ -134,7 +148,8 @@ export function DistrictTelemetryMap({
     } catch (_) {}
   };
 
-  const centerJharkhand = useMemo(() => ({ lat: 23.6102, lng: 85.2799 }), []);
+  const centerMaharashtra = useMemo(() => ({ lat: 19.7515, lng: 75.7139 }), []);
+  const centerJharkhand = centerMaharashtra;
 
   return (
     <div className="space-y-4">
@@ -144,7 +159,7 @@ export function DistrictTelemetryMap({
           <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="font-bold text-foreground flex items-center gap-1.5 font-mono">
             <Layers className="h-3.5 w-3.5 text-primary" />
-            <span>{t('map.liveLayerTitle', 'Google Maps Sovereign Jharkhand Command Grid')}</span>
+            <span>{t('map.liveLayerTitle', 'Google Maps Sovereign Maharashtra Innovation Grid')}</span>
           </span>
           <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary font-mono font-semibold">
             v=weekly • AdvancedMarkers
@@ -244,7 +259,7 @@ export function DistrictTelemetryMap({
             region="IN"
           >
             <Map
-              defaultCenter={centerJharkhand}
+              defaultCenter={centerMaharashtra}
               defaultZoom={7.5}
               mapId="DEMO_MAP_ID"
               internalUsageAttributionIds={['gmp_git_agentskills_v1']}
@@ -258,7 +273,7 @@ export function DistrictTelemetryMap({
 
               {/* Render Advanced Markers for each District */}
               {districts.map((d) => {
-                const coords = JHARKHAND_DISTRICT_COORDS[d.id];
+                const coords = MAHARASHTRA_DISTRICT_COORDS[d.id];
                 if (!coords) return null;
                 const isSelected = selectedDistrict.id === d.id;
 
@@ -283,9 +298,9 @@ export function DistrictTelemetryMap({
               })}
 
               {/* Active District InfoWindow */}
-              {activeMarker && JHARKHAND_DISTRICT_COORDS[activeMarker.id] && (
+              {activeMarker && MAHARASHTRA_DISTRICT_COORDS[activeMarker.id] && (
                 <InfoWindow
-                  position={JHARKHAND_DISTRICT_COORDS[activeMarker.id]}
+                  position={MAHARASHTRA_DISTRICT_COORDS[activeMarker.id]}
                   onCloseClick={() => setActiveMarker(null)}
                 >
                   <div className="p-1 max-w-xs space-y-2 text-xs font-sans text-slate-900">
@@ -339,7 +354,7 @@ export function DistrictTelemetryMap({
                 className="w-full h-full max-h-[380px] drop-shadow-md select-none"
               >
                 <defs>
-                  <linearGradient id="jharkhandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="maharashtraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#0f766e" stopOpacity="0.25" />
                     <stop offset="100%" stopColor="#064e3b" stopOpacity="0.15" />
                   </linearGradient>
@@ -348,7 +363,7 @@ export function DistrictTelemetryMap({
                 {/* Stylized State Geographic Contour */}
                 <path
                   d="M 120 180 Q 220 80 400 90 T 680 160 Q 740 260 690 380 T 460 450 Q 280 440 180 380 Z"
-                  fill="url(#jharkhandGrad)"
+                  fill="url(#maharashtraGrad)"
                   stroke="#0f766e"
                   strokeWidth="2"
                   strokeDasharray="4 2"
@@ -358,11 +373,11 @@ export function DistrictTelemetryMap({
                 {/* District Pin Nodes */}
                 {districts.map((d, i) => {
                   const isSelected = selectedDistrict.id === d.id;
-                  // Normalized positioning for Jharkhand polygon
-                  const coords = JHARKHAND_DISTRICT_COORDS[d.id] || { lat: 23.6, lng: 85.3 };
+                  // Normalized positioning for Maharashtra polygon (Lng 72.5 to 81.0, Lat 15.5 to 22.1)
+                  const coords = MAHARASHTRA_DISTRICT_COORDS[d.id] || { lat: 19.7, lng: 75.7 };
                   // Transform Lat/Lng to SVG viewport
-                  const cx = 150 + ((coords.lng - 83.5) / 4.8) * 500;
-                  const cy = 420 - ((coords.lat - 22.0) / 3.4) * 350;
+                  const cx = 100 + ((coords.lng - 72.5) / 8.5) * 600;
+                  const cy = 440 - ((coords.lat - 15.5) / 6.6) * 380;
 
                   return (
                     <g

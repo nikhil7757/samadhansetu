@@ -90,7 +90,7 @@ export default function MyTeams() {
                 <div className="space-y-2 text-xs text-muted-foreground pt-1">
                   <div className="flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5 text-primary" />
-                    <span>{team.problem?.district}, Jharkhand</span>
+                    <span>{team.problem?.district}, Maharashtra</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-sky-600" />

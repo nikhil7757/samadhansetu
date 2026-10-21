@@ -38,12 +38,17 @@ export function timeAgo(date: string | Date): string {
   return formatDate(date);
 }
 
-export const JHARKHAND_DISTRICTS = [
-  'Bokaro', 'Chatra', 'Deoghar', 'Dhanbad', 'Dumka', 'East Singhbhum',
-  'Garhwa', 'Giridih', 'Godda', 'Gumla', 'Hazaribagh', 'Jamtara',
-  'Khunti', 'Koderma', 'Latehar', 'Lohardaga', 'Pakur', 'Palamu',
-  'Ramgarh', 'Ranchi', 'Sahibganj', 'Saraikela Kharsawan', 'Simdega', 'West Singhbhum',
+export const MAHARASHTRA_DISTRICTS = [
+  'Ahmednagar', 'Akola', 'Amravati', 'Beed', 'Bhandara', 'Buldhana',
+  'Chandrapur', 'Chhatrapati Sambhajinagar', 'Dharashiv', 'Dhule', 'Gadchiroli', 'Gondia',
+  'Hingoli', 'Jalgaon', 'Jalna', 'Kolhapur', 'Latur', 'Mumbai City',
+  'Mumbai Suburban', 'Nagpur', 'Nanded', 'Nandurbar', 'Nashik', 'Palghar',
+  'Parbhani', 'Pune', 'Raigad', 'Ratnagiri', 'Sangli', 'Satara',
+  'Sindhudurg', 'Solapur', 'Thane', 'Wardha', 'Washim', 'Yavatmal',
 ] as const;
+
+export const JHARKHAND_DISTRICTS = MAHARASHTRA_DISTRICTS;
+export const DISTRICTS = MAHARASHTRA_DISTRICTS;
 
 export const CATEGORIES = [
   { value: 'WATER_SANITATION', labelKey: 'common.categoryWater' },

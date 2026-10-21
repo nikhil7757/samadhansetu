@@ -1,313 +1,208 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   PlusCircle,
-  Layers,
-  MapPin,
-  Calendar,
-  Search,
-  CheckCircle2,
+  Building2,
+  Rocket,
+  ShieldCheck,
   Clock,
-  XCircle,
-  ArrowRight,
-  Filter,
   Sparkles,
-  Inbox,
-  Loader2,
+  ArrowRight,
+  MapPin,
+  CreditCard,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { EmptyState } from '@/components/shared/EmptyState';
-import {
-  getStoredComplaints,
-  getSessionSubmittedComplaintIds,
-  isComplaintDeleted,
-  type Complaint,
-  type ComplaintStatus,
-} from '@/lib/complaints';
-import { formatDate, cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
+import { useNavSetu } from '@/lib/navsetuStore';
 import { useAuth } from '@/lib/auth';
-import api from '@/lib/api';
+import { cn } from '@/lib/utils';
 
 export default function MySubmissions() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { challenges, pilots } = useNavSetu();
 
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [dateSort, setDateSort] = useState<'newest' | 'oldest'>('newest');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const reloadComplaints = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const localAll = getStoredComplaints();
-      const sessionIds = getSessionSubmittedComplaintIds();
-
-      // Fetch latest complaints from backend database if accessible
-      let remoteComplaints: Complaint[] = [];
-      try {
-        const res = await api.get('/complaints');
-        if (Array.isArray(res.data)) {
-          remoteComplaints = res.data;
-        }
-      } catch (e) {
-        // Fall back to local registry
-      }
-
-      // Merge and deduplicate by ID, strictly excluding deleted/rejected complaints
-      const mergedMap = new Map<string, Complaint>();
-      for (const c of [...remoteComplaints, ...localAll]) {
-        if (c?.id && !isComplaintDeleted(c.id) && c.status !== 'rejected_by_officer' && !mergedMap.has(c.id)) {
-          mergedMap.set(c.id, c);
-        }
-      }
-      const allMerged = Array.from(mergedMap.values());
-
-      // Filter to relevant complaints:
-      // 1. Matches logged-in citizen ID or citizen email
-      // 2. Or matches any tracking ID submitted in this browser session
-      const userComplaints = allMerged.filter((c) => {
-        if (isComplaintDeleted(c.id) || c.status === 'rejected_by_officer') return false;
-        const matchesSession = sessionIds.includes(c.id);
-        if (matchesSession) return true;
-
-        if (user?.id) {
-          const matchesId = c.citizen_id === user.id;
-          const matchesEmail = user.email && c.citizen_email?.toLowerCase() === user.email.toLowerCase();
-          return matchesId || matchesEmail;
-        }
-
-        return false;
-      });
-
-      setComplaints(userComplaints);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    reloadComplaints();
-
-    const handleSubmitted = () => {
-      reloadComplaints();
-    };
-
-    window.addEventListener('samadhansetu:complaint-submitted', handleSubmitted);
-    window.addEventListener('samadhansetu:complaint-deleted', handleSubmitted);
-    return () => {
-      window.removeEventListener('samadhansetu:complaint-submitted', handleSubmitted);
-      window.removeEventListener('samadhansetu:complaint-deleted', handleSubmitted);
-    };
-  }, [reloadComplaints]);
-
-  const filteredComplaints = useMemo(() => {
-    const list = complaints.filter((c) => {
-      const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
-      const matchesSearch =
-        !searchQuery ||
-        c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        c.location.district.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesStatus && matchesSearch;
-    });
-
-    return list.sort((a, b) => {
-      const timeA = new Date(a.submitted_at).getTime();
-      const timeB = new Date(b.submitted_at).getTime();
-      return dateSort === 'newest' ? timeB - timeA : timeA - timeB;
-    });
-  }, [complaints, statusFilter, dateSort, searchQuery]);
+  const isStartupRole = user?.role === 'STARTUP' || user?.role === 'UNIVERSITY' || user?.role === 'INDUSTRY';
+  const [viewMode, setViewMode] = useState<'challenges' | 'proposals'>(() =>
+    isStartupRole ? 'proposals' : 'challenges'
+  );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-border/80">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-2 border border-primary/20 shadow-2xs">
-            <Layers className="h-3.5 w-3.5" />
-            <span>Citizen Redressal Workspace</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-            My Submissions & Grievances
-          </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl">
-            Track all civic grievances reported across Jharkhand with automated AI scores and nodal verification steps.
-          </p>
-        </div>
-
-        <Button
-          onClick={() => navigate('/report')}
-          className="gap-2 bg-accent hover:bg-accent-hover text-accent-foreground font-extrabold shadow-md hover:shadow-lg transition-all"
-        >
-          <PlusCircle className="h-4 w-4" />
-          <span>Report New Problem</span>
-        </Button>
-      </div>
-
-      {/* Summary KPI Strip */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs specular-card">
-          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">Total Filed</span>
-          <span className="text-2xl font-black font-mono text-foreground">{complaints.length}</span>
-        </div>
-        <div className="p-4 rounded-2xl border border-sky-500/30 bg-sky-500/5 shadow-xs specular-card">
-          <span className="text-[11px] font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wider block">In Progress</span>
-          <span className="text-2xl font-black font-mono text-sky-600 dark:text-sky-400">
-            {complaints.filter((c) => c.status === 'verified_in_progress' || c.status === 'pending_officer' || c.status === 'officer_reviewing').length}
-          </span>
-        </div>
-        <div className="p-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 shadow-xs specular-card">
-          <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">Resolved</span>
-          <span className="text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400">
-            {complaints.filter((c) => c.status === 'resolved').length}
-          </span>
-        </div>
-      </div>
-
-      {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between p-2 rounded-2xl bg-secondary/30 border border-border/70">
-        <div className="relative w-full sm:w-80">
-          <Search className="h-4 w-4 absolute left-3 top-3 text-muted-foreground" />
-          <Input
-            placeholder="Search by Tracking ID, title, district..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 text-xs bg-card"
-          />
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-muted-foreground shrink-0 flex items-center gap-1">
-              <Filter className="h-3.5 w-3.5" /> Status:
-            </span>
-            <Select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-card text-xs"
-              options={[
-                { value: 'all', label: 'All Statuses' },
-                { value: 'resolved', label: '🟢 Resolved' },
-                { value: 'verified_in_progress', label: '🔵 In Progress' },
-                { value: 'pending_officer', label: '🟡 Pending Officer' },
-                { value: 'auto_approved', label: '🟢 Auto-Approved' },
-                { value: 'auto_rejected', label: '🔴 Auto-Rejected' },
-              ]}
-            />
+    <div className="min-h-screen bg-background py-10 px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="border-b border-border/80 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 mb-3 shadow-xs">
+              <Building2 className="h-3.5 w-3.5" />
+              <span>Workspace Management</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-black text-foreground font-serif tracking-tight">
+              {viewMode === 'challenges' ? 'My Department Challenges' : 'My Startup Proposals & Pilots'}
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+              Track your submitted challenges, monitor incoming startup proposals, review milestone deliverable status, and track disbursed payments.
+            </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-muted-foreground shrink-0 flex items-center gap-1">
-              <Calendar className="h-3.5 w-3.5" /> Sort:
-            </span>
-            <Select
-              value={dateSort}
-              onChange={(e) => setDateSort(e.target.value as 'newest' | 'oldest')}
-              className="bg-card text-xs"
-              options={[
-                { value: 'newest', label: '📅 Newest First' },
-                { value: 'oldest', label: '📅 Oldest First' },
-              ]}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Complaints List */}
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center space-y-3">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="text-sm font-semibold text-muted-foreground">Synchronizing citizen grievances registry...</span>
-        </div>
-      ) : filteredComplaints.length === 0 ? (
-        <EmptyState
-          icon={Inbox}
-          title="No Complaints Found"
-          description="You have not submitted any complaints matching this filter. Report a new grievance to initiate automated AI verification."
-          action={{
-            label: 'Report Your First Problem',
-            onClick: () => navigate('/report'),
-          }}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredComplaints.map((c) => (
-            <Card
-              key={c.id}
-              onClick={() => navigate(`/track/${c.id}`)}
-              className="docket-sheet rounded-2xl overflow-hidden card-hover-lift cursor-pointer flex flex-col justify-between border border-border shadow-sm hover:shadow-xl transition-all group"
+            <button
+              type="button"
+              onClick={() => setViewMode('challenges')}
+              className={cn(
+                'px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                viewMode === 'challenges'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+              )}
             >
-              <div>
-                {/* Photo & Badge Header */}
-                <div className="relative h-44 w-full bg-secondary overflow-hidden">
-                  <img
-                    src={c.media[0] || 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80'}
-                    alt={c.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-black/80 backdrop-blur-xs text-white text-[11px] font-mono font-bold">
-                    {c.id}
-                  </div>
-
-                  {/* Official Ink-style Status Badge */}
-                  <div
-                    className={cn(
-                      'absolute top-3 right-3 docket-stamp text-[10px] py-0.5 shadow-md',
-                      c.status === 'resolved'
-                        ? 'docket-stamp-verified bg-emerald-950/90 text-emerald-200 border-emerald-400'
-                        : c.status === 'verified_in_progress'
-                        ? 'docket-stamp-action bg-sky-950/90 text-sky-200 border-sky-400'
-                        : c.status === 'pending_officer' || c.status === 'officer_reviewing'
-                        ? 'docket-stamp-pending bg-amber-950/90 text-amber-200 border-amber-400'
-                        : c.status === 'auto_approved'
-                        ? 'docket-stamp-verified bg-emerald-950/90 text-emerald-200 border-emerald-400'
-                        : 'docket-stamp-action bg-rose-950/90 text-rose-200 border-rose-400'
-                    )}
-                  >
-                    <span>{c.status.replace(/_/g, ' ')}</span>
-                  </div>
-                </div>
-
-                <CardContent className="p-5 space-y-3">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-3.5 w-3.5 text-primary" />
-                      {c.location.district}
-                    </span>
-                    <span className="font-mono text-[11px]">
-                      Score: <strong className="text-foreground">{c.ai_score}/100</strong>
-                    </span>
-                  </div>
-
-                  <h3 className="font-bold text-sm text-foreground line-clamp-2 leading-snug">
-                    {c.title}
-                  </h3>
-
-                  <p className="text-xs text-muted-foreground line-clamp-2">
-                    {c.description}
-                  </p>
-                </CardContent>
-              </div>
-
-              <div className="px-5 py-3 border-t border-border/60 bg-secondary/15 flex items-center justify-between text-xs">
-                <span className="text-muted-foreground font-mono text-[11px]">
-                  {formatDate(c.submitted_at)}
-                </span>
-                <span className="text-primary font-bold">
-                  Track Status
-                </span>
-              </div>
-            </Card>
-          ))}
+              My Challenges ({challenges.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('proposals')}
+              className={cn(
+                'px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer',
+                viewMode === 'proposals'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'bg-card border border-border text-muted-foreground hover:text-foreground'
+              )}
+            >
+              My Proposals & Pilots ({pilots.length})
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* View 1: Challenges (Department View) */}
+        {viewMode === 'challenges' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-muted-foreground uppercase font-mono">
+                Departmental Challenges Roster
+              </span>
+              <Link to="/report">
+                <Button size="sm" className="font-bold text-xs bg-amber-600 hover:bg-amber-700 text-white gap-1.5 cursor-pointer">
+                  <PlusCircle className="h-4 w-4" />
+                  <span>Post New Challenge</span>
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {challenges.map((ch) => (
+                <Card key={ch.id} className="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between shadow-xs space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-2">
+                      <span className="font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
+                        {ch.id}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600">
+                        {ch.status.replace('_', ' ')}
+                      </span>
+                    </div>
+
+                    <h3 className="text-base font-bold text-foreground">{ch.title}</h3>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                      <MapPin className="h-3.5 w-3.5 text-amber-500" />
+                      <span>{ch.district}, Maharashtra</span>
+                      <span>•</span>
+                      <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                      <span>Quality: {ch.aiQualityScore}/100</span>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground mt-3 line-clamp-2 leading-relaxed">
+                      {ch.desiredOutcome}
+                    </p>
+
+                    <div className="mt-4 pt-3 border-t border-border/60 flex justify-between items-center text-xs font-mono">
+                      <span>Grant: ₹{ch.budgetMin}L – ₹{ch.budgetMax}L</span>
+                      <span>{ch.pilotDurationMonths} Months</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-border flex items-center justify-between gap-3 text-xs">
+                    <Link to={`/problems/${ch.id}`}>
+                      <Button variant="ghost" size="sm" className="text-xs cursor-pointer">
+                        View Public Specs
+                      </Button>
+                    </Link>
+                    <Link to={`/track/${ch.id}`}>
+                      <Button size="sm" className="text-xs font-bold gap-1 cursor-pointer">
+                        <span>Track Lifecycle</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* View 2: Proposals & Pilots (Startup View) */}
+        {viewMode === 'proposals' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-muted-foreground uppercase font-mono">
+                Active Startup Pilots & Bids
+              </span>
+              <Link to="/problems">
+                <Button size="sm" className="font-bold text-xs gap-1.5 cursor-pointer">
+                  <Rocket className="h-4 w-4" />
+                  <span>Discover Open Challenges</span>
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {pilots.map((p) => (
+                <Card key={p.id} className="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between shadow-xs space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between text-xs mb-2">
+                      <span className="font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">
+                        {p.id}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600">
+                        {p.currentStage}
+                      </span>
+                    </div>
+
+                    <h3 className="text-base font-bold text-foreground">{p.challengeTitle}</h3>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                      <Building2 className="h-3.5 w-3.5 text-primary" />
+                      <span>{p.department}</span>
+                      <span>•</span>
+                      <MapPin className="h-3.5 w-3.5 text-amber-500" />
+                      <span>{p.district}, MH</span>
+                    </div>
+
+                    <p className="text-xs text-muted-foreground mt-3 line-clamp-2 leading-relaxed">
+                      {p.sandboxScope}
+                    </p>
+
+                    <div className="mt-4 pt-3 border-t border-border/60 flex justify-between items-center text-xs font-mono">
+                      <span>Disbursed: ₹{p.disbursedBudget}L / ₹{p.totalBudget}L</span>
+                      <span className="text-emerald-600 font-bold">{p.milestones.length} Milestones</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-border flex items-center justify-between gap-3 text-xs">
+                    <span className="font-mono text-muted-foreground text-[11px]">Agr: {p.agreementRef}</span>
+                    <Link to={`/track/${p.id}`}>
+                      <Button size="sm" className="text-xs font-bold gap-1 cursor-pointer">
+                        <span>Open Pilot Tracker</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Button>
+                    </Link>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

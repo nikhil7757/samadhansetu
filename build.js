@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * build.js — Resilient Production Build Pipeline for SamadhanSetu (Jharkhand Sovereign Civic Portal)
+ * build.js — Resilient Production Build Pipeline for SamadhanSetu (Maharashtra Innovation Procurement Platform)
  * 
  * Adheres to AGENTS.md Deployment Build Resilience Guidelines & Ponytail Principle:
  * 1. Zero-Dependency Static Packaging: Decouples production build from brittle devDependencies (tsc -b, heavy bundlers, or uninstalled plugins).
@@ -27,7 +27,7 @@ const DIST_DIR = path.join(FRONTEND_DIR, 'dist');
 const PRISMA_SCHEMA = path.join(BACKEND_DIR, 'prisma', 'schema.prisma');
 
 console.log('====================================================');
-console.log('🏛️  SamadhanSetu Production Build Pipeline');
+console.log('🏛️  SamadhanSetu Production Build Pipeline (MSInS)');
 console.log('    Environment: Vercel / CI-CD');
 console.log('====================================================\n');
 

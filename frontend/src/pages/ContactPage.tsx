@@ -18,13 +18,13 @@ export default function ContactPage() {
         <div className="text-center space-y-2 border-b border-border pb-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
             <Building2 className="h-3.5 w-3.5" />
-            <span>Official Government Directory</span>
+            <span>Official MSInS Innovation Directory</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">
-            Contact Nodal Authorities
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-serif">
+            Contact Innovation Authorities
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Get in touch with the Department of Higher & Technical Education or district nodal officers across Jharkhand.
+            Get in touch with the Maharashtra State Innovation Society (MSInS) or district innovation desks across Maharashtra.
           </p>
         </div>
 
@@ -33,46 +33,46 @@ export default function ContactPage() {
           <div className="md:col-span-5 space-y-4">
             <Card className="p-5.5 rounded-2xl border-border/80 bg-card specular-card shadow-xs space-y-3">
               <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider block">
-                Central State Directorate
+                MSInS State Headquarters
               </span>
               <div className="space-y-2.5 text-xs">
                 <div className="flex items-start gap-2.5 text-foreground">
                   <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <span>
-                    Yojana Bhawan, Nepal House, Doranda, Ranchi — 834002, Jharkhand
+                    New Administrative Building, Madame Cama Road, Mantralaya, Mumbai — 400032, Maharashtra
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-foreground">
                   <Phone className="h-4 w-4 text-primary shrink-0" />
-                  <span>24x7 Citizen Helpline: <strong>181</strong> / 0651-2490000</span>
+                  <span>Procurement Desk: <strong>022-22025222</strong> / 1800-120-8040</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-foreground">
                   <Mail className="h-4 w-4 text-primary shrink-0" />
-                  <span>nodal.sih@samadhansetu.gov.in</span>
+                  <span>procurement@samadhansetu.maharashtra.gov.in</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-muted-foreground">
                   <Clock className="h-4 w-4 text-primary shrink-0" />
-                  <span>Working Hours: Mon – Fri (09:30 – 18:00 IST)</span>
+                  <span>Working Hours: Mon – Fri (09:45 – 18:15 IST)</span>
                 </div>
               </div>
             </Card>
 
             <Card className="p-5.5 rounded-2xl border-border/80 bg-card specular-card shadow-xs space-y-2.5">
               <span className="text-xs font-bold uppercase text-muted-foreground tracking-wider block">
-                Key District Nodal Desks
+                Regional Innovation Desks
               </span>
               <div className="space-y-2 text-xs">
                 <div className="p-2.5 rounded-xl bg-secondary/40 border border-border/50">
-                  <span className="font-bold text-foreground block">Ranchi & Khunti Directorate</span>
-                  <span className="text-muted-foreground text-[11px]">ranchi.nodal@samadhansetu.gov.in • 0651-2201928</span>
+                  <span className="font-bold text-foreground block">Pune & Western Maharashtra Hub</span>
+                  <span className="text-muted-foreground text-[11px]">pune.hub@samadhansetu.maharashtra.gov.in • 020-25507000</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-secondary/40 border border-border/50">
-                  <span className="font-bold text-foreground block">Dhanbad, Bokaro & Giridih Desk</span>
-                  <span className="text-muted-foreground text-[11px]">dhanbad.nodal@samadhansetu.gov.in • 0326-2312091</span>
+                  <span className="font-bold text-foreground block">Vidarbha Regional Cell (Nagpur)</span>
+                  <span className="text-muted-foreground text-[11px]">nagpur.cell@samadhansetu.maharashtra.gov.in • 0712-2560123</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-secondary/40 border border-border/50">
-                  <span className="font-bold text-foreground block">Santhal Pargana (Deoghar & Dumka)</span>
-                  <span className="text-muted-foreground text-[11px]">deoghar.nodal@samadhansetu.gov.in • 06432-224102</span>
+                  <span className="font-bold text-foreground block">Marathwada Innovation Desk (Chhatrapati Sambhajinagar)</span>
+                  <span className="text-muted-foreground text-[11px]">csn.desk@samadhansetu.maharashtra.gov.in • 0240-2334411</span>
                 </div>
               </div>
             </Card>

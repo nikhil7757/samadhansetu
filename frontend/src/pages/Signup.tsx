@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { UserPlus, Users, GraduationCap, Building2, MapPin, Building, Mail, Lock, User as UserIcon } from 'lucide-react';
+import { UserPlus, Rocket, GraduationCap, Building2, MapPin, Building, Mail, Lock, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { JHARKHAND_DISTRICTS, cn } from '@/lib/utils';
+import { MAHARASHTRA_DISTRICTS, cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 
 export default function Signup() {
@@ -15,7 +15,7 @@ export default function Signup() {
   const navigate = useNavigate();
   const { signup } = useAuth();
 
-  const [role, setRole] = useState<'CITIZEN' | 'UNIVERSITY' | 'INDUSTRY'>('CITIZEN');
+  const [role, setRole] = useState<'STARTUP' | 'DEPARTMENT_USER' | 'EVALUATOR'>('STARTUP');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +23,7 @@ export default function Signup() {
   const [district, setDistrict] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const districtOptions = JHARKHAND_DISTRICTS.map((d) => ({ value: d, label: d }));
+  const districtOptions = MAHARASHTRA_DISTRICTS.map((d) => ({ value: d, label: d }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +35,8 @@ export default function Signup() {
       toast.error('Password must be at least 8 characters');
       return;
     }
-    if ((role === 'UNIVERSITY' || role === 'INDUSTRY') && !organizationName.trim()) {
-      toast.error(t('auth.signup.organizationHint'));
+    if (role === 'STARTUP' && !organizationName.trim()) {
+      toast.error('Please enter your Startup / Entity name & DPIIT number');
       return;
     }
 
@@ -46,15 +46,17 @@ export default function Signup() {
         name,
         email,
         password,
-        role,
+        role: role as any,
         organizationName: organizationName.trim() || undefined,
         district,
       });
       toast.success(`Account registered! Welcome, ${user.name}`);
-      if (user.role === 'CITIZEN') {
-        navigate('/problems/submit');
-      } else {
+      if (user.role === 'DEPARTMENT_USER') {
+        navigate('/report');
+      } else if (user.role === 'STARTUP') {
         navigate('/problems');
+      } else {
+        navigate('/admin/approvals');
       }
     } catch (err: any) {
       toast.error(err.response?.data?.error || t('auth.signup.error'));
@@ -85,63 +87,63 @@ export default function Signup() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={() => setRole('CITIZEN')}
+                    onClick={() => setRole('STARTUP')}
                     className={cn(
                       'p-3 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer',
-                      role === 'CITIZEN'
+                      role === 'STARTUP'
                         ? 'border-primary bg-primary/5 ring-1 ring-primary'
                         : 'border-border bg-card hover:bg-secondary/60'
                     )}
                   >
-                    <Users className={cn('h-5 w-5 mb-2', role === 'CITIZEN' ? 'text-primary' : 'text-muted-foreground')} />
+                    <Rocket className={cn('h-5 w-5 mb-2', role === 'STARTUP' ? 'text-primary' : 'text-muted-foreground')} />
                     <div>
                       <span className="text-xs font-bold block text-foreground">
-                        {t('common.roleCitizen')}
+                        Eligible Startup
                       </span>
                       <span className="text-[10px] text-muted-foreground leading-tight block mt-0.5">
-                        Post & track problems
+                        Pitch solutions & pilot tests
                       </span>
                     </div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setRole('UNIVERSITY')}
+                    onClick={() => setRole('DEPARTMENT_USER')}
                     className={cn(
                       'p-3 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer',
-                      role === 'UNIVERSITY'
+                      role === 'DEPARTMENT_USER'
                         ? 'border-primary bg-primary/5 ring-1 ring-primary'
                         : 'border-border bg-card hover:bg-secondary/60'
                     )}
                   >
-                    <GraduationCap className={cn('h-5 w-5 mb-2', role === 'UNIVERSITY' ? 'text-primary' : 'text-muted-foreground')} />
+                    <Building2 className={cn('h-5 w-5 mb-2', role === 'DEPARTMENT_USER' ? 'text-primary' : 'text-muted-foreground')} />
                     <div>
                       <span className="text-xs font-bold block text-foreground">
-                        {t('common.roleUniversity')}
+                        Govt. Department
                       </span>
                       <span className="text-[10px] text-muted-foreground leading-tight block mt-0.5">
-                        Pitch solutions & research
+                        Post challenges & pilot needs
                       </span>
                     </div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setRole('INDUSTRY')}
+                    onClick={() => setRole('EVALUATOR')}
                     className={cn(
                       'p-3 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer',
-                      role === 'INDUSTRY'
+                      role === 'EVALUATOR'
                         ? 'border-primary bg-primary/5 ring-1 ring-primary'
                         : 'border-border bg-card hover:bg-secondary/60'
                     )}
                   >
-                    <Building2 className={cn('h-5 w-5 mb-2', role === 'INDUSTRY' ? 'text-primary' : 'text-muted-foreground')} />
+                    <GraduationCap className={cn('h-5 w-5 mb-2', role === 'EVALUATOR' ? 'text-primary' : 'text-muted-foreground')} />
                     <div>
                       <span className="text-xs font-bold block text-foreground">
-                        {t('common.roleIndustry')}
+                        Expert Evaluator
                       </span>
                       <span className="text-[10px] text-muted-foreground leading-tight block mt-0.5">
-                        CSR funding & pilot tests
+                        Evaluate & validate pilots
                       </span>
                     </div>
                   </button>

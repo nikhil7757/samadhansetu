@@ -1,36 +1,65 @@
 import axios from 'axios';
 
+// In-memory token storage (never written to localStorage or sessionStorage)
+let inMemoryToken: string | null = null;
+let inMemoryCsrfToken: string | null = null;
+
+export function setAuthToken(token: string | null): void {
+  inMemoryToken = token;
+}
+
+export function setCsrfToken(csrf: string | null): void {
+  inMemoryCsrfToken = csrf;
+}
+
+export function getCsrfToken(): string | null {
+  return inMemoryCsrfToken;
+}
+
 const api = axios.create({
   baseURL: (import.meta as any).env?.VITE_API_URL || '/api',
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+  },
+  withCredentials: true, // Send httpOnly session cookies and CSRF cookies automatically
 });
 
-// Request interceptor: attach JWT
+// Request interceptor: attach in-memory Bearer token and anti-CSRF token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (inMemoryToken) {
+    config.headers.Authorization = `Bearer ${inMemoryToken}`;
+  }
+  if (inMemoryCsrfToken) {
+    config.headers['X-CSRF-Token'] = inMemoryCsrfToken;
   }
   return config;
 });
 
-// Response interceptor: handle 401 only for authenticated protected pages
+// Response interceptor: handle 401 for protected routes
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // If backend returns a new CSRF token in body or header, capture it in memory
+    const newCsrf = response.data?.csrfToken || response.headers['x-csrf-token'];
+    if (newCsrf) {
+      inMemoryCsrfToken = newCsrf;
+    }
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Never forcibly redirect to /login on public citizen routes
+      inMemoryToken = null;
+      inMemoryCsrfToken = null;
       if (typeof window !== 'undefined') {
         const path = window.location.pathname;
         const isPublicPath =
           path === '/' ||
           path.startsWith('/track') ||
-          path.startsWith('/report') ||
+          path.startsWith('/challenges') ||
           path.startsWith('/problems') ||
           path.startsWith('/about') ||
           path.startsWith('/faq') ||
+          path.startsWith('/templates') ||
           path.startsWith('/login') ||
           path.startsWith('/signup');
 

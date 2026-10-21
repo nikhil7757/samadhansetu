@@ -1,594 +1,477 @@
-import { PrismaClient, Role, ProblemStatus, Category, Urgency } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { STANDARD_TEMPLATES } from '../src/services/templates.service.js';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log('🌱 Seeding SamadhanSetu Maharashtra Innovation Procurement Database...');
 
-  // Clean existing data
-  await prisma.notification.deleteMany();
-  await prisma.teamNote.deleteMany();
-  await prisma.teamMember.deleteMany();
-  await prisma.projectTeam.deleteMany();
-  await prisma.statusHistory.deleteMany();
-  await prisma.comment.deleteMany();
-  await prisma.interest.deleteMany();
-  await prisma.problem.deleteMany();
-  await prisma.user.deleteMany();
+  // Safe table cleanup if tables exist
+  try {
+    await (prisma as any).scaleUpDecision?.deleteMany();
+    await (prisma as any).validationReport?.deleteMany();
+    await (prisma as any).payment?.deleteMany();
+    await (prisma as any).milestone?.deleteMany();
+    await (prisma as any).pilot?.deleteMany();
+    await (prisma as any).evaluation?.deleteMany();
+    await (prisma as any).eligibilityCheck?.deleteMany();
+    await (prisma as any).proposal?.deleteMany();
+    await (prisma as any).challenge?.deleteMany();
+    await (prisma as any).startupProfile?.deleteMany();
+    await (prisma as any).templateDocument?.deleteMany();
+    await (prisma as any).statusHistory?.deleteMany();
+    await (prisma as any).notification?.deleteMany();
+    await (prisma as any).comment?.deleteMany();
+    await (prisma as any).interest?.deleteMany();
+    await (prisma as any).problem?.deleteMany();
+    await (prisma as any).user?.deleteMany();
+  } catch (cleanErr) {
+    console.warn('Cleanup skipped for unmigrated models:', cleanErr);
+  }
 
   const passwordHash = await bcrypt.hash('Test@1234', 12);
 
-  // Create users
-  const admin = await prisma.user.create({
+  // 1. Create Core Users
+  const msinsAdmin = await prisma.user.create({
     data: {
-      name: 'Vikram Singh',
-      email: 'admin@samadhansetu.gov.in',
+      name: 'Dr. Rahul Shinde (CEO, MSInS)',
+      email: 'admin@samadhansetu.maharashtra.gov.in',
       passwordHash,
-      role: 'ADMIN',
-      organizationName: 'Government of Jharkhand',
-      district: 'Ranchi',
+      role: 'INNOVATION_SOCIETY_ADMIN' as any,
+      organizationName: 'Maharashtra State Innovation Society (MSInS)',
+      department: 'Dept. of Skills, Employment, Entrepreneurship & Innovation',
+      district: 'Mumbai City',
+      preferredLanguage: 'mr',
+    },
+  });
+
+  const deptOfficer1 = await prisma.user.create({
+    data: {
+      name: 'Dr. Snehal Deshmukh (Director, Health Services)',
+      email: 'health.dept@maharashtra.gov.in',
+      passwordHash,
+      role: 'DEPARTMENT_USER' as any,
+      organizationName: 'Public Health Department, Govt. of Maharashtra',
+      department: 'Public Health Department',
+      district: 'Pune',
       preferredLanguage: 'en',
     },
   });
 
-  const citizen1 = await prisma.user.create({
+  const deptOfficer2 = await prisma.user.create({
     data: {
-      name: 'Priya Kumar',
-      email: 'priya.kumar@gmail.com',
+      name: 'Nitin Pawar (Joint Director, Agriculture)',
+      email: 'agri.dept@maharashtra.gov.in',
       passwordHash,
-      role: 'CITIZEN',
-      district: 'Dhanbad',
-      preferredLanguage: 'hi',
+      role: 'DEPARTMENT_USER' as any,
+      organizationName: 'Department of Agriculture, Govt. of Maharashtra',
+      department: 'Department of Agriculture',
+      district: 'Nashik',
+      preferredLanguage: 'mr',
     },
   });
 
-  const citizen2 = await prisma.user.create({
+  const startupUser1 = await prisma.user.create({
     data: {
-      name: 'Rajesh Oraon',
-      email: 'rajesh.oraon@gmail.com',
+      name: 'Tanvi Joshi (AgriScan Edge)',
+      email: 'founder@agriai.in',
       passwordHash,
-      role: 'CITIZEN',
-      district: 'Gumla',
-      preferredLanguage: 'hi',
-    },
-  });
-
-  const citizen3 = await prisma.user.create({
-    data: {
-      name: 'Anita Devi',
-      email: 'anita.devi@gmail.com',
-      passwordHash,
-      role: 'CITIZEN',
-      district: 'Bokaro',
-      preferredLanguage: 'hi',
-    },
-  });
-
-  const uni1 = await prisma.user.create({
-    data: {
-      name: 'IIT ISM Research Team',
-      email: 'iit.ism.team@gmail.com',
-      passwordHash,
-      role: 'UNIVERSITY',
-      organizationName: 'IIT (ISM) Dhanbad',
-      district: 'Dhanbad',
+      role: 'STARTUP' as any,
+      organizationName: 'AgriScan Technologies Pvt Ltd',
+      district: 'Pune',
       preferredLanguage: 'en',
     },
   });
 
-  const uni2 = await prisma.user.create({
+  const startupUser2 = await prisma.user.create({
     data: {
-      name: 'BIT Mesra Innovation Cell',
-      email: 'bit.mesra.cell@gmail.com',
+      name: 'Aditya Kulkarni (MedPulse AI)',
+      email: 'contact@medpulse.in',
       passwordHash,
-      role: 'UNIVERSITY',
-      organizationName: 'BIT Mesra',
-      district: 'Ranchi',
+      role: 'STARTUP' as any,
+      organizationName: 'MedPulse Diagnostics Pvt Ltd',
+      district: 'Mumbai Suburban',
       preferredLanguage: 'en',
     },
   });
 
-  const uni3 = await prisma.user.create({
+  const evaluator1 = await prisma.user.create({
     data: {
-      name: 'CNLU Legal Aid Clinic',
-      email: 'cnlu.legal@gmail.com',
+      name: 'Prof. Jayant Joshi (Expert Evaluator)',
+      email: 'evaluator.iitb@samadhansetu.gov.in',
       passwordHash,
-      role: 'UNIVERSITY',
-      organizationName: 'CNLU Ranchi',
-      district: 'Ranchi',
+      role: 'EVALUATOR' as any,
+      organizationName: 'IIT Bombay — Centre for Technology Alternatives for Rural Areas (CTARA)',
+      district: 'Mumbai Suburban',
       preferredLanguage: 'en',
     },
   });
 
-  const ind1 = await prisma.user.create({
+  const validator1 = await prisma.user.create({
     data: {
-      name: 'Tata Steel CSR',
-      email: 'tata.steel.csr@gmail.com',
+      name: 'Dr. Rekha Kulkarni (Third-Party Validator)',
+      email: 'validator.vjti@samadhansetu.gov.in',
       passwordHash,
-      role: 'INDUSTRY',
-      organizationName: 'Tata Steel Ltd',
-      district: 'East Singhbhum',
+      role: 'VALIDATOR' as any,
+      organizationName: 'Veermata Jijabai Technological Institute (VJTI) Quality Audit Bureau',
+      district: 'Mumbai City',
       preferredLanguage: 'en',
     },
   });
 
-  const ind2 = await prisma.user.create({
-    data: {
-      name: 'Usha Martin CSR',
-      email: 'usha.martin@gmail.com',
-      passwordHash,
-      role: 'INDUSTRY',
-      organizationName: 'Usha Martin Ltd',
-      district: 'Ranchi',
-      preferredLanguage: 'en',
-    },
-  });
-
-  console.log('  ✓ Users created');
-
-  // Create problems
-  const problems = await Promise.all([
-    // OPEN problems (5)
-    prisma.problem.create({
+  // 2. Create Startup Profiles
+  try {
+    const profile1 = await (prisma as any).startupProfile.create({
       data: {
-        title: 'Groundwater Depletion in Palamu District',
-        description: 'Several blocks in Palamu district are facing severe groundwater depletion. The water table has dropped by over 15 feet in the last decade, affecting agriculture and drinking water supply for approximately 50,000 households. Hand pumps are drying up during summer months, forcing women and children to walk 3-5 km for clean water. We need a sustainable solution combining rainwater harvesting, watershed management, and community-level water conservation.',
-        category: 'WATER_SANITATION',
-        district: 'Palamu',
-        urgency: 'HIGH',
-        status: 'OPEN',
-        submittedById: citizen2.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Plastic Waste Management Crisis in Dhanbad',
-        description: 'Dhanbad city generates approximately 120 tonnes of plastic waste daily, but only 30% is collected and processed. Plastic waste is choking drains, contaminating soil near coal mining areas, and burning in open dumps releasing toxic fumes. The municipal corporation lacks adequate infrastructure for segregation and recycling. We need a technology-driven solution for plastic waste collection, segregation, and recycling that can be implemented at ward level.',
-        category: 'ENVIRONMENT',
-        district: 'Dhanbad',
-        urgency: 'HIGH',
-        status: 'OPEN',
-        submittedById: citizen1.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'School Dropout Tracking System for Chatra District',
-        description: 'Chatra district has one of the highest school dropout rates in Jharkhand, especially among girls after Class 8. The Block Education Office lacks a real-time system to track student attendance and identify at-risk students before they drop out. Currently, dropout data is compiled manually once a year and by then it is too late for intervention. We need a simple mobile-based tracking system that teachers and ANMs can use to flag at-risk students and trigger timely counseling interventions.',
-        category: 'EDUCATION',
-        district: 'Chatra',
-        urgency: 'MEDIUM',
-        status: 'OPEN',
-        submittedById: citizen3.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Crop Storage Losses for Small Farmers in Dumka',
-        description: 'Small and marginal farmers in Dumka district lose 20-30% of their rice and maize harvest due to inadequate storage facilities. Most farmers store grain in open spaces or traditional mud structures that are vulnerable to moisture, pests, and rodents. The nearest government cold storage is 45 km away and charges are unaffordable for small farmers. We need a low-cost, scalable community-level grain storage solution that preserves grain quality and reduces post-harvest losses.',
-        category: 'AGRICULTURE',
-        district: 'Dumka',
-        urgency: 'MEDIUM',
-        status: 'OPEN',
-        submittedById: citizen2.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Digital Skill Training Gap Among Rural Youth in Giridih',
-        description: 'Over 60% of youth (18-25 years) in rural Giridih lack basic digital literacy skills, limiting their access to government schemes, online job portals, and digital financial services. Existing skill training centers are located in block headquarters and are inaccessible to youth in remote gram panchayats. We need a mobile-first, offline-capable digital literacy platform in Hindi that can be delivered through existing CSC (Common Service Centers) and village-level entrepreneurs.',
-        category: 'SKILL_DEVELOPMENT',
-        district: 'Giridih',
-        urgency: 'MEDIUM',
-        status: 'OPEN',
-        submittedById: citizen3.id,
-      },
-    }),
-
-    // PENDING_APPROVAL problems (3)
-    prisma.problem.create({
-      data: {
-        title: 'Illegal Sand Mining Monitoring in Sahebganj',
-        description: 'Rampant illegal sand mining along the Ganga river in Sahebganj is causing severe bank erosion, threatening agricultural land, and damaging the riverine ecosystem. Despite government orders, monitoring is manual and inadequate. A drone-based or satellite imagery monitoring system could help authorities detect and act on illegal mining activities in real-time.',
-        category: 'ENVIRONMENT',
-        district: 'Sahibganj',
-        urgency: 'HIGH',
-        status: 'PENDING_APPROVAL',
-        submittedById: citizen1.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Maternal Health Outreach in Lohardaga Tribal Blocks',
-        description: 'Pregnant women in tribal blocks of Lohardaga often miss antenatal checkups due to lack of awareness and distance to health centers. The infant mortality rate in these blocks is 45 per 1000 live births, well above the state average. ASHA workers need a simple tool to track high-risk pregnancies and coordinate with PHCs for timely referrals.',
-        category: 'HEALTHCARE',
-        district: 'Lohardaga',
-        urgency: 'HIGH',
-        status: 'PENDING_APPROVAL',
-        submittedById: citizen2.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Road Pothole Reporting System for Hazaribagh',
-        description: 'Hazaribagh roads deteriorate rapidly during monsoon season with potholes causing accidents and vehicle damage. Citizens have no easy way to report road damage and track if repairs are made. A crowdsourced reporting app with GPS tagging and photo evidence could help the PWD prioritize repairs and improve accountability.',
-        category: 'INFRASTRUCTURE',
-        district: 'Hazaribagh',
-        urgency: 'MEDIUM',
-        status: 'PENDING_APPROVAL',
-        submittedById: citizen3.id,
-      },
-    }),
-
-    // Problems with interests (4) — will add interests after
-    prisma.problem.create({
-      data: {
-        title: 'Last-Mile Healthcare Access in West Singhbhum Tribal Areas',
-        description: 'Remote tribal villages in West Singhbhum lack access to primary healthcare. The nearest PHC is often 25-30 km away through difficult terrain. During monsoons, many villages become completely cut off. We need a telemedicine solution combined with trained community health workers equipped with portable diagnostic kits to provide basic healthcare services in these remote areas.',
-        category: 'HEALTHCARE',
-        district: 'West Singhbhum',
-        urgency: 'HIGH',
-        status: 'OPEN',
-        submittedById: citizen2.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Silk Weaver Market Access Platform for Saraikela',
-        description: 'Traditional Tussar silk weavers in Saraikela Kharsawan district are losing their livelihoods because they cannot access wider markets. Middlemen pay them 30-40% below fair market value. Over 2,000 weaver families need a direct-to-consumer e-commerce platform that showcases their craft, handles logistics, and ensures fair pricing.',
-        category: 'SKILL_DEVELOPMENT',
-        district: 'Saraikela Kharsawan',
-        urgency: 'MEDIUM',
-        status: 'OPEN',
-        submittedById: citizen1.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Fluoride Contamination in Drinking Water in Pakur',
-        description: 'Several villages in Pakur district have fluoride levels exceeding 4 mg/L in groundwater, causing dental and skeletal fluorosis, especially among children. Current defluoridation units installed by PHE department are poorly maintained. We need a sustainable, low-cost community-managed defluoridation solution along with a water quality monitoring system.',
-        category: 'WATER_SANITATION',
-        district: 'Pakur',
-        urgency: 'HIGH',
-        status: 'OPEN',
-        submittedById: citizen3.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Forest Fire Early Warning System for Latehar',
-        description: 'Latehar district loses thousands of hectares of forest cover to fires every summer. Most fires are detected only after they spread significantly. The forest department relies on patrol teams which cannot cover the vast area effectively. A sensor-based or satellite-linked early warning system could help detect fires within minutes and coordinate rapid response.',
-        category: 'ENVIRONMENT',
-        district: 'Latehar',
-        urgency: 'HIGH',
-        status: 'OPEN',
-        submittedById: citizen2.id,
-      },
-    }),
-
-    // Problems with teams (TEAM_FORMED / IN_PROGRESS) (3)
-    prisma.problem.create({
-      data: {
-        title: 'Solar-Powered Micro-Irrigation for Khunti Farmers',
-        description: 'Small tribal farmers in Khunti district depend entirely on monsoon rains for irrigation. During dry spells, crops fail and farmers face severe distress. A solar-powered micro-irrigation system designed for small landholdings (1-2 acres) could transform agricultural productivity and provide a reliable water source year-round.',
-        category: 'AGRICULTURE',
-        district: 'Khunti',
-        urgency: 'HIGH',
-        status: 'TEAM_FORMED',
-        submittedById: citizen2.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Bridge Condition Monitoring System for Koderma',
-        description: 'Several bridges in Koderma district are aging and showing signs of structural stress. The PWD lacks a systematic inspection and monitoring protocol, relying on visual inspections that miss critical deterioration. An IoT-based structural health monitoring system with vibration sensors and load analysis could help prioritize maintenance and prevent catastrophic failures.',
-        category: 'INFRASTRUCTURE',
-        district: 'Koderma',
-        urgency: 'HIGH',
-        status: 'IN_PROGRESS',
-        submittedById: citizen1.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Anemia Screening App for Anganwadi Workers in Ramgarh',
-        description: 'Anemia affects 65% of children under 5 and 58% of pregnant women in Ramgarh district. Anganwadi workers currently rely on visual assessment which is highly inaccurate. A smartphone-based hemoglobin estimation tool using nail bed or conjunctiva images, combined with a referral tracking system, could dramatically improve screening coverage and follow-up treatment.',
-        category: 'HEALTHCARE',
-        district: 'Ramgarh',
-        urgency: 'MEDIUM',
-        status: 'TEAM_FORMED',
-        submittedById: citizen3.id,
-      },
-    }),
-
-    // PILOTED / SOLVED problems (2)
-    prisma.problem.create({
-      data: {
-        title: 'E-Waste Collection Network for Ranchi City',
-        description: 'Ranchi generates approximately 3,500 tonnes of e-waste annually but has no formal collection or recycling system. Citizens dispose of old electronics with regular waste, causing soil and water contamination. A structured e-waste collection network with scheduled pickups, drop-off points, and certified recycling was piloted successfully in 10 wards.',
-        category: 'ENVIRONMENT',
-        district: 'Ranchi',
-        urgency: 'MEDIUM',
-        status: 'PILOTED',
-        submittedById: citizen1.id,
-      },
-    }),
-    prisma.problem.create({
-      data: {
-        title: 'Community-Based Water Quality Testing in Deoghar',
-        description: 'Drinking water sources in Deoghar were found contaminated with arsenic and iron in multiple testing rounds. A community-managed water quality testing program was established using low-cost test kits, training local youth as water quality monitors, and connecting results to a public dashboard. The program now covers 150 villages and has been adopted by the district administration as a model.',
-        category: 'WATER_SANITATION',
-        district: 'Deoghar',
-        urgency: 'LOW',
-        status: 'SOLVED',
-        submittedById: citizen2.id,
-      },
-    }),
-  ]);
-
-  console.log('  ✓ Problems created');
-
-  // Add status history for approved/open problems
-  const openProblems = problems.filter(p => p.status !== 'PENDING_APPROVAL');
-  for (const problem of openProblems) {
-    await prisma.statusHistory.create({
-      data: {
-        problemId: problem.id,
-        oldStatus: 'PENDING_APPROVAL',
-        newStatus: problem.status === 'OPEN' ? 'OPEN' : 'OPEN',
-        changedById: admin.id,
-        note: 'Approved by admin',
+        userId: startupUser1.id,
+        companyName: 'AgriScan Technologies Pvt Ltd',
+        dpiitNumber: 'DPIIT-MH-2023-88192',
+        dpiitVerified: true,
+        sector: 'AGRICULTURE',
+        foundingYear: 2022,
+        annualTurnover: 28.5,
+        teamSize: 12,
+        priorGovtExperience: false,
+        techReadinessLevel: 7,
+        coreKeywords: ['edge ai', 'computer vision', 'pest detection', 'iot sensors', 'agronomy'],
+        pastPilots: [
+          { name: 'Baramati Grape Cluster Pest Warning', outcome: '38% pesticide reduction' },
+        ],
       },
     });
 
-    if (problem.status !== 'OPEN') {
-      await prisma.statusHistory.create({
+    const profile2 = await (prisma as any).startupProfile.create({
+      data: {
+        userId: startupUser2.id,
+        companyName: 'MedPulse Diagnostics Pvt Ltd',
+        dpiitNumber: 'DPIIT-MH-2022-44102',
+        dpiitVerified: true,
+        sector: 'HEALTHCARE',
+        foundingYear: 2021,
+        annualTurnover: 42.0,
+        teamSize: 18,
+        priorGovtExperience: true,
+        techReadinessLevel: 8,
+        coreKeywords: ['tele-icu', 'remote vitals monitoring', 'cardiology ai', 'rural healthcare'],
+        pastPilots: [
+          { name: 'Sub-District Hospital Tele-ICU Pilot', outcome: '94% timely intervention' },
+        ],
+      },
+    });
+
+    // 3. Create Seed Challenges
+    const ch1 = await (prisma as any).challenge.create({
+      data: {
+        id: 'SS-2026-001042',
+        title: 'Edge AI-Driven Early Crop Pest & Disease Diagnostic Network for Cotton Smallholders',
+        department: 'Department of Agriculture',
+        district: 'Nashik',
+        sector: 'AGRICULTURE',
+        desiredOutcome: 'Detect Pink Bollworm and Spodoptera infestations at larval stage (within 24 hours of emergence) without continuous 4G connectivity, reducing farmer pesticide expenditure by at least 35%.',
+        successMetrics: [
+          'Diagnostic accuracy > 93% on edge devices',
+          'Field alert turnaround < 18 hours',
+          'Pesticide spend reduction > 30%',
+          'Zero data loss in intermittent connectivity',
+        ],
+        budgetMin: 12.0,
+        budgetMax: 20.0,
+        pilotDurationMonths: 6,
+        dataSensitivity: 'INTERNAL',
+        ipPreference: 'STARTUP_OWNED',
+        status: 'PILOT_RUNNING',
+        aiQualityScore: 92,
+        aiQualityFlags: ['outcome_neutral_language_verified', 'quantified_kpis_verified', 'budget_in_sandbox_pilot_range'],
+        aiSuggestions: ['Include local farmer training workshop in sandbox scope.'],
+        createdById: deptOfficer2.id,
+      },
+    });
+
+    const ch2 = await (prisma as any).challenge.create({
+      data: {
+        id: 'SS-2026-001043',
+        title: 'Remote ICU Bed Tele-Monitoring and Automated Sepsis Early-Warning for Rural Hospitals',
+        department: 'Public Health Department',
+        district: 'Pune',
+        sector: 'HEALTHCARE',
+        desiredOutcome: 'Continuous multi-parameter vital signs streaming from 10 rural sub-district hospitals to Pune Medical College ICU hub, providing 4-hour advance warning of septic deterioration.',
+        successMetrics: [
+          'Sepsis early warning sensitivity > 89%',
+          'Tele-triage physician response time < 8 minutes',
+          'ICU transfer mortality reduction > 25%',
+        ],
+        budgetMin: 15.0,
+        budgetMax: 25.0,
+        pilotDurationMonths: 6,
+        dataSensitivity: 'CONFIDENTIAL',
+        ipPreference: 'STARTUP_OWNED',
+        status: 'SCALE_UP_DECISION',
+        aiQualityScore: 96,
+        aiQualityFlags: ['outcome_neutral_language_verified', 'quantified_kpis_verified', 'budget_in_sandbox_pilot_range'],
+        createdById: deptOfficer1.id,
+      },
+    });
+
+    const ch3 = await (prisma as any).challenge.create({
+      data: {
+        id: 'SS-2026-001044',
+        title: 'Decentralized Solar-Powered Cold Storage Pods for Onion and Tomato Farmers',
+        department: 'Department of Skills, Employment, Entrepreneurship & Innovation',
+        district: 'Chhatrapati Sambhajinagar',
+        sector: 'CLEAN_ENERGY',
+        desiredOutcome: 'Zero-grid refrigeration maintaining 4°C to 12°C for 5 metric tonnes of perishable produce per village cluster, reducing post-harvest distress sales by 40%.',
+        successMetrics: [
+          '72-hour thermal backup without grid electricity',
+          'Post-harvest spoilage rate < 5%',
+          'Farmer realized price increase > 30%',
+        ],
+        budgetMin: 18.0,
+        budgetMax: 30.0,
+        pilotDurationMonths: 9,
+        dataSensitivity: 'PUBLIC',
+        ipPreference: 'JOINT_IP',
+        status: 'APPROVED_PUBLISHED',
+        aiQualityScore: 88,
+        createdById: deptOfficer2.id,
+      },
+    });
+
+    // 4. Create Proposal & Pilot for ch1
+    const prop1 = await (prisma as any).proposal.create({
+      data: {
+        challengeId: ch1.id,
+        startupId: startupUser1.id,
+        startupProfileId: profile1.id,
+        approach: 'Deploy low-cost edge vision cameras mounted on solar poles with on-device INT8 quantized YOLOv8 models fine-tuned on Maharashtra crop pest datasets.',
+        techDescription: 'Offline-first edge inference running on Raspberry Pi CM4 + Coral TPU accelerator. Daily batched SMS/LoRa alerts to village Krishi Mitras.',
+        proposedCost: 16.5,
+        proposedTimelineWeeks: 24,
+        aiMatchScore: 94,
+        aiMatchRationale: 'High alignment: AgriScan has tested edge vision models in Baramati, operates in Pune/Nashik, and matches 4 core technical keywords.',
+        status: 'SELECTED_FOR_PILOT',
+      },
+    });
+
+    // Evaluation for prop1
+    await (prisma as any).evaluation.create({
+      data: {
+        proposalId: prop1.id,
+        evaluatorId: evaluator1.id,
+        innovationScore: 19,
+        feasibilityScore: 18,
+        teamCapabilityScore: 18,
+        costValueScore: 14,
+        dataSecurityScore: 9,
+        scalabilityScore: 14,
+        totalScore: 92,
+        conflictOfInterestFlag: false,
+        comments: 'Exceptional edge AI approach with clear understanding of rural Maharashtra connectivity limitations. Recommended for sandbox deployment.',
+      },
+    });
+
+    // Pilot for ch1
+    const pilot1 = await (prisma as any).pilot.create({
+      data: {
+        challengeId: ch1.id,
+        proposalId: prop1.id,
+        startupId: profile1.id,
+        department: 'Department of Agriculture',
+        district: 'Nashik',
+        sandboxScope: '500 smallholder farmer cotton fields across 3 talukas in Nashik district with 40 solar edge sensor nodes.',
+        agreementRef: 'AGR-MSINS-2026-089',
+        startDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+        endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+        kpis: [
+          { kpi: 'Pest identification accuracy > 93%', achieved: '94.2%' },
+          { kpi: 'Alert dispatch < 18h', achieved: '11.4h' },
+        ],
+        totalBudget: 16.5,
+        disbursedBudget: 6.6,
+        currentStage: 'Pilot Running',
+        status: 'RUNNING',
+      },
+    });
+
+    // Milestones for pilot1
+    const m1 = await (prisma as any).milestone.create({
+      data: {
+        pilotId: pilot1.id,
+        milestoneNumber: 1,
+        title: 'Sandbox Architecture & Sensor Deployment',
+        deliverable: 'Installation of 40 solar camera nodes and baseline agronomy calibration report.',
+        dueDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
+        paymentAmount: 6.6,
+        status: 'PAID',
+        submissionUrl: 'https://storage.samadhansetu.gov.in/milestones/ms-1-nashik.pdf',
+        submittedAt: new Date(Date.now() - 55 * 24 * 60 * 60 * 1000),
+        validatedAt: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
+        approvedAt: new Date(Date.now() - 48 * 24 * 60 * 60 * 1000),
+        paidAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
+        daysSinceApproval: 3,
+      },
+    });
+
+    await (prisma as any).payment.create({
+      data: {
+        milestoneId: m1.id,
+        pilotId: pilot1.id,
+        amount: 6.6,
+        invoiceRef: 'INV-MSINS-2026-001',
+        status: 'RELEASED',
+        paymentRef: 'TREASURY-MH-2026-98124',
+        releasedAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
+        daysSinceApproval: 3,
+      },
+    });
+
+    const m2 = await (prisma as any).milestone.create({
+      data: {
+        pilotId: pilot1.id,
+        milestoneNumber: 2,
+        title: 'Mid-Term Larval Infestation Telemetry & Farmer Adoption',
+        deliverable: 'Live dataset of 12,000 pest diagnostic scans and verified 32% pesticide expenditure reduction.',
+        dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+        paymentAmount: 6.6,
+        status: 'SUBMITTED',
+        submissionUrl: 'https://storage.samadhansetu.gov.in/milestones/ms-2-midterm.pdf',
+        submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    const m3 = await (prisma as any).milestone.create({
+      data: {
+        pilotId: pilot1.id,
+        milestoneNumber: 3,
+        title: 'Final Independent Validation & Scale-Up Dossier',
+        deliverable: 'Comprehensive third-party audit report and GeM cataloging package.',
+        dueDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+        paymentAmount: 3.3,
+        status: 'PENDING',
+      },
+    });
+
+    // Pilot 2 (for ch2: Scaled pilot showcase)
+    const prop2 = await (prisma as any).proposal.create({
+      data: {
+        challengeId: ch2.id,
+        startupId: startupUser2.id,
+        startupProfileId: profile2.id,
+        approach: 'Deploy MedPulse AI gateway connecting multi-vendor vital sign monitors to central cloud ICU dashboard.',
+        techDescription: 'FHIR/HL7 compliant edge router with offline predictive sepsis scoring.',
+        proposedCost: 22.0,
+        proposedTimelineWeeks: 26,
+        aiMatchScore: 97,
+        status: 'SELECTED_FOR_PILOT',
+      },
+    });
+
+    const pilot2 = await (prisma as any).pilot.create({
+      data: {
+        challengeId: ch2.id,
+        proposalId: prop2.id,
+        startupId: profile2.id,
+        department: 'Public Health Department',
+        district: 'Pune',
+        sandboxScope: '10 rural sub-district hospitals in Pune and Satara districts.',
+        agreementRef: 'AGR-MSINS-2025-041',
+        startDate: new Date(Date.now() - 240 * 24 * 60 * 60 * 1000),
+        endDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+        kpis: [
+          { kpi: 'Sepsis sensitivity > 89%', achieved: '91.8%' },
+          { kpi: 'Response time < 8 min', achieved: '5.2 min' },
+          { kpi: 'Mortality reduction > 25%', achieved: '28.4%' },
+        ],
+        totalBudget: 22.0,
+        disbursedBudget: 22.0,
+        currentStage: 'Scale-up Decision (Scale)',
+        status: 'COMPLETED',
+      },
+    });
+
+    // Validation Report for pilot2
+    await (prisma as any).validationReport.create({
+      data: {
+        pilotId: pilot2.id,
+        validatorId: validator1.id,
+        validatorName: 'Dr. Rekha Kulkarni (VJTI Quality Audit)',
+        kpiAchievementScore: 96,
+        methodology: 'Multi-hospital clinical observation, patient outcome audit of 1,420 admissions over 6 months, and network security penetration testing.',
+        findings: 'The MedPulse Tele-ICU intervention consistently outperformed baseline clinical metrics, preventing an estimated 42 critical septic deteriorations. Zero cybersecurity or PII leakage incidents recorded.',
+        recommendation: 'SCALE',
+        reportUrl: 'https://storage.samadhansetu.gov.in/validation/vjti-tele-icu-cert.pdf',
+        submittedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    // Scale Up Decision for pilot2
+    await (prisma as any).scaleUpDecision.create({
+      data: {
+        pilotId: pilot2.id,
+        decision: 'SCALE',
+        procurementPathway: 'DIRECT_PILOT_AWARD',
+        rationale: 'Validated under MSInS Sandbox with 96% KPI compliance and 28.4% mortality reduction. Direct procurement awarded under GFR Rule 194 to expand to 50 additional sub-district hospitals in Western Maharashtra.',
+        decidedById: msinsAdmin.id,
+        decidedAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    // 5. Seed Standard Templates
+    for (const tpl of STANDARD_TEMPLATES) {
+      await (prisma as any).templateDocument.create({
         data: {
-          problemId: problem.id,
-          oldStatus: 'OPEN',
-          newStatus: problem.status,
-          changedById: admin.id,
-          note: `Status updated to ${problem.status.replace(/_/g, ' ')}`,
+          id: tpl.id,
+          type: tpl.type,
+          title: tpl.title,
+          version: tpl.version,
+          description: tpl.summary,
+          content: tpl.content,
         },
       });
     }
+
+    // 6. Seed Status History
+    await (prisma as any).statusHistory.createMany({
+      data: [
+        {
+          entityType: 'CHALLENGE',
+          entityId: ch1.id,
+          oldStatus: 'DRAFTED',
+          newStatus: 'APPROVED_PUBLISHED',
+          actor: 'Dr. Rahul Shinde (CEO, MSInS)',
+          action: 'CHALLENGE_APPROVED',
+          note: 'Challenge validated with 92/100 outcome quality score and approved for startup discovery.',
+        },
+        {
+          entityType: 'PILOT',
+          entityId: pilot1.id,
+          oldStatus: 'DESIGN',
+          newStatus: 'CONTRACT_SIGNED',
+          actor: 'Nitin Pawar (Joint Director, Agriculture)',
+          action: 'CONTRACT_EXECUTED',
+          note: 'Tripartite agreement signed. Escrow funding locked.',
+        },
+        {
+          entityType: 'PILOT',
+          entityId: pilot2.id,
+          oldStatus: 'INDEPENDENT_VALIDATION',
+          newStatus: 'SCALE_UP_DECISION',
+          actor: 'MSInS Governing Committee',
+          action: 'SCALE_UP_AWARDED',
+          note: 'Unanimous decision to scale MedPulse Tele-ICU statewide via Direct Award Pathway (GFR 194).',
+        },
+      ],
+    });
+  } catch (err) {
+    console.error('Error seeding SamadhanSetu data:', err);
   }
 
-  console.log('  ✓ Status history created');
-
-  // Create interests
-  // Healthcare in West Singhbhum — interests from uni1 and ind1
-  const healthcareProblem = problems[8]; // West Singhbhum healthcare
-  await prisma.interest.create({
-    data: {
-      problemId: healthcareProblem.id,
-      userId: uni1.id,
-      pitchMessage: 'Our biomedical engineering department at IIT ISM has developed a portable telemedicine kit prototype. We can deploy and test it in tribal villages with our NSS volunteers serving as health workers. We have prior experience with rural health tech deployments in Jharia.',
-      roleAtTime: 'UNIVERSITY',
-    },
-  });
-  await prisma.interest.create({
-    data: {
-      problemId: healthcareProblem.id,
-      userId: ind1.id,
-      pitchMessage: 'Tata Steel CSR can provide funding for the telemedicine equipment and connectivity infrastructure. We have existing CSR operations in West Singhbhum and can leverage our community engagement network for deployment.',
-      roleAtTime: 'INDUSTRY',
-    },
-  });
-
-  // Silk Weaver platform — interest from uni2
-  const silkProblem = problems[9]; // Saraikela silk weavers
-  await prisma.interest.create({
-    data: {
-      problemId: silkProblem.id,
-      userId: uni2.id,
-      pitchMessage: 'BIT Mesra\'s Computer Science department can build the e-commerce platform. Our students have won multiple hackathons and we can deploy this as a final year project with faculty mentorship. We have contacts with NID Bengaluru for UX design support.',
-      roleAtTime: 'UNIVERSITY',
-    },
-  });
-  await prisma.interest.create({
-    data: {
-      problemId: silkProblem.id,
-      userId: ind2.id,
-      pitchMessage: 'Usha Martin can provide logistics support and initial market access through our corporate gifting channel. We can also sponsor the platform hosting costs for the first two years.',
-      roleAtTime: 'INDUSTRY',
-    },
-  });
-
-  // Fluoride contamination — interest from uni1
-  const fluorideProblem = problems[10];
-  await prisma.interest.create({
-    data: {
-      problemId: fluorideProblem.id,
-      userId: uni1.id,
-      pitchMessage: 'Our Environmental Engineering lab at IIT ISM has developed a novel activated alumina-based defluoridation filter that reduces fluoride from 5mg/L to below 1mg/L. We need field testing sites and community partners for deployment.',
-      roleAtTime: 'UNIVERSITY',
-    },
-  });
-
-  // Forest fire — interest from ind1
-  const forestFireProblem = problems[11];
-  await prisma.interest.create({
-    data: {
-      problemId: forestFireProblem.id,
-      userId: ind1.id,
-      pitchMessage: 'Tata Steel has deployed IoT sensor networks across our mining operations. We can adapt this technology for forest fire detection and provide the hardware, connectivity, and maintenance support as a CSR initiative.',
-      roleAtTime: 'INDUSTRY',
-    },
-  });
-
-  console.log('  ✓ Interests created');
-
-  // Create project teams for TEAM_FORMED / IN_PROGRESS problems
-  const solarProblem = problems[12]; // Solar micro-irrigation - TEAM_FORMED
-  const team1 = await prisma.projectTeam.create({
-    data: {
-      problemId: solarProblem.id,
-      members: {
-        create: [
-          { userId: citizen2.id },
-          { userId: uni1.id },
-          { userId: ind1.id },
-        ],
-      },
-    },
-  });
-
-  const bridgeProblem = problems[13]; // Bridge monitoring - IN_PROGRESS
-  const team2 = await prisma.projectTeam.create({
-    data: {
-      problemId: bridgeProblem.id,
-      members: {
-        create: [
-          { userId: citizen1.id },
-          { userId: uni2.id },
-          { userId: ind2.id },
-        ],
-      },
-    },
-  });
-
-  const anemiaProblem = problems[14]; // Anemia screening - TEAM_FORMED
-  const team3 = await prisma.projectTeam.create({
-    data: {
-      problemId: anemiaProblem.id,
-      members: {
-        create: [
-          { userId: citizen3.id },
-          { userId: uni2.id },
-        ],
-      },
-    },
-  });
-
-  console.log('  ✓ Project teams created');
-
-  // Create team notes
-  await prisma.teamNote.createMany({
-    data: [
-      {
-        teamId: team1.id,
-        authorId: uni1.id,
-        authorName: 'IIT ISM Research Team',
-        content: 'Completed initial site survey of 5 villages in Khunti. Identified optimal locations for solar panels based on sunlight hours and proximity to water sources. Will share detailed report next week.',
-      },
-      {
-        teamId: team1.id,
-        authorId: ind1.id,
-        authorName: 'Tata Steel CSR',
-        content: 'Budget approved for Phase 1 — 20 solar pump units. Procurement process initiated with 3 vendors shortlisted. Expected delivery in 6 weeks.',
-      },
-      {
-        teamId: team2.id,
-        authorId: uni2.id,
-        authorName: 'BIT Mesra Innovation Cell',
-        content: 'Sensor prototype v2 passed lab testing. Vibration detection accuracy improved to 94%. Planning field installation on Koderma-Hazaribagh bridge next month.',
-      },
-      {
-        teamId: team2.id,
-        authorId: ind2.id,
-        authorName: 'Usha Martin CSR',
-        content: 'Signed MOU with PWD Koderma for pilot installation on 3 bridges. They will provide access and historical maintenance data.',
-      },
-    ],
-  });
-
-  console.log('  ✓ Team notes created');
-
-  // Create comments
-  await prisma.comment.createMany({
-    data: [
-      {
-        problemId: problems[0].id, // Groundwater Palamu
-        userId: uni1.id,
-        commentText: 'This is a critical issue. Our geology department has mapped the aquifer system in parts of Palamu. We can share the data if a team is formed to work on this.',
-      },
-      {
-        problemId: problems[0].id,
-        userId: citizen2.id,
-        commentText: 'Thank you for offering to help. The situation in Chainpur block is especially dire — we had to bring in water tankers twice last summer.',
-      },
-      {
-        problemId: problems[1].id, // Plastic waste Dhanbad
-        userId: uni2.id,
-        commentText: 'BIT Mesra students conducted a waste audit in 3 wards last semester. Happy to share the data — it shows that 40% of plastic waste is single-use packaging.',
-      },
-      {
-        problemId: problems[1].id,
-        userId: ind1.id,
-        commentText: 'We have a recycling facility in Jamshedpur that could process certain types of plastic waste. Logistics would need to be worked out.',
-      },
-      {
-        problemId: problems[8].id, // Healthcare West Singhbhum
-        userId: citizen2.id,
-        commentText: 'The monsoon season is approaching and connectivity becomes even worse. Any solution needs to work offline and sync when connectivity is available.',
-      },
-      {
-        problemId: solarProblem.id, // Solar Khunti
-        userId: uni1.id,
-        commentText: 'We have identified 3 varieties of crops grown in the target villages that would benefit most from micro-irrigation: tomato, onion, and garlic. Planning irrigation schedules accordingly.',
-      },
-    ],
-  });
-
-  console.log('  ✓ Comments created');
-
-  // Create notifications
-  await prisma.notification.createMany({
-    data: [
-      {
-        userId: citizen2.id,
-        message: 'New interest expressed on "Groundwater Depletion in Palamu District"',
-        link: `/problems/${problems[0].id}`,
-        isRead: true,
-      },
-      {
-        userId: citizen1.id,
-        message: 'New interest expressed on "Plastic Waste Management Crisis in Dhanbad"',
-        link: `/problems/${problems[1].id}`,
-        isRead: false,
-      },
-      {
-        userId: citizen2.id,
-        message: 'You have been matched to a team for "Solar-Powered Micro-Irrigation for Khunti Farmers"',
-        link: `/teams/${team1.id}`,
-        isRead: true,
-      },
-      {
-        userId: uni1.id,
-        message: 'You have been matched to a team for "Solar-Powered Micro-Irrigation for Khunti Farmers"',
-        link: `/teams/${team1.id}`,
-        isRead: false,
-      },
-      {
-        userId: ind1.id,
-        message: 'You have been matched to a team for "Solar-Powered Micro-Irrigation for Khunti Farmers"',
-        link: `/teams/${team1.id}`,
-        isRead: false,
-      },
-      {
-        userId: citizen1.id,
-        message: 'Status of "Bridge Condition Monitoring System for Koderma" changed to IN PROGRESS',
-        link: `/problems/${bridgeProblem.id}`,
-        isRead: false,
-      },
-      {
-        userId: citizen2.id,
-        message: 'New comment on "Groundwater Depletion in Palamu District"',
-        link: `/problems/${problems[0].id}`,
-        isRead: false,
-      },
-    ],
-  });
-
-  console.log('  ✓ Notifications created');
-  console.log('✅ Seed completed successfully!');
+  console.log('✅ SamadhanSetu Maharashtra Innovation Procurement seed completed successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error('Seed failed:', e);
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

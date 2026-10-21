@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'samadhansetu-dev-secret-change-in-production';
+import { config } from '../config.js';
 
 export interface TokenPayload {
   userId: string;
@@ -9,10 +8,13 @@ export interface TokenPayload {
   name: string;
 }
 
+/**
+ * @deprecated Prefer Firebase ID tokens and session cookies. Retained only for legacy integration compatibility.
+ */
 export function signToken(payload: TokenPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  return jwt.sign(payload, config.jwtSecret, { expiresIn: '1d' });
 }
 
 export function verifyToken(token: string): TokenPayload {
-  return jwt.verify(token, JWT_SECRET) as TokenPayload;
+  return jwt.verify(token, config.jwtSecret) as TokenPayload;
 }

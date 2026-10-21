@@ -166,7 +166,7 @@ export function useGrievance(docketId?: string): UseGrievanceResult {
       }
     } catch (err: any) {
       if (!local) {
-        setError('Docket not found on Jharkhand Civic Registry.');
+        setError('Docket or Challenge not found on SamadhanSetu Innovation Registry.');
       }
     } finally {
       setIsLoading(false);

@@ -3,7 +3,7 @@
  * Computes 0-100 authenticity score per complaint based on:
  * - Text coherence & specificity (20%)
  * - Duplicate similarity against existing complaints (20%)
- * - Geo-consistency against Jharkhand districts & blocks (20%)
+ * - Geo-consistency against Maharashtra districts & blocks (20%)
  * - Submitter reputation & history (15%)
  * - Category-context keyword match (15%)
  * - Media/evidence presence (10%)
@@ -33,32 +33,46 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
   other: ['civic', 'issue', 'problem', 'repair', 'community', 'facility', 'infrastructure'],
 };
 
-const JHARKHAND_DISTRICTS_MAP: Record<string, string[]> = {
-  'Ranchi': ['ranchi', 'kanke', 'ormanjhi', 'namkum', 'doranda', 'hehal', 'ratu', 'bundu', 'tamar', 'morabadi', 'harmu', 'bariatu', 'dhruwa', 'hatia', 'lalpur'],
-  'Dhanbad': ['dhanbad', 'jharia', 'katras', 'baghmara', 'govindpur', 'nirsa', 'topchanchi', 'tundi', 'damodar', 'kendua', 'sindri', 'chirkunda'],
-  'Bokaro': ['bokaro', 'chas', 'bermo', 'chandrapura', 'gomia', 'jaridih', 'petarwar', 'chandankiyari', 'dugda', 'tenughat'],
-  'Deoghar': ['deoghar', 'sarwan', 'madhupur', 'karon', 'sarath', 'palojori', 'mohanpur', 'jasidih', 'rohini'],
-  'East Singhbhum': ['jamshedpur', 'ghatsila', 'potka', 'chakulia', 'musabani', 'baharagora', 'dimna', 'telco', 'sakchi', 'bistupur', 'mango'],
-  'West Singhbhum': ['chaibasa', 'chakradharpur', 'noamundi', 'jhinkpani', 'jagannathpur', 'manoharpur', 'kiriburu'],
-  'Hazaribagh': ['hazaribagh', 'barhi', 'ichak', 'chauparan', 'barkagaon', 'bishnugarh', 'daru', 'katkamsandi'],
-  'Giridih': ['giridih', 'dumri', 'bagodar', 'deori', 'bengabad', 'jamua', 'tisri', 'gawan', 'rajdhanwar'],
-  'Ramgarh': ['ramgarh', 'patratu', 'gola', 'mandu', 'chittor', 'dulmi'],
-  'Palamu': ['medininagar', 'daltonganj', 'lesliganj', 'chhatarpur', 'hariharganj', 'patan', 'manatu', 'chainpur'],
-  'Gumla': ['gumla', 'chainpur', 'ghaghra', 'raidih', 'sisai', 'kamdara', 'basia', 'palkot', 'bishunpur'],
-  'Garhwa': ['garhwa', 'nagar untari', 'bhawnathpur', 'majhaoan', 'ramna', 'kharoundhi', 'dhurki'],
-  'Dumka': ['dumka', 'jama', 'jarmundi', 'ramgarh', 'shikaripara', 'ranishwar', 'masaliya'],
-  'Jamtara': ['jamtara', 'karmatanr', 'narayanpur', 'kundhit', 'nala', 'fatehpur', 'mihijam'],
-  'Godda': ['godda', 'mahagama', 'pathargama', 'porayahat', 'sundarpahari', 'boarijor', 'meharma'],
-  'Sahebganj': ['sahebganj', 'rajmahal', 'borio', 'barharwa', 'taljhari', 'mandro', 'udhua'],
-  'Pakur': ['pakur', 'hiranpur', 'littipara', 'pakuria', 'maheshpur'],
-  'Koderma': ['koderma', 'jhumri telaiya', 'chandwara', 'satgawan', 'markacho', 'domchanch'],
-  'Chatra': ['chatra', 'hunterganj', 'simaria', 'tandwa', 'pratappur', 'kunda', 'itarhori', 'giddhour'],
-  'Latehar': ['latehar', 'chandwa', 'balumath', 'mahauadanr', 'barwadih', 'garu', 'manika'],
-  'Lohardaga': ['lohardaga', 'kuru', 'bhandra', 'senha', 'kisko', 'peshrar'],
-  'Simdega': ['simdega', 'kolebira', 'thethaitangar', 'jaldega', 'bolba', 'kurdeg', 'bano', 'kersai'],
-  'Khunti': ['khunti', 'murhu', 'torpa', 'karra', 'raniya', 'arki'],
-  'Saraikela Kharsawan': ['saraikela', 'kharsawan', 'adityapur', 'gamharia', 'chandil', 'nimdih', 'rajanagar', 'kuchai']
+const MAHARASHTRA_DISTRICTS_MAP: Record<string, string[]> = {
+  'Pune': ['pune', 'shivajinagar', 'kothrud', 'hadapsar', 'pimpri', 'chinchwad', 'baramati', 'talegaon', 'hinjawadi', 'wakad', 'viman nagar', 'kharadi', 'daund', 'shirur', 'indapur'],
+  'Mumbai City': ['mumbai', 'nariman point', 'colaba', 'dadar', 'byculla', 'worli', 'fort', 'marine drive', 'girgaon', 'malabar hill', 'crawford market'],
+  'Mumbai Suburban': ['andheri', 'bandra', 'borivali', 'malad', 'ghatkopar', 'kurla', 'powai', 'kandivali', 'goregaon', 'vile parle', 'santacruz', 'chembur', 'mulund', 'dahisar'],
+  'Nagpur': ['nagpur', 'dharampeth', 'sitabuldi', 'itwari', 'hingna', 'kamptee', 'koradi', 'wadi', 'butibori', 'umred', 'katol', 'ramtek', 'narkhed'],
+  'Nashik': ['nashik', 'panchavati', 'satpur', 'deolali', 'malegaon', 'sinnar', 'trimbak', 'niphad', 'yeola', 'kalwan', 'chandwad', 'dindori', 'satana'],
+  'Chhatrapati Sambhajinagar': ['chhatrapati sambhajinagar', 'aurangabad', 'cidco', 'waluj', 'shendra', 'paithan', 'gangapur', 'vaijapur', 'kannad', 'sillod', 'soegaon'],
+  'Thane': ['thane', 'kalyan', 'dombivli', 'ulhasnagar', 'bhiwandi', 'mira bhayandar', 'ambernath', 'badlapur', 'mumbra', 'kalwa', 'diva'],
+  'Solapur': ['solapur', 'barshi', 'pandharpur', 'mohol', 'akkalkot', 'sangola', 'karmala', 'mangalore', 'madha', 'malshiras'],
+  'Kolhapur': ['kolhapur', 'ichalkaranji', 'jaysingpur', 'panhala', 'gadhinglaj', 'kagal', 'hatkanangale', 'radhanagari', 'shahuwadi', 'ajra', 'chandgad'],
+  'Amravati': ['amravati', 'badnera', 'achalpur', 'chandur', 'morshi', 'warud', 'daryapur', 'anjangaon', 'chikhaldara', 'dhamangaon'],
+  'Nanded': ['nanded', 'mudkhed', 'kinwat', 'degloor', 'kandhar', 'biloli', 'hadgaon', 'mukhed', 'dharmabad'],
+  'Jalgaon': ['jalgaon', 'bhusawal', 'amalner', 'chalisgaon', 'chopda', 'pachora', 'jamner', 'erandol', 'yawal'],
+  'Ahmednagar': ['ahmednagar', 'shirdi', 'kopargaon', 'sangamner', 'rahuri', 'shrirampur', 'nevasa', 'shevgaon', 'pathardi', 'parner'],
+  'Satara': ['satara', 'karad', 'wai', 'phaltan', 'koregaon', 'mahabaleshwar', 'panchgani', 'shirwal', 'patani'],
+  'Sangli': ['sangli', 'miraj', 'kupwad', 'islampur', 'vita', 'tasgaon', 'ashta', 'jat', 'palus', 'kavathe mahankal'],
+  'Akola': ['akola', 'akot', 'balapur', 'murtizapur', 'barshitakli', 'telhara', 'patur'],
+  'Latur': ['latur', 'udgir', 'ausa', 'nilanga', 'ahmadpur', 'chakur', 'renapur', 'shirur anantpal'],
+  'Dhule': ['dhule', 'shirpur', 'sakri', 'sindkheda'],
+  'Raigad': ['alibag', 'panvel', 'karjat', 'khopoli', 'roha', 'mahad', 'uran', 'mangaon', 'pen'],
+  'Ratnagiri': ['ratnagiri', 'chiplun', 'khed', 'dapoli', 'rajapur', 'guhagar', 'lanja', 'sangameshwar'],
+  'Sindhudurg': ['orros', 'kankavli', 'sawantwadi', 'malvan', 'kudal', 'vengurla', 'devgad', 'dodamarg'],
+  'Palghar': ['palghar', 'vasai', 'virar', 'dahanu', 'boisar', 'talasari', 'jawhar', 'mokhada', 'wada'],
+  'Beed': ['beed', 'parli', 'ambajogai', 'georai', 'majlegaon', 'ashti', 'kaij', 'patoda'],
+  'Bhandara': ['bhandara', 'tumsar', 'pauni', 'sakoli', 'lakhani', 'mohadi', 'lakhandur'],
+  'Buldhana': ['buldhana', 'khamgaon', 'shegaon', 'malkapur', 'chikhli', 'mehkar', 'nandura', 'jalgaon jamod'],
+  'Chandrapur': ['chandrapur', 'ballarpur', 'warora', 'bhadravati', 'rajura', 'mul', 'chimur', 'nagbhid'],
+  'Dharashiv': ['dharashiv', 'osmanabad', 'tuljapur', 'omerga', 'kallam', 'bhoom', 'paranda', 'washi'],
+  'Gadchiroli': ['gadchiroli', 'aheri', 'armori', 'chamorshi', 'dhanora', 'kurkheda', 'sironcha'],
+  'Gondia': ['gondia', 'tiroda', 'goregaon', 'arjoni morgaon', 'amgaon', 'salekasa', 'sadak arjuni'],
+  'Hingoli': ['hingoli', 'basmath', 'kalamnuri', 'sengaon', 'aundha nagnath'],
+  'Jalna': ['jalna', 'partur', 'ambad', 'bhokardan', 'jafrabad', 'ghansawangi', 'mantha', 'badnapur'],
+  'Nandurbar': ['nandurbar', 'shahada', 'navapur', 'taloda', 'akkalkuwa', 'dhadgaon'],
+  'Parbhani': ['parbhani', 'gangakhed', 'jintur', 'selu', 'manwath', 'pathri', 'sonpeth', 'purna'],
+  'Wardha': ['wardha', 'hinganghat', 'arvi', 'deoli', 'seloo', 'karanja', 'samudrapur', 'ashti'],
+  'Washim': ['washim', 'karanja', 'risod', 'malegaon', 'mangrulpir', 'manora'],
+  'Yavatmal': ['yavatmal', 'pusad', 'wani', 'digras', 'darwha', 'pandharkawada', 'umerkhed', 'ghatanji']
 };
+
+const JHARKHAND_DISTRICTS_MAP = MAHARASHTRA_DISTRICTS_MAP;
 
 export class AIVerificationService {
   static evaluateComplaint(params: {
@@ -134,7 +148,7 @@ export class AIVerificationService {
 
     // 3. Geo-Consistency (20%)
     let geoScore = 50;
-    const districtKeywords = JHARKHAND_DISTRICTS_MAP[district] || [district.toLowerCase()];
+    const districtKeywords = MAHARASHTRA_DISTRICTS_MAP[district] || [district.toLowerCase()];
     const hasLocalMatch = districtKeywords.some((k) => combinedText.includes(k));
     if (hasLocalMatch) {
       geoScore = 95;

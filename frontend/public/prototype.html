@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SamadhanSetu — Complaint Verification Logic Prototype</title>
+  <title>SamadhanSetu — Innovation Procurement Logic Prototype</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -250,15 +250,15 @@
 <div class="container">
   <header>
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-      <div class="gov-badge">Government of Jharkhand • SIH 2026 Problem Statement 043</div>
+      <div class="gov-badge">Government of Maharashtra • MSInS • SIH 2026 Problem ID 26136</div>
       <div style="display: flex; gap: 8px;">
         <a href="/" style="font-size: 11px; font-weight: 700; color: #CCFBF1; text-decoration: none; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.15);">← Live Portal</a>
-        <a href="/architecture-review.html" style="font-size: 11px; font-weight: 700; color: #99F6E4; text-decoration: none; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.15);">Architecture Review ↗</a>
+        <a href="/track" style="font-size: 11px; font-weight: 700; color: #99F6E4; text-decoration: none; padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,0.15);">Track Pilot Dossier ↗</a>
       </div>
     </div>
-    <h1>SamadhanSetu — Verification State Machine Prototype</h1>
+    <h1>SamadhanSetu — Innovation Procurement Lifecycle Prototype</h1>
     <p class="header-desc">
-      Interactive logic demo: test how multi-factor AI scoring, automated routing thresholds, Nodal Officer moderation, citizen appeal cycles, and academic solver team formation behave under real-world civic conditions.
+      Interactive logic demo: test how challenge quality scoring, automated DPIIT eligibility relaxations, expert multi-criteria evaluations, milestone payments, and scale-up procurement decisions behave under real-world Maharashtra public procurement.
     </p>
   </header>
 
@@ -336,10 +336,11 @@ const VerificationMachine = {
     if (data.isDuplicate) { flags.push('potential_duplicate_detected'); }
     else { score += 20; flags.push('unique_grievance_confirmed'); }
 
-    if (data.lat >= 21.98 && data.lat <= 25.35 && data.lng >= 83.33 && data.lng <= 87.92) {
+    // Maharashtra Bounding Box: 15.6°N to 22.1°N, 72.6°E to 80.9°E
+    if (data.lat >= 15.6 && data.lat <= 22.1 && data.lng >= 72.6 && data.lng <= 80.9) {
       score += 20; flags.push('geo_consistency_verified');
     } else {
-      flags.push('coords_outside_jharkhand');
+      flags.push('coords_outside_maharashtra');
     }
 
     if (data.hasPhoto) { score += 15; flags.push('exif_metadata_passed'); }
@@ -361,19 +362,19 @@ const VerificationMachine = {
   createComplaint: function(input) {
     const verified = this.calculateScore(input);
     const now = new Date().toISOString();
-    const id = 'SS-2026-' + Math.floor(100000 + Math.random() * 900000);
+    const id = 'NS-2026-' + Math.floor(100000 + Math.random() * 900000);
 
     const complaint = {
       id: id,
-      citizen_id: input.citizen_id || 'u-citizen-demo',
-      category: input.category || 'roads',
-      title: input.title || 'Civic Infrastructure Grievance',
+      citizen_id: input.citizen_id || 'u-dept-demo',
+      category: input.category || 'agriculture',
+      title: input.title || 'Civic Infrastructure Challenge',
       description: input.description,
       location: {
-        district: input.district || 'Ranchi',
-        lat: input.lat || 23.3441,
-        lng: input.lng || 85.3096,
-        address: input.address || 'Birsa Chowk, Ranchi'
+        district: input.district || 'Pune',
+        lat: input.lat || 18.5204,
+        lng: input.lng || 73.8567,
+        address: input.address || 'Shivajinagar, Pune'
       },
       media: input.hasPhoto ? ['https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600'] : [],
       submitted_at: now,
@@ -382,14 +383,14 @@ const VerificationMachine = {
       status: verified.status,
       officer_id: null,
       officer_notes: null,
-      rejection_reason: verified.status === 'auto_rejected' ? 'Insufficient specificity and lack of verified photographic evidence.' : null,
+      rejection_reason: verified.status === 'auto_rejected' ? 'Insufficient specificity and lack of verified evidence.' : null,
       appealed: false,
       history: [
         {
           status: 'submitted',
-          actor: 'Citizen Submitter',
+          actor: 'Department Submitter',
           timestamp: now,
-          note: 'Complaint registered and submitted for AI automated checks.'
+          note: 'Challenge registered and submitted for AI automated quality checks.'
         },
         {
           status: verified.status,

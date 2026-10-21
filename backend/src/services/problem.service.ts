@@ -89,52 +89,14 @@ export class ProblemService {
         },
       };
     } catch (err) {
-      console.warn('Database offline, returning fallback problems:', err);
-      const fallbackList = [
-        {
-          id: 'prob-1',
-          title: 'High Arsenic & Fluoride Contamination in Deep Groundwater Wells',
-          description: 'Multiple deep borewells in Deoghar and Jamtara districts show fluoride levels exceeding 3.5 mg/L. Over 18,000 rural residents rely on these wells.',
-          category: 'WATER_SANITATION',
-          district: 'Deoghar',
-          urgency: 'HIGH',
-          status: 'IN_PROGRESS',
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(),
-          submittedBy: { id: 'u1', name: 'Rajesh Oraon', district: 'Deoghar', role: 'CITIZEN' },
-          _count: { interests: 4, comments: 8 },
-        },
-        {
-          id: 'prob-2',
-          title: 'Severe Post-Harvest Tomato Spoilage in Unrefrigerated Farm Clusters',
-          description: 'Farmers in Gumla produce bumper yields of local tomatoes, but lack localized cold chain infrastructure.',
-          category: 'AGRICULTURE',
-          district: 'Gumla',
-          urgency: 'HIGH',
-          status: 'TEAM_FORMED',
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(),
-          submittedBy: { id: 'u2', name: 'Anita Devi', district: 'Gumla', role: 'CITIZEN' },
-          _count: { interests: 3, comments: 5 },
-        },
-        {
-          id: 'prob-3',
-          title: 'Heavy Metal Runoff from Abandoned Coal Washeries into Damodar Tributaries',
-          description: 'Abandoned coal overburden dumps near Dhanbad leach acidic runoff into Katri river.',
-          category: 'ENVIRONMENT',
-          district: 'Dhanbad',
-          urgency: 'HIGH',
-          status: 'IN_PROGRESS',
-          createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(),
-          submittedBy: { id: 'u3', name: 'Priya Kumar', district: 'Dhanbad', role: 'CITIZEN' },
-          _count: { interests: 5, comments: 12 },
-        },
-      ];
+      console.warn('Database query error in ProblemService.list:', err);
       return {
-        problems: fallbackList as any,
+        problems: [],
         pagination: {
-          page: 1,
-          limit: 12,
-          total: fallbackList.length,
-          totalPages: 1,
+          page: query.page,
+          limit: query.limit,
+          total: 0,
+          totalPages: 0,
         },
       };
     }
@@ -153,7 +115,7 @@ export class ProblemService {
               select: { id: true, name: true, role: true },
             },
           },
-          orderBy: { createdAt: 'asc' },
+          orderBy: { timestamp: 'asc' },
         },
         projectTeam: {
           include: {
@@ -185,13 +147,17 @@ export class ProblemService {
         where: { id: problemId },
         data: { status: newStatus as ProblemStatus },
       }),
-      prisma.statusHistory.create({
+      (prisma as any).statusHistory.create({
         data: {
+          entityType: 'PROBLEM',
+          entityId: problemId,
           problemId,
           oldStatus: problem.status,
           newStatus: newStatus as ProblemStatus,
+          actor: changedById,
+          action: 'STATUS_TRANSITION',
           changedById,
-          note,
+          note: note || 'Status updated',
         },
       }),
       // Notify the problem submitter
