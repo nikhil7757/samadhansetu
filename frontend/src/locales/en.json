@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "SamadhanSetu",
+    "name": "NavSetu",
     "tagline": "Innovation Procurement Platform",
     "description": "Government of Maharashtra & Maharashtra State Innovation Society (MSInS) — A transparent, competitive, legally compliant platform enabling departments to identify, pilot, procure, and scale innovative startup solutions."
   },
@@ -80,8 +80,8 @@
     "tracker": {
       "title": "INNOVATION PROCUREMENT DOCKET TRACKER",
       "badge": "MAHARASHTRA STATE REGISTRY",
-      "desc": "Enter any official tracking reference (format: SS-YYYY-NNNNNN) to inspect challenge drafting, expert scoring, pilot milestone execution, validator sign-offs, and scaling decisions.",
-      "placeholder": "e.g. SS-2026-001042",
+      "desc": "Enter any official tracking reference (format: NS-YYYY-NNNNNN) to inspect challenge drafting, expert scoring, pilot milestone execution, validator sign-offs, and scaling decisions.",
+      "placeholder": "e.g. NS-2026-001042",
       "button": "Inspect Live Pipeline Dossier",
       "sampleHeading": "Active Sandboxed Pilots on Live State Roster:"
     },

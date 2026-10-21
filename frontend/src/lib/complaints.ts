@@ -504,19 +504,20 @@ export function getComplaintById(id: string): Complaint | undefined {
 
   if (found) return found;
 
-  // Resilient fallback for direct URL visits with valid tracking tokens (e.g. SS-2026-000495)
+  // Resilient fallback for direct URL visits with valid tracking tokens (e.g. NS-2026-000495 or SS-2026-000495)
   // ONLY for complaints that have not been explicitly rejected/deleted
-  if (!isComplaintDeleted(rawUpper) && (rawUpper.startsWith('SS-') || rawUpper.startsWith('SS'))) {
-    const formattedId = rawUpper.startsWith('SS-') ? rawUpper : `SS-${rawUpper.slice(2, 6)}-${rawUpper.slice(6)}`;
+  if (!isComplaintDeleted(rawUpper) && (rawUpper.startsWith('NS-') || rawUpper.startsWith('NS') || rawUpper.startsWith('SS-') || rawUpper.startsWith('SS'))) {
+    const prefix = rawUpper.startsWith('SS') ? 'SS' : 'NS';
+    const formattedId = rawUpper.includes('-') ? rawUpper : `${prefix}-${rawUpper.slice(prefix.length, prefix.length + 4)}-${rawUpper.slice(prefix.length + 4)}`;
     if (isComplaintDeleted(formattedId)) return undefined;
     const dynamicComplaint: Complaint = {
       id: formattedId,
       citizen_id: 'u-citizen',
       citizen_name: 'Verified Department Officer',
-      citizen_email: 'department@samadhansetu.maharashtra.gov.in',
+      citizen_email: 'department@navsetu.maharashtra.gov.in',
       title: `Innovation Procurement Challenge #${formattedId}`,
       category: 'roads',
-      description: 'Challenge registered on the SamadhanSetu Procurement Registry. Live pilot evaluation dispatched to state innovation panel.',
+      description: 'Challenge registered on the NavSetu Procurement Registry. Live pilot evaluation dispatched to state innovation panel.',
       location: {
         lat: 18.5204,
         lng: 73.8567,
@@ -536,7 +537,7 @@ export function getComplaintById(id: string): Complaint | undefined {
       history: [
         {
           status: 'auto_approved',
-          actor: 'SamadhanSetu AI Core',
+          actor: 'NavSetu AI Core',
           timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
           note: 'Challenge Quality Score: 82/100. Outcome criteria and KPI benchmarks verified.',
         },
@@ -557,13 +558,13 @@ export function getComplaintById(id: string): Complaint | undefined {
 }
 
 /**
- * Generate standard SS-YYYY-NNNNNN tracking ID
+ * Generate standard NS-YYYY-NNNNNN tracking ID
  */
 export function generatePublicTrackingId(): string {
   const all = getStoredComplaints();
   const year = new Date().getFullYear();
   const nextNum = (all.length + 488).toString().padStart(6, '0');
-  return `SS-${year}-${nextNum}`;
+  return `NS-${year}-${nextNum}`;
 }
 
 /**

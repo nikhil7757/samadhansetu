@@ -102,7 +102,7 @@ export const STANDARD_TEMPLATES: StandardTemplate[] = [
 
 ### Article 2: Timely Payment Assurance & SLA
 2.1 Upon independent validation of each milestone deliverable, the Department shall approve the payment voucher within **7 business days**.
-2.2 If the voucher is not processed within 14 calendar days of validator certification, the SamadhanSetu automated escalation engine shall notify the Principal Secretary and MSInS Chief Executive Officer.
+2.2 If the voucher is not processed within 14 calendar days of validator certification, the NavSetu automated escalation engine shall notify the Principal Secretary and MSInS Chief Executive Officer.
 
 ---
 
@@ -188,7 +188,7 @@ export const STANDARD_TEMPLATES: StandardTemplate[] = [
 
 ### Pathway 2: GeM (Government e-Marketplace) Startup Runway Listing
 - **Applicability**: Recommended for commercial software products, SaaS solutions, and modular IoT equipment.
-- **Mechanism**: SamadhanSetu provides a 1-click verified dossier export directly to the GeM Startup Runway portal.
+- **Mechanism**: NavSetu provides a 1-click verified dossier export directly to the GeM Startup Runway portal.
 - **Benefit**: Any state department can directly purchase the certified product off GeM without issuing a separate tender, up to threshold limits under Rule 149 GFR.
 
 ### Pathway 3: Limited Competitive Swiss-Challenge Tender

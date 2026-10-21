@@ -50,12 +50,12 @@ export default function ComplaintTrackerPage() {
     recordScaleUpDecision,
   } = useNavSetu();
 
-  const [searchInput, setSearchInput] = useState(() => complaintId || 'SS-2026-001042');
+  const [searchInput, setSearchInput] = useState(() => complaintId || 'NS-2026-001042');
   const [selectedPilot, setSelectedPilot] = useState<Pilot | null>(null);
 
   // Modals for walkthrough actions
   const [deliverableModal, setDeliverableModal] = useState<{ open: boolean; milestoneNumber: number }>({ open: false, milestoneNumber: 1 });
-  const [deliverableUrl, setDeliverableUrl] = useState('https://storage.samadhansetu.gov.in/milestones/field-telemetry-v1.pdf');
+  const [deliverableUrl, setDeliverableUrl] = useState('https://storage.navsetu.gov.in/milestones/field-telemetry-v1.pdf');
   const [deliverableNotes, setDeliverableNotes] = useState('Field sensor telemetry logs & verification metrics attached.');
 
   const [scaleUpModal, setScaleUpModal] = useState(false);
@@ -107,7 +107,7 @@ export default function ComplaintTrackerPage() {
   };
 
   useEffect(() => {
-    const raw = (complaintId || searchInput || 'SS-2026-001042').trim().toUpperCase();
+    const raw = (complaintId || searchInput || 'NS-2026-001042').trim().toUpperCase();
     const altRaw = raw.startsWith('SS-') ? raw.replace('SS-', 'NS-') : (raw.startsWith('NS-') ? raw.replace('NS-', 'SS-') : raw);
     const found = pilots.find(
       (p) =>
@@ -176,7 +176,7 @@ export default function ComplaintTrackerPage() {
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="SS-YYYY-NNNNNN"
+                  placeholder="NS-YYYY-NNNNNN"
                   className="pl-9 h-11 text-xs font-mono uppercase bg-background shadow-xs"
                 />
               </div>

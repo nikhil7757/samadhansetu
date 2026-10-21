@@ -5,7 +5,7 @@ import { STANDARD_TEMPLATES } from '../src/services/templates.service.js';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding SamadhanSetu Maharashtra Innovation Procurement Database...');
+  console.log('🌱 Seeding NavSetu Maharashtra Innovation Procurement Database...');
 
   // Safe table cleanup if tables exist
   try {
@@ -36,7 +36,7 @@ async function main() {
   const msinsAdmin = await prisma.user.create({
     data: {
       name: 'Dr. Rahul Shinde (CEO, MSInS)',
-      email: 'admin@samadhansetu.maharashtra.gov.in',
+      email: 'admin@navsetu.maharashtra.gov.in',
       passwordHash,
       role: 'INNOVATION_SOCIETY_ADMIN' as any,
       organizationName: 'Maharashtra State Innovation Society (MSInS)',
@@ -99,7 +99,7 @@ async function main() {
   const evaluator1 = await prisma.user.create({
     data: {
       name: 'Prof. Jayant Joshi (Expert Evaluator)',
-      email: 'evaluator.iitb@samadhansetu.gov.in',
+      email: 'evaluator.iitb@navsetu.gov.in',
       passwordHash,
       role: 'EVALUATOR' as any,
       organizationName: 'IIT Bombay — Centre for Technology Alternatives for Rural Areas (CTARA)',
@@ -111,7 +111,7 @@ async function main() {
   const validator1 = await prisma.user.create({
     data: {
       name: 'Dr. Rekha Kulkarni (Third-Party Validator)',
-      email: 'validator.vjti@samadhansetu.gov.in',
+      email: 'validator.vjti@navsetu.gov.in',
       passwordHash,
       role: 'VALIDATOR' as any,
       organizationName: 'Veermata Jijabai Technological Institute (VJTI) Quality Audit Bureau',
@@ -163,7 +163,7 @@ async function main() {
     // 3. Create Seed Challenges
     const ch1 = await (prisma as any).challenge.create({
       data: {
-        id: 'SS-2026-001042',
+        id: 'NS-2026-001042',
         title: 'Edge AI-Driven Early Crop Pest & Disease Diagnostic Network for Cotton Smallholders',
         department: 'Department of Agriculture',
         district: 'Nashik',
@@ -190,7 +190,7 @@ async function main() {
 
     const ch2 = await (prisma as any).challenge.create({
       data: {
-        id: 'SS-2026-001043',
+        id: 'NS-2026-001043',
         title: 'Remote ICU Bed Tele-Monitoring and Automated Sepsis Early-Warning for Rural Hospitals',
         department: 'Public Health Department',
         district: 'Pune',
@@ -215,7 +215,7 @@ async function main() {
 
     const ch3 = await (prisma as any).challenge.create({
       data: {
-        id: 'SS-2026-001044',
+        id: 'NS-2026-001044',
         title: 'Decentralized Solar-Powered Cold Storage Pods for Onion and Tomato Farmers',
         department: 'Department of Skills, Employment, Entrepreneurship & Innovation',
         district: 'Chhatrapati Sambhajinagar',
@@ -303,7 +303,7 @@ async function main() {
         dueDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
         paymentAmount: 6.6,
         status: 'PAID',
-        submissionUrl: 'https://storage.samadhansetu.gov.in/milestones/ms-1-nashik.pdf',
+        submissionUrl: 'https://storage.navsetu.gov.in/milestones/ms-1-nashik.pdf',
         submittedAt: new Date(Date.now() - 55 * 24 * 60 * 60 * 1000),
         validatedAt: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000),
         approvedAt: new Date(Date.now() - 48 * 24 * 60 * 60 * 1000),
@@ -334,7 +334,7 @@ async function main() {
         dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
         paymentAmount: 6.6,
         status: 'SUBMITTED',
-        submissionUrl: 'https://storage.samadhansetu.gov.in/milestones/ms-2-midterm.pdf',
+        submissionUrl: 'https://storage.navsetu.gov.in/milestones/ms-2-midterm.pdf',
         submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       },
     });
@@ -399,7 +399,7 @@ async function main() {
         methodology: 'Multi-hospital clinical observation, patient outcome audit of 1,420 admissions over 6 months, and network security penetration testing.',
         findings: 'The MedPulse Tele-ICU intervention consistently outperformed baseline clinical metrics, preventing an estimated 42 critical septic deteriorations. Zero cybersecurity or PII leakage incidents recorded.',
         recommendation: 'SCALE',
-        reportUrl: 'https://storage.samadhansetu.gov.in/validation/vjti-tele-icu-cert.pdf',
+        reportUrl: 'https://storage.navsetu.gov.in/validation/vjti-tele-icu-cert.pdf',
         submittedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000),
       },
     });
@@ -463,10 +463,10 @@ async function main() {
       ],
     });
   } catch (err) {
-    console.error('Error seeding SamadhanSetu data:', err);
+    console.error('Error seeding NavSetu data:', err);
   }
 
-  console.log('✅ SamadhanSetu Maharashtra Innovation Procurement seed completed successfully!');
+  console.log('✅ NavSetu Maharashtra Innovation Procurement seed completed successfully!');
 }
 
 main()

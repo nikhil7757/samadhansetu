@@ -48,7 +48,7 @@ export default function ContactPage() {
                 </div>
                 <div className="flex items-center gap-2.5 text-foreground">
                   <Mail className="h-4 w-4 text-primary shrink-0" />
-                  <span>procurement@samadhansetu.maharashtra.gov.in</span>
+                  <span>procurement@navsetu.maharashtra.gov.in</span>
                 </div>
                 <div className="flex items-center gap-2.5 text-muted-foreground">
                   <Clock className="h-4 w-4 text-primary shrink-0" />
@@ -64,15 +64,15 @@ export default function ContactPage() {
               <div className="space-y-2 text-xs">
                 <div className="p-2.5 rounded-xl bg-secondary/40 border border-border/50">
                   <span className="font-bold text-foreground block">Pune & Western Maharashtra Hub</span>
-                  <span className="text-muted-foreground text-[11px]">pune.hub@samadhansetu.maharashtra.gov.in • 020-25507000</span>
+                  <span className="text-muted-foreground text-[11px]">pune.hub@navsetu.maharashtra.gov.in • 020-25507000</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-secondary/40 border border-border/50">
                   <span className="font-bold text-foreground block">Vidarbha Regional Cell (Nagpur)</span>
-                  <span className="text-muted-foreground text-[11px]">nagpur.cell@samadhansetu.maharashtra.gov.in • 0712-2560123</span>
+                  <span className="text-muted-foreground text-[11px]">nagpur.cell@navsetu.maharashtra.gov.in • 0712-2560123</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-secondary/40 border border-border/50">
                   <span className="font-bold text-foreground block">Marathwada Innovation Desk (Chhatrapati Sambhajinagar)</span>
-                  <span className="text-muted-foreground text-[11px]">csn.desk@samadhansetu.maharashtra.gov.in • 0240-2334411</span>
+                  <span className="text-muted-foreground text-[11px]">csn.desk@navsetu.maharashtra.gov.in • 0240-2334411</span>
                 </div>
               </div>
             </Card>

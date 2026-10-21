@@ -130,13 +130,14 @@ export interface Proposal {
   createdAt: string;
 }
 
-const STORAGE_KEY = 'samadhansetu_state_v1';
+const STORAGE_KEY = 'navsetu_state_v2';
 const LEGACY_STORAGE_KEY = 'navsetu_state_v1';
+const PREV_STORAGE_KEY = 'samadhansetu_state_v1';
 
 // Initial realistic Maharashtra seed dataset
 export const INITIAL_CHALLENGES: Challenge[] = [
   {
-    id: 'SS-2026-001042',
+    id: 'NS-2026-001042',
     title: 'Edge AI Early Crop Pest & Infestation Warning for Smallholder Cotton Farmers',
     department: 'Department of Agriculture',
     district: 'Nashik',
@@ -161,7 +162,7 @@ export const INITIAL_CHALLENGES: Challenge[] = [
     createdAt: new Date(Date.now() - 95 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'SS-2026-001043',
+    id: 'NS-2026-001043',
     title: 'Rural Tele-ICU Bed Monitoring & Predictive Sepsis Early-Warning Network',
     department: 'Public Health Department',
     district: 'Pune',
@@ -185,7 +186,7 @@ export const INITIAL_CHALLENGES: Challenge[] = [
     createdAt: new Date(Date.now() - 250 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'SS-2026-001044',
+    id: 'NS-2026-001044',
     title: 'Decentralized Solar-Powered Cold Storage Pods for Perishable Agri-Produce',
     department: 'Dept. of Skills, Employment, Entrepreneurship & Innovation',
     district: 'Chhatrapati Sambhajinagar',
@@ -209,7 +210,7 @@ export const INITIAL_CHALLENGES: Challenge[] = [
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
-    id: 'SS-2026-001045',
+    id: 'NS-2026-001045',
     title: 'AI Video Analytics for Urban Bottleneck Detection & Adaptive Traffic Light Control',
     department: 'Urban Development Department',
     district: 'Nagpur',
@@ -236,8 +237,8 @@ export const INITIAL_CHALLENGES: Challenge[] = [
 
 export const INITIAL_PILOTS: Pilot[] = [
   {
-    id: 'SS-2026-001042',
-    challengeId: 'SS-2026-001042',
+    id: 'NS-2026-001042',
+    challengeId: 'NS-2026-001042',
     challengeTitle: 'Edge AI Early Crop Pest & Infestation Warning for Smallholder Cotton Farmers',
     department: 'Department of Agriculture',
     district: 'Nashik',
@@ -266,7 +267,7 @@ export const INITIAL_PILOTS: Pilot[] = [
         dueDate: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
         paymentAmount: 6.6,
         status: 'PAID',
-        submissionUrl: 'https://storage.samadhansetu.gov.in/milestones/ms1-nashik.pdf',
+        submissionUrl: 'https://storage.navsetu.gov.in/milestones/ms1-nashik.pdf',
         submittedAt: new Date(Date.now() - 55 * 24 * 60 * 60 * 1000).toISOString(),
         validatedAt: new Date(Date.now() - 50 * 24 * 60 * 60 * 1000).toISOString(),
         approvedAt: new Date(Date.now() - 48 * 24 * 60 * 60 * 1000).toISOString(),
@@ -282,7 +283,7 @@ export const INITIAL_PILOTS: Pilot[] = [
         dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
         paymentAmount: 6.6,
         status: 'SUBMITTED',
-        submissionUrl: 'https://storage.samadhansetu.gov.in/milestones/ms2-midterm.pdf',
+        submissionUrl: 'https://storage.navsetu.gov.in/milestones/ms2-midterm.pdf',
         submittedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
         daysSinceApproval: 3,
       },
@@ -309,8 +310,8 @@ export const INITIAL_PILOTS: Pilot[] = [
     ],
   },
   {
-    id: 'SS-2026-001043',
-    challengeId: 'SS-2026-001043',
+    id: 'NS-2026-001043',
+    challengeId: 'NS-2026-001043',
     challengeTitle: 'Rural Tele-ICU Bed Monitoring & Predictive Sepsis Early-Warning Network',
     department: 'Public Health Department',
     district: 'Pune',
@@ -375,7 +376,7 @@ export const INITIAL_PILOTS: Pilot[] = [
       methodology: 'Multi-hospital observation across 1,420 admissions over 6 months; certified 91.8% early warning sensitivity with zero data security breaches.',
       findings: 'The MedPulse Tele-ICU intervention consistently outperformed baseline clinical outcomes, preventing an estimated 42 critical septic deteriorations.',
       recommendation: 'SCALE',
-      reportUrl: 'https://storage.samadhansetu.gov.in/validation/vjti-tele-icu-cert.pdf',
+      reportUrl: 'https://storage.navsetu.gov.in/validation/vjti-tele-icu-cert.pdf',
       submittedAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
     },
     scaleUpDecision: {
@@ -459,7 +460,7 @@ export function useNavSetu() {
       const quality = evaluateChallengeQuality(challengeInput);
       const year = new Date().getFullYear();
       const count = data.challenges.length + 1045;
-      const id = `SS-${year}-${String(count).padStart(6, '0')}`;
+      const id = `NS-${year}-${String(count).padStart(6, '0')}`;
 
       const newChallenge: Challenge = {
         id,

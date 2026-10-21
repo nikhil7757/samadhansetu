@@ -478,7 +478,7 @@ export function QuickReportWidget() {
               )}
             </Button>
             <p className="text-[11px] text-center text-muted-foreground mt-2 font-medium">
-              {t('widget.permanentAuditNote', '🔒 Generates a permanent public tracking ID (SS-2026-NNNNNN) with real-time audit trail')}
+              {t('widget.permanentAuditNote', '🔒 Generates a permanent public tracking ID (NS-2026-NNNNNN) with real-time audit trail')}
             </p>
           </div>
         </form>

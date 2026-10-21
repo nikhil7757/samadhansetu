@@ -56,7 +56,7 @@ export function Footer() {
               </li>
               <li>
                 <Link to="/track" className="hover:text-primary hover:translate-x-0.5 inline-block transition-all">
-                  Track Pilot Lifecycle (SS-XXXX)
+                  Track Pilot Lifecycle (NS-XXXX)
                 </Link>
               </li>
               <li>

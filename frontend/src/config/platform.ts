@@ -5,8 +5,8 @@
  */
 
 export const PLATFORM_CONFIG = {
-  name: 'SamadhanSetu',
-  fullName: 'SamadhanSetu — Innovation Procurement Platform',
+  name: 'NavSetu',
+  fullName: 'NavSetu — Innovation Procurement Platform',
   tagline: 'Bridging Public Need to Startup Innovation',
   subtitle: 'A transparent, competitive, and legally compliant innovation-procurement mechanism for government departments to identify, pilot, procure, and scale startup solutions.',
   orgName: 'Maharashtra State Innovation Society (MSInS)',
@@ -16,8 +16,8 @@ export const PLATFORM_CONFIG = {
   problemStatementId: 'ID 26136',
   category: 'Software',
   theme: 'Miscellaneous',
-  refPrefix: 'SS',
-  sampleRefId: 'SS-2026-001042',
+  refPrefix: 'NS',
+  sampleRefId: 'NS-2026-001042',
   totalDistricts: 36,
   nodalAdminRole: 'INNOVATION_SOCIETY_ADMIN',
   departmentRole: 'DEPARTMENT_USER',

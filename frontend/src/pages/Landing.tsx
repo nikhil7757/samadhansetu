@@ -39,7 +39,7 @@ const MAHARASHTRA_DISTRICT_HUBS = [
     scaledRate: '83.3%',
     primaryFocus: 'Rural Tele-ICU, Smart Mobility, Drone Deliveries, Agritech',
     nodalSecretary: 'Dr. Snehal Deshmukh (Health Directorate)',
-    sampleRef: 'SS-2026-001043',
+    sampleRef: 'NS-2026-001043',
   },
   {
     id: 'nashik',
@@ -52,7 +52,7 @@ const MAHARASHTRA_DISTRICT_HUBS = [
     scaledRate: '75.0%',
     primaryFocus: 'Crop Pest Edge AI, Post-Harvest Cold Chain, Micro-Irrigation',
     nodalSecretary: 'Nitin Pawar (Joint Director Agriculture)',
-    sampleRef: 'SS-2026-001042',
+    sampleRef: 'NS-2026-001042',
   },
   {
     id: 'nagpur',
@@ -65,7 +65,7 @@ const MAHARASHTRA_DISTRICT_HUBS = [
     scaledRate: '77.8%',
     primaryFocus: 'Adaptive Traffic Lights, Drone Forest Surveillance, Water Grid',
     nodalSecretary: 'Executive Engineer, Nagpur Municipal Corp',
-    sampleRef: 'SS-2026-001045',
+    sampleRef: 'NS-2026-001045',
   },
   {
     id: 'mumbai_suburban',
@@ -78,7 +78,7 @@ const MAHARASHTRA_DISTRICT_HUBS = [
     scaledRate: '88.5%',
     primaryFocus: 'Civic Sensor Telemetry, Slum Sanitation AI, Coastal Protection',
     nodalSecretary: 'Director of Innovation (MSInS HQ)',
-    sampleRef: 'SS-2026-001043',
+    sampleRef: 'NS-2026-001043',
   },
   {
     id: 'chhatrapati_sambhajinagar',
@@ -91,7 +91,7 @@ const MAHARASHTRA_DISTRICT_HUBS = [
     scaledRate: '71.4%',
     primaryFocus: 'Decentralized Solar Cold Storage, Water Filtration, EV Fleets',
     nodalSecretary: 'District Development Officer',
-    sampleRef: 'SS-2026-001044',
+    sampleRef: 'NS-2026-001044',
   },
   {
     id: 'thane',
@@ -104,13 +104,13 @@ const MAHARASHTRA_DISTRICT_HUBS = [
     scaledRate: '73.3%',
     primaryFocus: 'Lake Water Quality Monitoring, Decentralized Waste-to-Energy',
     nodalSecretary: 'Chief Environmental Officer (TMC)',
-    sampleRef: 'SS-2026-001045',
+    sampleRef: 'NS-2026-001045',
   },
 ];
 
 const RECENT_SCALED_PILOTS = [
   {
-    id: 'SS-2026-001043',
+    id: 'NS-2026-001043',
     title: 'Rural Tele-ICU & Predictive Sepsis Early-Warning Network',
     department: 'Public Health Department',
     district: 'Pune & Satara',
@@ -122,7 +122,7 @@ const RECENT_SCALED_PILOTS = [
     grantDisbursed: '₹22.0 Lakhs',
   },
   {
-    id: 'SS-2026-001042',
+    id: 'NS-2026-001042',
     title: 'Edge AI Crop Pest Early Warning for Cotton Farmers',
     department: 'Department of Agriculture',
     district: 'Nashik & Marathwada',
@@ -134,7 +134,7 @@ const RECENT_SCALED_PILOTS = [
     grantDisbursed: '₹16.5 Lakhs',
   },
   {
-    id: 'SS-2026-001044',
+    id: 'NS-2026-001044',
     title: 'Decentralized Solar-Powered Cold Storage Pods',
     department: 'Dept. of Skills, Employment, Entrepreneurship & Innovation',
     district: 'Chhatrapati Sambhajinagar',
@@ -291,7 +291,7 @@ export default function Landing() {
                 type="text"
                 value={trackQuery}
                 onChange={(e) => setTrackQuery(e.target.value)}
-                placeholder="Track any pilot or challenge (e.g. SS-2026-001042)..."
+                placeholder="Track any pilot or challenge (e.g. NS-2026-001042)..."
                 className="pl-10 h-12 text-sm bg-card border-border font-mono shadow-xs"
               />
             </div>

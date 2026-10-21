@@ -358,7 +358,7 @@ export class GrievanceRegistryService {
   static async submitGrievance(input: SubmitGrievanceInput): Promise<GrievanceRecord> {
     const year = new Date().getFullYear();
     const randomNum = Math.floor(100000 + Math.random() * 900000);
-    const trackingId = input.id || `SS-${year}-${randomNum}`;
+    const trackingId = input.id || `NS-${year}-${randomNum}`;
     const now = new Date().toISOString();
 
     // 1. Authoritative Server Verification (Zero Client Spoofing)

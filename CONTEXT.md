@@ -1,6 +1,6 @@
-# SamadhanSetu Domain Context
+# NavSetu Domain Context & Architecture
 
-> **SamadhanSetu (समाधान सेतु)** is the Sovereign Civic Grievance Redressal and Academic Solver Exchange for the Government of Jharkhand (SIH 2026 Problem Statement 043).
+> **NavSetu (नवसेतु)** is the Startup-Friendly Innovation Procurement Platform for the Government of Maharashtra and the Maharashtra State Innovation Society (MSInS), built for Smart India Hackathon 2026 (Problem Statement ID 26136).
 
 ---
 
@@ -8,56 +8,95 @@
 
 | Term | Definition | Avoid Calling It |
 | :--- | :--- | :--- |
-| **Grievance** | A formal citizen-submitted report describing a civic infrastructure defect, environmental hazard, public service breakdown, or administrative irregularity. Identified by an authoritative tracking code (`SS-YYYY-NNNNNN`). | "ticket", "bug", "task", "item" |
-| **Citizen** | An authenticated or guest resident of Jharkhand submitting grievances, providing photographic evidence, or filing appeals. | "user", "client", "reporter" |
-| **District Nodal Officer** | An administrative official assigned to one of Jharkhand's 24 districts (DWSD, RCD, Municipal Corporation, JPSC) authorized to inspect, approve, reject, or dispatch grievances. | "admin", "moderator", "manager" |
-| **Verification Engine** | An authoritative server-side evaluation pipeline that scores grievances from 0–100 across 6 signals (text coherence, duplicate detection, geo-consistency, submitter history, category match, media presence) and recommends auto-approval, officer review, or auto-rejection. | "AI bot", "filter", "checker" |
-| **Public Tracking ID** | A sovereign formatted identifier: `SS-YYYY-NNNNNN` (e.g. `SS-2026-000481`), normalized across all search and tracking interfaces. | "UUID", "ID", "slug" |
-| **Appeal Override** | A citizen's procedural right to overturn an auto-rejection or officer determination by furnishing supplementary geotagged proof, forcing mandatory nodal review. | "reopen", "retry" |
-| **Solver Team** | An interdisciplinary academic or industry group (e.g., from BIT Mesra, IIT ISM Dhanbad, NIT Jamshedpur) matched to complex recurring grievances to formulate pilot solutions and engineering tenders. | "dev team", "group", "workers" |
-| **Challenge Board** | The public directory of verified, high-urgency civic challenges available for university solvers and CSR consortiums. | "feed", "list", "board" |
-| **Resolution Vector** | The verified deployment artifacts and entry points ensuring synchronous UI delivery across SPA routes, static CDN mirrors, and serverless endpoints. | "build outputs", "pages" |
+| **Challenge** | An outcome-based problem statement formulated by a Maharashtra government department specifying desired outcomes, measurable KPIs, budget ceiling, sandbox duration, data sensitivity, and IP preference. Identified by `NS-YYYY-NNNNNN`. | "ticket", "complaint", "bug", "task" |
+| **Department User** | An administrative or technical official from a Maharashtra government department (e.g., Public Health, Agriculture, Urban Development) authorized to post challenges, review pilot proposals, and sign off on milestone vouchers. | "client", "reporter", "citizen" |
+| **Startup** | A DPIIT-recognized startup or innovative venture proposing novel technologies, running controlled sandboxed pilots, and delivering verified field outcomes under GFR relaxation rules. | "vendor", "agency", "freelancer" |
+| **MSInS Admin** | A nodal officer from the Maharashtra State Innovation Society authorized to approve challenges, assign expert evaluators, oversee sandbox agreements, and authorize scale-up procurement pathways. | "superadmin", "moderator" |
+| **Expert Evaluator** | An independent technical, commercial, or domain expert (e.g., IIT Bombay, VJTI, sectoral research chairs) who scores startup proposals across weighted evaluation criteria and declares conflicts of interest. | "judge", "reviewer", "grader" |
+| **Independent Validator** | A certified third-party technical audit organization (e.g., VJTI Quality Audit Bureau, certified testing laboratories) that conducts field audits and issues binding KPI achievement certificates. | "inspector", "checker" |
+| **Pilot Sandbox** | A controlled, time-bound, ring-fenced testing environment where an eligible startup deploys and tests its solution under real-world departmental conditions with explicit data/IP safe-harbor protections. | "test environment", "demo" |
+| **Milestone Voucher** | A contractual deliverable tied to a specific financial tranche; releases payment upon independent validation with an automated SLA turnaround timer ("days since approval"). | "bill", "invoice", "receipt" |
+| **Scale-Up Decision** | A statutory determination (Scale / Extend / Stop) transitioning a successful pilot into statewide procurement via Direct Award (GFR Rule 194), Limited Tender, or GeM Startup Runway (GFR Rule 149). | "close", "promote", "done" |
+| **Public Tracking ID** | An authoritative formatted identifier: `NS-YYYY-NNNNNN` (e.g., `NS-2026-001042`), normalized across all search, tracking, and GeM export interfaces. | "UUID", "ID", "slug" |
 
 ---
 
-## 2. Core Entities & Lifecycle
+## 2. 11-Stage Statutory Procurement Lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Submitted: Citizen Intake
-    Submitted --> Scoring: Verification Engine
-    Scoring --> AutoApproved: Score ≥ 80
-    Scoring --> PendingOfficer: Score 40-79 (Amber Zone)
-    Scoring --> AutoRejected: Score < 40
+    [*] --> Stage1_Drafted: Department Formulates Challenge
+    Stage1_Drafted --> AIQualityScoring: Outcome & KPI Analysis (0-100)
+    AIQualityScoring --> Stage1_Drafted: Needs Refinement (Score < 70)
+    AIQualityScoring --> Stage2_Approved: MSInS Admin Approves & Publishes
     
-    AutoRejected --> PendingOfficer: Citizen Appeal Override
+    Stage2_Approved --> Stage3_Discovery: Startup Discovery Marketplace
+    Stage3_Discovery --> Stage4_Screening: Startup Submits Proposal
     
-    PendingOfficer --> OfficerReviewing: Officer Claims Case
-    OfficerReviewing --> VerifiedInProgress: Officer Approves / Dispatches
-    OfficerReviewing --> RejectedByOfficer: Officer Rejects (Mandatory Reason)
+    Stage4_Screening --> Stage5_Evaluation: DPIIT & GFR Rule 170/173 Pass
+    Stage4_Screening --> AppealReview: Needs Review / Appeal Filed
+    AppealReview --> Stage5_Evaluation: Human Officer Clearance
     
-    RejectedByOfficer --> PendingOfficer: Citizen Appeal Override
+    Stage5_Evaluation --> Stage6_PilotDesign: Proposal Shortlisted by Expert Panel
+    Stage6_PilotDesign --> Stage7_ContractSigned: Sandbox Scope & Tripartite Agreement
+    Stage7_ContractSigned --> Stage8_PilotRunning: Milestone Deliverables Deployed
     
-    AutoApproved --> VerifiedInProgress: Ground Dispatch
-    VerifiedInProgress --> SolverMatched: Complex Community Problem
-    SolverMatched --> Piloted: Academic Pilot
-    Piloted --> Resolved: Field Sign-off
-    VerifiedInProgress --> Resolved: Direct Municipal Repair Completed
-    Resolved --> [*]
+    Stage8_PilotRunning --> Stage9_Validation: Deliverable Submitted by Startup
+    Stage9_Validation --> Stage10_PaymentReleased: Third-Party Validator Certifies KPIs
+    
+    Stage10_PaymentReleased --> Stage11_ScaleUp: All Milestones Successfully Completed
+    
+    Stage11_ScaleUp --> DirectPilotAward: GFR Rule 194 Direct Purchase
+    Stage11_ScaleUp --> GeMStartupRunway: GFR Rule 149 Fast-Track Listing
+    Stage11_ScaleUp --> LimitedInnovationTender: Statewide Scaled Procurement
+    
+    DirectPilotAward --> [*]
+    GeMStartupRunway --> [*]
+    LimitedInnovationTender --> [*]
 ```
 
 ---
 
-## 3. Architectural Seams & Invariants
+## 3. The 4 AI Triage & Advisory Services
 
-1. **Intake Seam (`GrievanceRegistry`)**:
-   - Every civic problem enters through a unified intake schema with explicit District, Block, Category, Coordinates, and Media Evidence.
-2. **Authoritative Verification Seam (`VerificationEngine`)**:
-   - Authenticity scores are never trusted from client payloads. The server strictly executes the 6-factor composite algorithm and writes immutable audit entries.
-3. **Appeals & Nodal Officer Seam**:
-   - Rejections require an explicit, public-facing reason.
-   - Any citizen appeal immediately reopens the docket into the active nodal officer queue.
-4. **Solver & Academic Collaboration Seam**:
-   - Solved dockets can transition into structured innovation projects (`ProjectTeam`) with university milestones and CSR sponsorship.
-5. **Zero-Dependency Static Packaging Seam**:
-   - Production web assets must build cleanly via standard library Node (`fs.cpSync`, `build.js`) without reliance on brittle devDependencies.
+1. **Challenge Quality Score (0–100)**:
+   - Evaluates problem statements to ensure they are **outcome-oriented rather than solution-prescriptive**.
+   - Checks for measurable, quantified KPIs, realistic budget and pilot durations, and explicit data sensitivity and IP preferences.
+   - Provides instant actionable flags and suggestions to department users before administrative submission.
+
+2. **Startup Eligibility Engine**:
+   - Automated rule engine applying **GFR Rule 170 / 173 exemptions** (turnover and prior experience waivers for DPIIT-recognized startups).
+   - Validates DPIIT registration format, incorporation age (< 10 years), and sector relevance.
+   - Enforces a **mandatory procedural appeal pathway** for flagged applications—failures are never silently final.
+
+3. **Startup–Challenge Match Score (0–100)**:
+   - Calculates multidimensional alignment based on sector classification, core technical keywords, Technology Readiness Level (TRL 5–9), past pilot experience, and Maharashtra district location.
+
+4. **Proposal Evaluation Matrix**:
+   - Weighted scoring system across Innovation (20%), Technical Feasibility (20%), Team Capability (20%), Cost & Commercial Viability (15%), Data Security & Cyber-Safety (10%), and Scalability (15%).
+   - Flags potential conflicts of interest among evaluators and aggregates scores for MSInS committee decisions.
+
+---
+
+## 4. Standard Procurement Template Suite
+
+NavSetu includes 7 standardized, pre-approved procurement templates compliant with Maharashtra public procurement guidelines:
+1. **Outcome-Based Problem Statement Template**
+2. **Weighted Evaluation & Scoring Matrix**
+3. **Tripartite Sandbox Pilot Agreement**
+4. **Data Protection & IP Allocation Clauses**
+5. **Cybersecurity & CERT-In Compliance Checklist**
+6. **Innovation Pilot Risk Register**
+7. **Statutory Scale-Up & GeM Procurement Pathway Guide**
+
+---
+
+## 5. Security & Authentication Architecture
+
+- **Authentication**: Real Firebase Authentication (Email/Password, Google OAuth, Email Verification, Password Reset). Zero mock credentials or hardcoded users.
+- **Session Security**: Firebase ID tokens exchanged on the backend for 5-day `httpOnly`, `Secure`, `SameSite=Lax` session cookies (`createSessionCookie` with `checkRevoked: true`).
+- **Token Persistence**: Client SDK configured with `inMemoryPersistence`; auth tokens are never written to `localStorage` or `sessionStorage`.
+- **Role Enforcement**: User roles (`DEPARTMENT_USER`, `STARTUP`, `INNOVATION_SOCIETY_ADMIN`, `EVALUATOR`, `VALIDATOR`) enforced via server-issued Firebase Custom Claims.
+- **Multi-Factor Authentication (MFA)**: TOTP enrollment mandatory for `INNOVATION_SOCIETY_ADMIN` and available for all users.
+- **BOLA / IDOR Guarding**: Strict object-level ownership checks across challenge drafting, proposal scoring, milestone deliverable submission, and payment authorization.
+- **Injection & Network Hardening**: Strict Helmet Content-Security-Policy (CSP), custom double-submit CSRF cookies, SSRF private IP blocker, and binary magic-byte inspection on file uploads.

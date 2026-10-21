@@ -111,7 +111,7 @@ export default function PrototypePage() {
           </div>
           <iframe
             src="/prototype.html"
-            title="SamadhanSetu Verification Logic Prototype"
+            title="NavSetu Verification Logic Prototype"
             className="w-full flex-1 min-h-[800px] border-0"
           />
         </div>
