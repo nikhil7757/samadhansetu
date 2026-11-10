@@ -75,7 +75,7 @@ export function TopNav({ onOpenCommandPalette }: TopNavProps) {
   const isDevanagari = currentLang === 'mr' || currentLang === 'hi';
 
   return (
-    <header className="sticky top-0 z-40 w-full transition-all">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/60 border-b border-border/40 shadow-xs transition-all">
       {/* Sovereign Official Gazette Micro-Banner */}
       <div className="bg-neutral-950 text-white/90 py-0.5 px-3 sm:px-6 text-[10px] font-mono tracking-wide border-b border-neutral-800/80 backdrop-blur-md">
         <div className="flex items-center justify-between mx-auto max-w-7xl w-full">

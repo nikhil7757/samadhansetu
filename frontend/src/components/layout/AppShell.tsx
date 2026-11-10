@@ -8,33 +8,25 @@ import { ProcurementTicker } from '@/components/common/ProcurementTicker';
 import {
   Compass,
   PlusCircle,
-  Search,
-  Rocket,
   Home,
   Activity,
-  FileText,
-  BarChart3,
 } from 'lucide-react';
-import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
 export function AppShell() {
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const location = useLocation();
-  const { user } = useAuth();
 
   // Scroll to top on route navigation
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
 
-  const isStartup = user?.role === 'STARTUP' || user?.role === 'UNIVERSITY' || user?.role === 'INDUSTRY';
-
   const isActive = (path: string) =>
     location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-accent/20 selection:text-accent relative overflow-x-hidden bg-app-atmosphere">
+    <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-accent/20 selection:text-accent relative overflow-x-clip bg-app-atmosphere">
       {/* Subtle Analog Texture Layer */}
       <div className="film-grain pointer-events-none" />
 
@@ -48,12 +40,13 @@ export function AppShell() {
         <Footer />
       </div>
 
-      {/* Permanently Pinned iOS Floating Bottom Glass Pill Dock (Visible on Home & All Pages, Desktop & Mobile) */}
+      {/* Permanently Pinned iOS Floating Bottom Glass Pill Dock (Streamlined Minimal Options for All Aspect Ratios & Devices) */}
       <nav
         aria-label="Primary Navigation Dock"
-        className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-50 ios-bottom-dock rounded-full p-1.5 flex items-center gap-1 sm:gap-1.5 shadow-2xl select-none max-w-[94vw] sm:max-w-fit"
+        className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-50 ios-bottom-dock rounded-full p-1.5 flex items-center gap-1 sm:gap-2 shadow-2xl select-none shrink-0"
+        style={{ bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0.75rem))' }}
       >
-        {/* Home */}
+        {/* 1. Home */}
         <Link
           to="/"
           className={cn(
@@ -67,7 +60,7 @@ export function AppShell() {
           <span className="text-[11px] font-heading uppercase tracking-wider">Home</span>
         </Link>
 
-        {/* Startup Discovery / Marketplace */}
+        {/* 2. Startup Discovery / Marketplace */}
         <Link
           to="/problems"
           className={cn(
@@ -81,7 +74,7 @@ export function AppShell() {
           <span className="text-[11px] font-heading uppercase tracking-wider">Market</span>
         </Link>
 
-        {/* Central Post Challenge Action Pill - Contained 100% INSIDE the pill */}
+        {/* 3. Central Post Challenge Action Pill - Primary Highlight Action Contained 100% Inside */}
         <Link
           to="/report"
           className={cn(
@@ -96,7 +89,7 @@ export function AppShell() {
           <span className="text-[11px] font-heading">Post</span>
         </Link>
 
-        {/* Pilot Telemetry & Docket Tracker */}
+        {/* 4. Pilot Telemetry & Docket Tracker */}
         <Link
           to="/track"
           className={cn(
@@ -109,67 +102,6 @@ export function AppShell() {
           <Activity className="h-3.5 w-3.5" />
           <span className="text-[11px] font-heading uppercase tracking-wider">Track</span>
         </Link>
-
-        {/* Spotlight Command Palette Quick Search Button */}
-        <button
-          type="button"
-          onClick={() => setCommandPaletteOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-foreground/5 transition-all duration-150 cursor-pointer shrink-0"
-          aria-label="Search platform or press Cmd+K"
-          title="Quick Search (Cmd+K)"
-        >
-          <Search className="h-3.5 w-3.5 text-accent" />
-          <span className="hidden sm:inline text-[11px] font-heading uppercase tracking-wider">Search</span>
-          <kbd className="hidden md:inline text-[9px] font-mono px-1 py-0.2 rounded-full bg-muted text-muted-foreground border border-border">
-            ⌘K
-          </kbd>
-        </button>
-
-        {/* Standard Legal Templates (Visible on sm and up) */}
-        <Link
-          to="/templates"
-          className={cn(
-            'hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer shrink-0',
-            isActive('/templates')
-              ? 'bg-primary text-primary-foreground font-bold shadow-xs scale-[1.02]'
-              : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
-          )}
-        >
-          <FileText className="h-3.5 w-3.5" />
-          <span className="text-[11px] font-heading uppercase tracking-wider">Templates</span>
-        </Link>
-
-        {/* Pipeline Analytics Dashboard (Visible on md and up) */}
-        <Link
-          to="/dashboard/analytics"
-          className={cn(
-            'hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer shrink-0',
-            isActive('/dashboard')
-              ? 'bg-primary text-primary-foreground font-bold shadow-xs scale-[1.02]'
-              : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
-          )}
-        >
-          <BarChart3 className="h-3.5 w-3.5" />
-          <span className="text-[11px] font-heading uppercase tracking-wider">Stats</span>
-        </Link>
-
-        {/* User Submissions / Pilots (if authenticated) */}
-        {user && (
-          <Link
-            to="/my/submissions"
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-150 cursor-pointer shrink-0',
-              isActive('/my')
-                ? 'bg-primary text-primary-foreground font-bold shadow-xs scale-[1.02]'
-                : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
-            )}
-          >
-            <Rocket className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline text-[11px] font-heading uppercase tracking-wider">
-              {isStartup ? 'Proposals' : 'Challenges'}
-            </span>
-          </Link>
-        )}
       </nav>
 
       {/* Global Command Palette (Cmd+K) */}
