@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-let adminApp: App;
+let _adminApp: App | null = null;
+let _adminAuth: Auth | null = null;
 
 function initFirebaseAdmin(): App {
   if (getApps().length > 0) {
@@ -41,6 +42,41 @@ function initFirebaseAdmin(): App {
   return initializeApp({ projectId });
 }
 
-adminApp = initFirebaseAdmin();
-export const adminAuth: Auth = getAuth(adminApp);
-export default adminApp;
+export function getAdminApp(): App {
+  if (!_adminApp) {
+    _adminApp = initFirebaseAdmin();
+  }
+  return _adminApp;
+}
+
+export function getAdminAuth(): Auth {
+  if (!_adminAuth) {
+    try {
+      const app = getAdminApp();
+      _adminAuth = getAuth(app);
+    } catch (err) {
+      console.warn('Firebase Admin getAuth initialization fallback:', err);
+      return new Proxy({} as Auth, {
+        get(_target, prop) {
+          if (prop === 'verifySessionCookie' || prop === 'verifyIdToken') {
+            return async () => {
+              throw new Error('Firebase Auth verification unavailable in current environment');
+            };
+          }
+          return async () => ({});
+        },
+      });
+    }
+  }
+  return _adminAuth;
+}
+
+export const adminAuth: Auth = new Proxy({} as Auth, {
+  get(_target, prop) {
+    const auth = getAdminAuth();
+    const val = (auth as any)[prop];
+    return typeof val === 'function' ? val.bind(auth) : val;
+  },
+});
+
+export default getAdminApp;
