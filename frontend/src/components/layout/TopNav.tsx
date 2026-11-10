@@ -186,7 +186,7 @@ export function TopNav({ onOpenCommandPalette }: TopNavProps) {
                   ) : null}
                 </div>
                 <span className="text-[10px] text-primary font-mono capitalize">
-                  {user.role.toLowerCase().replace('_', ' ')}
+                  {(user.role || 'CITIZEN').toLowerCase().replace('_', ' ')}
                 </span>
               </div>
 
