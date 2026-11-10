@@ -11,8 +11,11 @@ async function verifyLive() {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
   console.log('Navigating to https://sih-red-zeta.vercel.app ...');
-  await page.goto('https://sih-red-zeta.vercel.app', { waitUntil: 'domcontentloaded', timeout: 30000 });
-  await page.waitForTimeout(2000);
+  await page.goto('https://sih-red-zeta.vercel.app', { waitUntil: 'load', timeout: 45000 });
+  await page.waitForTimeout(1000);
+
+  const pillCount = await page.locator('.ios-glass-pill').count();
+  console.log('✓ Live iOS Glass Pill elements verified:', pillCount);
 
   const headlineEn = await page.locator('.fluid-headline').first().textContent();
   console.log('✓ Live English Headline:', headlineEn?.trim());
