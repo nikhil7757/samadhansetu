@@ -198,7 +198,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         id: 'act-theme',
         category: 'Actions',
         title: 'Toggle Light / Dark Mode',
-        subtitle: 'Switch between light glass and dark indigo atmosphere',
+        subtitle: 'Switch between crisp light and pitch black orange theme',
         icon: document.documentElement.classList.contains('dark') ? Sun : Moon,
         action: () => {
           const isDark = document.documentElement.classList.toggle('dark');
@@ -214,7 +214,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         icon: Globe,
         action: () => {
           i18n.changeLanguage('mr');
-          localStorage.setItem('i18nextLng', 'mr');
+          localStorage.setItem('lang', 'mr');
+          document.documentElement.lang = 'mr';
         },
         keywords: ['marathi', 'language', 'bhasha'],
       },
@@ -226,7 +227,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         icon: Globe,
         action: () => {
           i18n.changeLanguage('hi');
-          localStorage.setItem('i18nextLng', 'hi');
+          localStorage.setItem('lang', 'hi');
+          document.documentElement.lang = 'hi';
         },
         keywords: ['hindi', 'language', 'bhasha'],
       },
@@ -238,7 +240,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         icon: Globe,
         action: () => {
           i18n.changeLanguage('en');
-          localStorage.setItem('i18nextLng', 'en');
+          localStorage.setItem('lang', 'en');
+          document.documentElement.lang = 'en';
         },
         keywords: ['english', 'language'],
       },

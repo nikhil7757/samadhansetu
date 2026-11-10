@@ -77,54 +77,54 @@
   --radius-3xl: 1.25rem;
 }
 
-/* Dark Mode Tokens (Deep Obsidian Cyber-Civic Mood) */
+/* Dark Mode Tokens (Pure Pitch Black #000000 & Vibrant Orange Theme — ZERO Blue/Indigo) */
 .dark {
-  --color-primary: #526AE5;
-  --color-primary-foreground: #FFFFFF;
-  --color-primary-hover: #3E56D0;
-  --color-primary-light: #121A3B;
-  --color-primary-dark: #070B18;
+  --color-primary: #F97316;
+  --color-primary-foreground: #000000;
+  --color-primary-hover: #EA580C;
+  --color-primary-light: #241103;
+  --color-primary-dark: #120800;
 
-  --color-accent: #F29A2E;
-  --color-accent-foreground: #080B14;
-  --color-accent-hover: #FFAF4D;
-  --color-accent-light: #2A1D0E;
+  --color-accent: #FF7700;
+  --color-accent-foreground: #000000;
+  --color-accent-hover: #FF9233;
+  --color-accent-light: #2A1400;
 
   --color-success: #10B981;
-  --color-success-light: #0B241C;
+  --color-success-light: #052217;
 
-  --color-warning: #F5B014;
-  --color-warning-light: #2B2107;
+  --color-warning: #F59E0B;
+  --color-warning-light: #261704;
 
-  --color-danger: #E25757;
-  --color-danger-light: #2E1313;
+  --color-danger: #EF4444;
+  --color-danger-light: #270D0D;
 
-  --color-info: #5587EB;
-  --color-info-light: #0E1D3D;
+  --color-info: #F97316;
+  --color-info-light: #261204;
 
-  --color-background: #080B14;
-  --color-foreground: #F1F4FD;
-  --color-card: #0E1424;
-  --color-card-foreground: #F1F4FD;
+  --color-background: #000000;
+  --color-foreground: #F5F5F5;
+  --color-card: #0D0D0D;
+  --color-card-foreground: #F5F5F5;
 
-  --color-secondary: #141B30;
-  --color-secondary-foreground: #F1F4FD;
-  --color-muted: #131A30;
-  --color-muted-foreground: #7E8DAF;
+  --color-secondary: #171717;
+  --color-secondary-foreground: #F5F5F5;
+  --color-muted: #1A1A1A;
+  --color-muted-foreground: #A3A3A3;
 
-  --color-border: #1B233C;
-  --color-input: #1F2946;
-  --color-ring: #526AE5;
-  --color-destructive: #E25757;
+  --color-border: #262626;
+  --color-input: #1F1F1F;
+  --color-ring: #F97316;
+  --color-destructive: #EF4444;
   --color-destructive-foreground: #FFFFFF;
 
-  --color-status-submitted: #5587EB;
+  --color-status-submitted: #F97316;
   --color-status-ai-verified: #10B981;
-  --color-status-pending: #F5B014;
-  --color-status-in-progress: #5587EB;
+  --color-status-pending: #F59E0B;
+  --color-status-in-progress: #F97316;
   --color-status-solved: #10B981;
-  --color-status-rejected: #E25757;
-  --color-status-appealed: #A78BFA;
+  --color-status-rejected: #EF4444;
+  --color-status-appealed: #F97316;
 }
 
 /* Global Reset & Base Setup */
@@ -242,19 +242,9 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
 }
 
-/* Drifting Film-Grain Overlay */
+/* Drifting Film-Grain Overlay - Disabled heavy SVG filter to eliminate GPU reflow & lagging */
 .film-grain {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.025;
-}
-.dark .film-grain {
-  opacity: 0.04;
+  display: none !important;
 }
 
 /* Scanline raster texture */
@@ -278,10 +268,20 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
   animation-play-state: paused;
 }
 
+/* Zero-lag linear progress fill for HUD reel */
+@keyframes progress-strip {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+.animate-progress-strip {
+  animation: progress-strip 6s linear forwards;
+  will-change: width;
+}
+
 /* Pulse Saffron Glow */
 @keyframes pulse-saffron {
-  0%, 100% { box-shadow: 0 0 12px rgba(242, 154, 46, 0.25); }
-  50% { box-shadow: 0 0 24px rgba(242, 154, 46, 0.6); }
+  0%, 100% { box-shadow: 0 0 12px rgba(249, 115, 22, 0.25); }
+  50% { box-shadow: 0 0 24px rgba(249, 115, 22, 0.6); }
 }
 .glow-saffron {
   animation: pulse-saffron 2.5s infinite ease-in-out;
@@ -323,11 +323,11 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
 }
 
 .dark .glass-surface {
-  background: rgba(14, 20, 36, 0.75);
+  background: rgba(13, 13, 13, 0.88);
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .glass-popover {
@@ -339,11 +339,11 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
 }
 
 .dark .glass-popover {
-  background: rgba(14, 20, 36, 0.90);
+  background: rgba(18, 18, 18, 0.96);
   backdrop-filter: blur(20px) saturate(170%);
   -webkit-backdrop-filter: blur(20px) saturate(170%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.75);
 }
 
 /* Solid high-contrast surfaces for authentic field-grade readability */
@@ -360,10 +360,10 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
 }
 
 .dark .solid-surface-elevated {
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.65);
 }
 
-/* Background Atmosphere */
+/* Background Atmosphere (Zero blue tone in dark mode: pure deep black with radiant orange highlights) */
 .bg-app-atmosphere {
   background-image:
     radial-gradient(ellipse at 15% 10%, rgba(27, 37, 89, 0.04) 0%, transparent 60%),
@@ -373,8 +373,8 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
 
 .dark .bg-app-atmosphere {
   background-image:
-    radial-gradient(ellipse at 15% 10%, rgba(82, 106, 229, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse at 85% 90%, rgba(242, 154, 46, 0.04) 0%, transparent 50%);
+    radial-gradient(ellipse at 15% 10%, rgba(249, 115, 22, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 85% 90%, rgba(255, 119, 0, 0.03) 0%, transparent 50%);
   background-attachment: fixed;
 }
 

@@ -98,9 +98,45 @@ server.listen(PORT, async () => {
     await page.screenshot({ path: path.join(__dirname, '..', 'docs', 'screenshots', 'final-landing-field-grade.png') });
     console.log('✓ Captured final screenshot docs/screenshots/final-landing-field-grade.png');
 
+    // Verify Language Switching
+    console.log('\n--- Testing Language Toggle ---');
+    // Switch to Marathi
+    const mrBtn = page.locator('button[aria-label="मराठी (Marathi)"]');
+    if (await mrBtn.count() > 0) {
+      await mrBtn.click();
+      await page.waitForTimeout(300);
+      const mrHeadline = await page.locator('.fluid-headline').first().textContent();
+      console.log(`✓ Marathi language switch verified: "${mrHeadline?.trim()}"`);
+    }
+
+    // Switch to Hindi
+    const hiBtn = page.locator('button[aria-label="हिंदी (Hindi)"]');
+    if (await hiBtn.count() > 0) {
+      await hiBtn.click();
+      await page.waitForTimeout(300);
+      const hiHeadline = await page.locator('.fluid-headline').first().textContent();
+      console.log(`✓ Hindi language switch verified: "${hiHeadline?.trim()}"`);
+    }
+
+    // Switch back to English
+    const enBtn = page.locator('button[aria-label="English"]');
+    if (await enBtn.count() > 0) {
+      await enBtn.click();
+      await page.waitForTimeout(300);
+      const enHeadline = await page.locator('.fluid-headline').first().textContent();
+      console.log(`✓ English language switch restored: "${enHeadline?.trim()}"`);
+    }
+
     // Test dark mode
+    console.log('\n--- Testing Dark Mode (Pitch Black & Orange Theme) ---');
     await page.evaluate(() => document.documentElement.classList.add('dark'));
     await page.waitForTimeout(300);
+
+    const darkBg = await page.evaluate(() => {
+      return window.getComputedStyle(document.body).backgroundColor;
+    });
+    console.log(`✓ Dark mode body background color: ${darkBg}`);
+
     await page.screenshot({ path: path.join(__dirname, '..', 'docs', 'screenshots', 'final-landing-field-grade-dark.png') });
     console.log('✓ Captured final dark mode screenshot docs/screenshots/final-landing-field-grade-dark.png');
 

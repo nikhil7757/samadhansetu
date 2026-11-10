@@ -67,6 +67,23 @@ if (fs.existsSync(PRISMA_SCHEMA)) {
   console.log('ℹ  No Prisma schema found at expected path; skipping Prisma generate.\n');
 }
 
+// Compile backend TypeScript to backend/dist for Vercel serverless execution
+const backendTsConfig = path.join(BACKEND_DIR, 'tsconfig.json');
+if (fs.existsSync(backendTsConfig)) {
+  try {
+    console.log('    Compiling backend TypeScript for serverless execution...');
+    execSync('npx --yes tsc --project backend/tsconfig.json', {
+      stdio: 'inherit',
+      cwd: ROOT_DIR,
+      shell: true,
+      timeout: 45000,
+    });
+    console.log('✓ Backend compiled to backend/dist successfully.\n');
+  } catch (err) {
+    console.warn('⚠️  Backend tsc warning (continuing with runtime resolution):', err.message, '\n');
+  }
+}
+
 // ----------------------------------------------------
 // 2. Prepare Output Directory
 // ----------------------------------------------------

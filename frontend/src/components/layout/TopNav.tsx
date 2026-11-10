@@ -73,11 +73,11 @@ export function TopNav({ onOpenCommandPalette }: TopNavProps) {
       <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-white to-emerald-600 dark:from-amber-600 dark:via-slate-200 dark:to-emerald-700" />
 
       {/* Sovereign Official Gazette Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-950 text-white py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between border-b border-white/10">
+      <div className="bg-neutral-950 text-white py-1 px-4 text-[11px] font-medium tracking-wide flex items-center justify-between border-b border-neutral-800">
         <div className="flex items-center justify-between mx-auto max-w-7xl w-full">
           <div className="flex items-center gap-2.5">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 ring-1 ring-emerald-400/40" />
-            <span className="font-semibold tracking-wide text-amber-300">
+            <span className="font-semibold tracking-wide text-accent font-heading">
               {t('nav.topBannerGov', 'महाराष्ट्र शासन • Government of Maharashtra')}
             </span>
             <span className="hidden md:inline text-white/40">|</span>
@@ -88,7 +88,7 @@ export function TopNav({ onOpenCommandPalette }: TopNavProps) {
 
           <div className="flex items-center gap-4 text-white/80">
             <span className="hidden lg:inline-flex items-center gap-1.5 text-[10px] bg-white/10 px-2 py-0.5 rounded-full border border-white/15">
-              <Building2 className="h-3 w-3 text-amber-300" />
+              <Building2 className="h-3 w-3 text-accent" />
               {t('nav.registriesActive', '36 District Innovation Desks Active')}
             </span>
           </div>
