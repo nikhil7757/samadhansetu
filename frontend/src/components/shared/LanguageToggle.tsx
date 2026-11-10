@@ -33,7 +33,7 @@ export function LanguageToggle() {
 
   return (
     <div
-      className="inline-flex items-center rounded-lg border border-border bg-card p-0.5 text-xs font-semibold shadow-2xs"
+      className="inline-flex items-center rounded-full border border-border/80 bg-secondary/50 dark:bg-neutral-900/60 p-0.5 text-[11px] font-semibold backdrop-blur-md shadow-2xs"
       role="group"
       aria-label="Language selection"
     >
@@ -41,10 +41,10 @@ export function LanguageToggle() {
         type="button"
         onClick={() => toggle('en')}
         className={cn(
-          'rounded-md px-2 py-1 transition-all duration-150 cursor-pointer',
+          'rounded-full px-2 py-0.5 transition-all duration-150 cursor-pointer',
           isEn
             ? 'bg-primary text-primary-foreground shadow-xs font-bold'
-            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary/80'
         )}
         aria-pressed={isEn}
         aria-label="English"
@@ -55,10 +55,10 @@ export function LanguageToggle() {
         type="button"
         onClick={() => toggle('mr')}
         className={cn(
-          'rounded-md px-2 py-1 transition-all duration-150 cursor-pointer font-medium',
+          'rounded-full px-2 py-0.5 transition-all duration-150 cursor-pointer font-medium font-devanagari',
           isMr
             ? 'bg-primary text-primary-foreground shadow-xs font-bold'
-            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary/80'
         )}
         aria-pressed={isMr}
         aria-label="मराठी (Marathi)"
@@ -69,10 +69,10 @@ export function LanguageToggle() {
         type="button"
         onClick={() => toggle('hi')}
         className={cn(
-          'rounded-md px-2 py-1 transition-all duration-150 cursor-pointer font-medium',
+          'rounded-full px-2 py-0.5 transition-all duration-150 cursor-pointer font-medium font-devanagari',
           isHi
             ? 'bg-primary text-primary-foreground shadow-xs font-bold'
-            : 'text-muted-foreground hover:text-foreground hover:bg-secondary'
+            : 'text-muted-foreground hover:text-foreground hover:bg-secondary/80'
         )}
         aria-pressed={isHi}
         aria-label="हिंदी (Hindi)"

@@ -35,16 +35,16 @@ export function AppShell() {
         <Footer />
       </div>
 
-      {/* Floating mobile bottom navigation bar */}
+      {/* Floating mobile bottom navigation pill bar (iOS style) */}
       <nav
         aria-label="Mobile Navigation"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass-surface border-t border-border/80 px-2 py-1.5 flex items-center justify-around"
+        className="lg:hidden fixed bottom-3 left-3 right-3 sm:left-6 sm:right-6 z-40 ios-glass-pill rounded-full px-3 py-1.5 flex items-center justify-around shadow-2xl"
       >
         <Link
           to="/"
           className={cn(
-            'flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors',
-            location.pathname === '/' ? 'text-primary font-bold' : 'text-muted-foreground hover:text-foreground'
+            'flex flex-col items-center justify-center py-1 px-3 rounded-full text-[10px] font-medium transition-colors',
+            location.pathname === '/' ? 'text-primary font-bold bg-primary/10' : 'text-muted-foreground hover:text-foreground'
           )}
         >
           <Home className="h-4 w-4 mb-0.5" />
@@ -54,8 +54,8 @@ export function AppShell() {
         <Link
           to="/problems"
           className={cn(
-            'flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors',
-            location.pathname.startsWith('/problems') ? 'text-primary font-bold' : 'text-muted-foreground hover:text-foreground'
+            'flex flex-col items-center justify-center py-1 px-3 rounded-full text-[10px] font-medium transition-colors',
+            location.pathname.startsWith('/problems') ? 'text-primary font-bold bg-primary/10' : 'text-muted-foreground hover:text-foreground'
           )}
         >
           <Compass className="h-4 w-4 mb-0.5" />
@@ -64,7 +64,7 @@ export function AppShell() {
 
         <Link
           to="/report"
-          className="flex flex-col items-center justify-center -mt-4 bg-gradient-to-tr from-amber-600 to-amber-500 text-white rounded-full h-11 w-11 shadow-lg shadow-amber-600/30 ring-2 ring-background focus:outline-hidden"
+          className="flex flex-col items-center justify-center -mt-4 bg-gradient-to-tr from-amber-600 to-amber-500 text-white rounded-full h-11 w-11 shadow-lg shadow-amber-600/30 ring-2 ring-background focus:outline-hidden hover:scale-105 active:scale-95 transition-all"
           title="Post Challenge"
         >
           <PlusCircle className="h-5 w-5" />
@@ -73,7 +73,7 @@ export function AppShell() {
         <button
           type="button"
           onClick={() => setCommandPaletteOpen(true)}
-          className="flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          className="flex flex-col items-center justify-center py-1 px-3 rounded-full text-[10px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           <Search className="h-4 w-4 mb-0.5" />
           <span>Search</span>
@@ -82,9 +82,9 @@ export function AppShell() {
         <Link
           to={user ? '/my/submissions' : '/track'}
           className={cn(
-            'flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors',
+            'flex flex-col items-center justify-center py-1 px-3 rounded-full text-[10px] font-medium transition-colors',
             location.pathname.startsWith('/my') || location.pathname.startsWith('/track')
-              ? 'text-primary font-bold'
+              ? 'text-primary font-bold bg-primary/10'
               : 'text-muted-foreground hover:text-foreground'
           )}
         >

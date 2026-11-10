@@ -330,6 +330,50 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
+/* iOS Ultra-Premium Floating Glass Pill Navigation */
+.ios-glass-pill {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 12px 36px -4px rgba(27, 37, 89, 0.12),
+    0 4px 12px -2px rgba(27, 37, 89, 0.06),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .ios-glass-pill {
+  background: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 
+    0 16px 40px -4px rgba(0, 0, 0, 0.85),
+    0 4px 16px -2px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* iOS Segmented Pill Sub-Surface */
+.ios-pill-dock {
+  background: rgba(235, 240, 248, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(216, 223, 238, 0.7);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+.dark .ios-pill-dock {
+  background: rgba(24, 24, 24, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+}
+
 .glass-popover {
   background: rgba(255, 255, 255, 0.90);
   backdrop-filter: blur(20px) saturate(170%);

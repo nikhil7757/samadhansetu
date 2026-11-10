@@ -25,7 +25,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       onClick={() => setIsDark(!isDark)}
-      className="h-8 w-8 p-0 rounded-lg text-muted-foreground hover:text-foreground"
+      className="h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-foreground bg-secondary/40 dark:bg-neutral-900/50 border border-border/60 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-2xs"
       aria-label="Toggle dark mode"
       title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
