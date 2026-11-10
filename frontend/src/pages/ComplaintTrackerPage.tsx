@@ -152,18 +152,20 @@ export default function ComplaintTrackerPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* 1. Header Banner & Search */}
-      <section className="bg-card border-b border-border/80 pt-8 pb-10">
+      <section className="bg-card border-b border-border pt-8 pb-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 mb-3 shadow-xs">
-                <StateSeal size="xs" />
-                <span>Maharashtra State Innovation Society (MSInS) • Dossier Registry</span>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="w-8 h-0.5 bg-accent" />
+                <span className="font-mono text-xs text-accent tracking-widest uppercase font-bold">
+                  01 // STATEWIDE DOSSIER REGISTRY
+                </span>
               </div>
-              <h1 className="text-2xl sm:text-4xl font-black text-foreground font-serif tracking-tight">
-                Procurement Lifecycle Dossier
+              <h1 className="font-display text-3xl sm:text-5xl font-black text-foreground uppercase tracking-tight">
+                PROCUREMENT LIFECYCLE DOSSIER
               </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed font-body">
                 Legally binding state audit trail tracking challenge formulation, expert evaluation, pilot sandbox milestones, independent validation, and scale-up procurement decisions.
               </p>
             </div>
@@ -177,18 +179,18 @@ export default function ComplaintTrackerPage() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="NS-YYYY-NNNNNN"
-                  className="pl-9 h-11 text-xs font-mono uppercase bg-background shadow-xs"
+                  className="pl-9 h-11 text-xs font-mono uppercase bg-background shadow-xs rounded-sm"
                 />
               </div>
-              <Button type="submit" size="sm" className="h-11 px-4 font-bold text-xs cursor-pointer">
+              <Button type="submit" size="sm" className="h-11 px-5 font-bold text-xs uppercase tracking-wider cursor-pointer bg-accent hover:bg-accent-hover text-accent-foreground rounded-sm glow-saffron font-heading">
                 Track
               </Button>
             </form>
           </div>
 
           {/* Quick Pilot Selector Chips */}
-          <div className="mt-5 flex flex-wrap items-center gap-2 text-xs pt-4 border-t border-border/60">
-            <span className="text-muted-foreground font-medium">Sample Pilots:</span>
+          <div className="mt-5 flex flex-wrap items-center gap-2 text-xs pt-4 border-t border-border">
+            <span className="text-muted-foreground font-mono text-[11px] uppercase font-bold">Sample Pilots:</span>
             {pilots.map((p) => (
               <button
                 key={p.id}
@@ -198,10 +200,10 @@ export default function ComplaintTrackerPage() {
                   navigate(`/track/${p.id}`);
                 }}
                 className={cn(
-                  'px-2.5 py-1 rounded-md text-[11px] font-mono border transition-all cursor-pointer flex items-center gap-1.5',
+                  'px-2.5 py-1 rounded-xs text-[11px] font-mono border transition-all cursor-pointer flex items-center gap-1.5',
                   selectedPilot?.id === p.id
-                    ? 'bg-primary text-primary-foreground border-primary font-bold shadow-xs'
-                    : 'bg-secondary/60 border-border text-foreground hover:bg-secondary'
+                    ? 'bg-accent text-accent-foreground border-accent font-bold shadow-xs'
+                    : 'bg-secondary/60 border-border text-foreground hover:border-accent'
                 )}
               >
                 <span>{p.id}</span>
@@ -216,41 +218,41 @@ export default function ComplaintTrackerPage() {
       {selectedPilot && (
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8 space-y-8">
           {/* Top Pilot Docket Header Card */}
-          <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="rounded-sm border-2 border-border bg-card p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6 corner-brackets">
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-2">
                 <button
                   type="button"
                   onClick={copyRefCode}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xs text-xs font-mono font-bold bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors cursor-pointer"
                   title="Click to copy tracking ID"
                 >
                   <Copy className="h-3.5 w-3.5" />
                   <span>{selectedPilot.id}</span>
                 </button>
-                <span className="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="px-2.5 py-0.5 rounded-xs text-[11px] font-mono font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                   {selectedPilot.currentStage}
                 </span>
                 <span className="text-xs text-muted-foreground font-mono">
-                  Agr: {selectedPilot.agreementRef}
+                  AGR: {selectedPilot.agreementRef}
                 </span>
               </div>
 
-              <h2 className="text-lg sm:text-2xl font-bold text-foreground font-serif">
+              <h2 className="font-heading text-lg sm:text-2xl font-black text-foreground uppercase tracking-tight">
                 {selectedPilot.challengeTitle}
               </h2>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mt-3">
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-muted-foreground mt-3">
                 <span className="flex items-center gap-1.5 font-medium text-foreground">
-                  <Building2 className="h-3.5 w-3.5 text-primary" />
+                  <Building2 className="h-3.5 w-3.5 text-accent" />
                   {selectedPilot.department}
                 </span>
                 <span className="flex items-center gap-1.5 font-medium text-foreground">
-                  <MapPin className="h-3.5 w-3.5 text-amber-500" />
+                  <MapPin className="h-3.5 w-3.5 text-accent" />
                   {selectedPilot.district}, Maharashtra
                 </span>
                 <span className="flex items-center gap-1.5 font-medium text-foreground">
-                  <Rocket className="h-3.5 w-3.5 text-indigo-500" />
+                  <Rocket className="h-3.5 w-3.5 text-primary" />
                   {selectedPilot.startupName} ({selectedPilot.dpiitNumber})
                 </span>
               </div>
@@ -261,7 +263,7 @@ export default function ComplaintTrackerPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => window.print()}
-                className="gap-1.5 text-xs font-medium cursor-pointer"
+                className="gap-1.5 text-xs font-mono uppercase font-bold cursor-pointer rounded-sm border-border hover:border-accent"
               >
                 <Printer className="h-4 w-4" />
                 <span>Print Dossier</span>

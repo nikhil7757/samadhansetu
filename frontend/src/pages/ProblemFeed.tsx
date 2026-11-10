@@ -105,31 +105,33 @@ export default function ProblemFeed() {
   return (
     <div className="min-h-screen bg-background py-10 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border/80 pb-6">
+        {/* Header with Civic Marker */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 mb-3 shadow-xs">
-              <Rocket className="h-3.5 w-3.5" />
-              <span>Maharashtra State Innovation Society • Startup Discovery</span>
+            <div className="flex items-center gap-3 mb-2">
+              <span className="w-8 h-0.5 bg-accent" />
+              <span className="font-mono text-xs text-accent tracking-widest uppercase font-bold">
+                01 // STARTUP DISCOVERY MARKETPLACE
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-black text-foreground font-serif tracking-tight">
-              Startup Discovery Marketplace
+            <h1 className="font-display text-3xl sm:text-5xl font-black text-foreground uppercase tracking-tight">
+              PUBLIC CHALLENGE MARKETPLACE
             </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed font-body">
               Browse outcome-based public challenges posted by Maharashtra government departments.
               DPIIT-recognized startups receive statutory exemptions on prior turnover and years of experience under GFR Rule 170/173.
             </p>
           </div>
 
           <Link to="/report">
-            <Button size="sm" className="font-bold text-xs bg-amber-600 hover:bg-amber-700 text-white cursor-pointer">
+            <Button size="lg" className="min-h-[46px] font-bold text-xs uppercase tracking-wider bg-accent hover:bg-accent-hover text-accent-foreground cursor-pointer rounded-sm glow-saffron shadow-sm">
               Post Department Challenge
             </Button>
           </Link>
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-xs space-y-4">
+        <div className="rounded-sm border-2 border-border bg-card p-4 sm:p-6 shadow-xs space-y-4">
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -137,17 +139,17 @@ export default function ProblemFeed() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by keyword, department, sector, or tracking ID (e.g. SS-2026-001042)..."
-              className="pl-10 h-11 text-xs"
+              className="pl-10 h-11 text-xs font-mono rounded-sm"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
             <div>
-              <label className="text-[11px] font-bold text-muted-foreground block mb-1">Sector Domain</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Sector Domain</label>
               <select
                 value={selectedSector}
                 onChange={(e) => setSelectedSector(e.target.value)}
-                className="w-full h-9 rounded-md border border-border bg-background px-3 text-xs"
+                className="w-full h-9 rounded-sm border border-border bg-background px-3 text-xs"
               >
                 <option value="ALL">All Innovation Sectors</option>
                 {INNOVATION_SECTORS.map((s) => (
@@ -157,11 +159,11 @@ export default function ProblemFeed() {
             </div>
 
             <div>
-              <label className="text-[11px] font-bold text-muted-foreground block mb-1">Maharashtra District</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Maharashtra District</label>
               <select
                 value={selectedDistrict}
                 onChange={(e) => setSelectedDistrict(e.target.value)}
-                className="w-full h-9 rounded-md border border-border bg-background px-3 text-xs"
+                className="w-full h-9 rounded-sm border border-border bg-background px-3 text-xs"
               >
                 <option value="ALL">All 36 Districts</option>
                 {MAHARASHTRA_DISTRICTS.map((d) => (
@@ -171,11 +173,11 @@ export default function ProblemFeed() {
             </div>
 
             <div>
-              <label className="text-[11px] font-bold text-muted-foreground block mb-1">Procurement Stage</label>
+              <label className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Procurement Stage</label>
               <select
                 value={selectedStage}
                 onChange={(e) => setSelectedStage(e.target.value)}
-                className="w-full h-9 rounded-md border border-border bg-background px-3 text-xs"
+                className="w-full h-9 rounded-sm border border-border bg-background px-3 text-xs"
               >
                 <option value="ALL">All Lifecycle Stages</option>
                 <option value="APPROVED_PUBLISHED">Approved & Published (Open for Bids)</option>
@@ -189,8 +191,8 @@ export default function ProblemFeed() {
 
         {/* Results Counter & List */}
         <div>
-          <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
-            <span>Showing {filteredChallenges.length} of {challenges.length} active challenge dockets</span>
+          <div className="flex items-center justify-between text-xs font-mono text-muted-foreground mb-4">
+            <span className="uppercase font-bold tracking-wider">SHOWING {filteredChallenges.length} OF {challenges.length} ACTIVE CHALLENGE DOCKETS</span>
             {(selectedSector !== 'ALL' || selectedDistrict !== 'ALL' || selectedStage !== 'ALL' || searchTerm) && (
               <button
                 type="button"
@@ -200,7 +202,7 @@ export default function ProblemFeed() {
                   setSelectedDistrict('ALL');
                   setSelectedStage('ALL');
                 }}
-                className="flex items-center gap-1 text-primary hover:underline cursor-pointer"
+                className="flex items-center gap-1 text-accent hover:underline cursor-pointer uppercase font-bold"
               >
                 <FilterX className="h-3.5 w-3.5" />
                 <span>Reset All Filters</span>
@@ -210,41 +212,41 @@ export default function ProblemFeed() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredChallenges.map((challenge) => (
-              <Card
+              <div
                 key={challenge.id}
-                className="rounded-2xl border border-border/80 bg-card p-6 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all"
+                className="rounded-sm border-2 border-border bg-card p-6 flex flex-col justify-between corner-brackets hover:border-accent/60 transition-all space-y-4"
               >
                 <div>
                   {/* Top Badges */}
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+                      <span className="font-mono font-black text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-xs border border-primary/20">
                         {challenge.id}
                       </span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-secondary text-foreground">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-xs bg-secondary text-foreground font-mono">
                         {challenge.sector.replace('_', ' ')}
                       </span>
                     </div>
 
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                      <MapPin className="h-3.5 w-3.5 text-amber-500" />
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground font-mono font-medium">
+                      <MapPin className="h-3.5 w-3.5 text-accent" />
                       {challenge.district}, MH
                     </span>
                   </div>
 
                   {/* Title & Department */}
                   <Link to={`/problems/${challenge.id}`}>
-                    <h3 className="text-base sm:text-lg font-bold text-foreground hover:text-primary transition-colors leading-snug">
+                    <h3 className="font-heading font-black text-base sm:text-lg text-foreground hover:text-accent transition-colors leading-snug uppercase">
                       {challenge.title}
                     </h3>
                   </Link>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-                    <Building2 className="h-3.5 w-3.5 text-primary" />
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1.5 font-mono">
+                    <Building2 className="h-3.5 w-3.5 text-accent" />
                     <span>{challenge.department}</span>
                   </div>
 
                   {/* Outcome Description Excerpt */}
-                  <p className="text-xs text-muted-foreground mt-3 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-muted-foreground mt-3 line-clamp-3 leading-relaxed font-body">
                     {challenge.desiredOutcome}
                   </p>
 
@@ -253,7 +255,7 @@ export default function ProblemFeed() {
                     {challenge.successMetrics.slice(0, 2).map((kpi, idx) => (
                       <span
                         key={idx}
-                        className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20"
+                        className="text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-xs border border-emerald-500/20 font-bold"
                       >
                         ✓ {kpi}
                       </span>
@@ -261,16 +263,16 @@ export default function ProblemFeed() {
                   </div>
 
                   {/* Commercials Bar */}
-                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border/60 text-xs">
+                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border text-xs font-mono">
                     <div>
-                      <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Grant Budget</span>
-                      <span className="font-mono font-bold text-foreground">
+                      <span className="text-muted-foreground block text-[10px] uppercase font-bold">Grant Budget</span>
+                      <span className="font-bold text-foreground text-sm">
                         ₹{challenge.budgetMin}L – ₹{challenge.budgetMax}L
                       </span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground block text-[10px] uppercase font-semibold">Sandbox Duration</span>
-                      <span className="font-mono font-bold text-foreground">
+                      <span className="text-muted-foreground block text-[10px] uppercase font-bold">Sandbox Duration</span>
+                      <span className="font-bold text-accent text-sm">
                         {challenge.pilotDurationMonths} Months
                       </span>
                     </div>
@@ -278,26 +280,26 @@ export default function ProblemFeed() {
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="mt-6 pt-4 border-t border-border flex items-center justify-between gap-3 text-xs">
+                <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-3 text-xs font-mono">
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     onClick={() => handleOpenEligibility(challenge)}
-                    className="gap-1.5 text-xs font-semibold text-primary hover:bg-primary/10 border-primary/30 cursor-pointer"
+                    className="gap-1.5 text-xs uppercase font-bold text-foreground hover:border-accent border-border cursor-pointer rounded-sm"
                   >
-                    <FileCheck2 className="h-3.5 w-3.5" />
+                    <FileCheck2 className="h-3.5 w-3.5 text-accent" />
                     <span>Check Eligibility</span>
                   </Button>
 
                   <Link to={`/problems/${challenge.id}`}>
-                    <Button size="sm" className="gap-1.5 text-xs font-bold cursor-pointer">
+                    <Button size="sm" className="gap-1.5 text-xs uppercase font-bold cursor-pointer bg-primary hover:bg-primary-hover text-white rounded-sm">
                       <span>View Specs & Bid</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </Button>
                   </Link>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         </div>

@@ -4,6 +4,7 @@ import { TopNav } from './TopNav';
 import { Footer } from './Footer';
 import { Toaster } from 'sonner';
 import { CommandPalette } from '@/components/shared/CommandPalette';
+import { ProcurementTicker } from '@/components/common/ProcurementTicker';
 import { Compass, PlusCircle, Search, Rocket, Home } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -21,9 +22,13 @@ export function AppShell() {
   const isStartup = user?.role === 'STARTUP' || user?.role === 'UNIVERSITY' || user?.role === 'INDUSTRY';
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/20 selection:text-primary relative overflow-x-hidden bg-app-atmosphere">
-      <div className="flex flex-col min-h-screen pb-16 lg:pb-0">
+    <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-accent/20 selection:text-accent relative overflow-x-hidden bg-app-atmosphere">
+      {/* Subtle Analog Texture Layer */}
+      <div className="film-grain pointer-events-none" />
+
+      <div className="flex flex-col min-h-screen pb-16 lg:pb-0 relative z-10">
         <TopNav onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
+        <ProcurementTicker />
         <main className="flex-1">
           <Outlet />
         </main>
