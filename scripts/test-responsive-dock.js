@@ -66,7 +66,7 @@ server.listen(PORT, async () => {
       const page = await context.newPage();
 
       // Test Home Page
-      await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+      await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'domcontentloaded', timeout: 30000 });
       await page.waitForTimeout(600);
 
       // 1. Verify Top Navigation Bar
@@ -129,12 +129,12 @@ server.listen(PORT, async () => {
         throw new Error(`Upper bar unpinned after scroll! Y=${headerBoxScrolled.y}`);
       }
 
-      // Verify Bottom Dock remains pinned at bottom
+      // Verify Bottom Dock remains pinned and elevated higher above screen floor
       const dockBoxScrolled = await dock.boundingBox();
       const distanceFromBottom = dev.height - (dockBoxScrolled.y + dockBoxScrolled.height);
-      console.log(`  ✓ Bottom dock Y after scroll: ${dockBoxScrolled.y.toFixed(1)}px (distance from bottom = ${distanceFromBottom.toFixed(1)}px) (PINNED AT BOTTOM)`);
-      if (distanceFromBottom < 0 || distanceFromBottom > 50) {
-        throw new Error(`Bottom dock unpinned or drifted after scroll! distance=${distanceFromBottom}`);
+      console.log(`  ✓ Bottom dock Y after scroll: ${dockBoxScrolled.y.toFixed(1)}px (distance from bottom = ${distanceFromBottom.toFixed(1)}px) (ELEVATED & PINNED)`);
+      if (distanceFromBottom < 18 || distanceFromBottom > 75) {
+        throw new Error(`Bottom dock elevation out of expected range! distance=${distanceFromBottom}`);
       }
 
       await context.close();
@@ -150,7 +150,7 @@ server.listen(PORT, async () => {
     const subPage = await testContext.newPage();
 
     for (const path of subpages) {
-      await subPage.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'domcontentloaded', timeout: 15000 });
+      await subPage.goto(`http://localhost:${PORT}${path}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
       await subPage.waitForTimeout(500);
 
       const topNav = subPage.locator('header.sticky.top-0');

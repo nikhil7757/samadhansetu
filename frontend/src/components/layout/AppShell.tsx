@@ -30,8 +30,8 @@ export function AppShell() {
       {/* Subtle Analog Texture Layer */}
       <div className="film-grain pointer-events-none" />
 
-      {/* Main content wrapper with bottom padding so floating dock never overlaps footer or page content */}
-      <div className="flex flex-col min-h-screen pb-24 sm:pb-28 relative z-10">
+      {/* Main content wrapper with generous bottom padding so floating dock never overlaps footer or page content */}
+      <div className="flex flex-col min-h-screen pb-32 sm:pb-36 relative z-10">
         <TopNav onOpenCommandPalette={() => setCommandPaletteOpen(true)} />
         <ProcurementTicker />
         <main className="flex-1">
@@ -40,11 +40,10 @@ export function AppShell() {
         <Footer />
       </div>
 
-      {/* Permanently Pinned iOS Floating Bottom Glass Pill Dock (Streamlined Minimal Options for All Aspect Ratios & Devices) */}
+      {/* Permanently Pinned iOS Floating Bottom Glass Pill Dock (Elevated Higher Above Screen Floor Across All Devices) */}
       <nav
         aria-label="Primary Navigation Dock"
-        className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-50 ios-bottom-dock rounded-full p-1.5 flex items-center gap-1 sm:gap-2 shadow-2xl select-none shrink-0"
-        style={{ bottom: 'max(0.75rem, env(safe-area-inset-bottom, 0.75rem))' }}
+        className="ios-bottom-dock rounded-full p-1.5 flex items-center gap-1 sm:gap-2 shadow-2xl select-none shrink-0"
       >
         {/* 1. Home */}
         <Link

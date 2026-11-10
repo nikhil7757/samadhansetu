@@ -464,7 +464,7 @@ export default function Landing() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center min-w-0">
             {/* Left Column (7 cols): Editorial Typography & Direct Action */}
-            <div className="lg:col-span-7 space-y-6 min-w-0">
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6 min-w-0">
               {/* Civic Kicker with Saffron Rule */}
               <div className="flex items-center gap-3">
                 <span className="w-8 h-0.5 bg-accent shrink-0" />
