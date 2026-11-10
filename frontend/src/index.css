@@ -357,6 +357,34 @@ html[lang="mr"], html[lang="mr"] body, html[lang="mr"] * {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* iOS Ultra-Refined Floating Bottom Glass Pill Dock (Pinned on all pages) */
+.ios-bottom-dock {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(36px) saturate(220%) brightness(1.03);
+  -webkit-backdrop-filter: blur(36px) saturate(220%) brightness(1.03);
+  border: 1px solid rgba(255, 255, 255, 0.70);
+  box-shadow: 
+    0 20px 48px -6px rgba(27, 37, 89, 0.16),
+    0 8px 24px -2px rgba(27, 37, 89, 0.08),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .ios-bottom-dock {
+  background: rgba(10, 10, 10, 0.74);
+  backdrop-filter: blur(36px) saturate(220%) brightness(1.08);
+  -webkit-backdrop-filter: blur(36px) saturate(220%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 24px 60px -8px rgba(0, 0, 0, 0.95),
+    0 8px 24px -2px rgba(0, 0, 0, 0.75),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.6),
+    0 0 24px rgba(249, 115, 22, 0.14);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* iOS Segmented Pill Sub-Surface */
 .ios-pill-dock {
   background: rgba(235, 240, 248, 0.65);
