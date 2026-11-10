@@ -68,9 +68,9 @@ async function verifyLive() {
 
   const dockBoxScrolled = await mobileDock.boundingBox();
   const distanceFromBottom = 844 - (dockBoxScrolled.y + dockBoxScrolled.height);
-  console.log(`✓ Live Mobile Bottom Dock Y after scroll: ${dockBoxScrolled.y.toFixed(1)}px (distance from bottom = ${distanceFromBottom.toFixed(1)}px) (PINNED AT BOTTOM)`);
-  if (distanceFromBottom < 0 || distanceFromBottom > 50) {
-    throw new Error(`Live mobile bottom dock unpinned or drifted after scroll! distance=${distanceFromBottom}`);
+  console.log(`✓ Live Mobile Bottom Dock Y after scroll: ${dockBoxScrolled.y.toFixed(1)}px (distance from bottom = ${distanceFromBottom.toFixed(1)}px) (ELEVATED & PINNED)`);
+  if (distanceFromBottom < 18 || distanceFromBottom > 75) {
+    throw new Error(`Live mobile bottom dock elevation out of expected range! distance=${distanceFromBottom}`);
   }
 
   await mobileContext.close();
@@ -81,6 +81,14 @@ async function verifyLive() {
   const desktopPage = await desktopContext.newPage();
   await desktopPage.goto(LIVE_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await desktopPage.waitForTimeout(1000);
+
+  const deskDock = desktopPage.locator('nav.ios-bottom-dock');
+  const hasDeskDock = await deskDock.isVisible();
+  console.log(`✓ Live Desktop Bottom Dock visible: ${hasDeskDock}`);
+  if (!hasDeskDock) throw new Error('Live desktop bottom dock is missing!');
+  const deskDockBox = await deskDock.boundingBox();
+  const deskDist = 900 - (deskDockBox.y + deskDockBox.height);
+  console.log(`✓ Live Desktop Bottom Dock distance from bottom: ${deskDist.toFixed(1)}px (ELEVATED & PINNED)`);
 
   const headlineEn = await desktopPage.locator('.fluid-headline').first().textContent();
   console.log(`✓ Live English Headline: "${headlineEn?.trim()}"`);
