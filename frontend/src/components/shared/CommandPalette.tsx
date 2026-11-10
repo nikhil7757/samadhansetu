@@ -17,14 +17,16 @@ import {
   Activity,
   Layers,
   X,
+  Sparkles,
 } from 'lucide-react';
 import { useNavSetu } from '@/lib/navsetuStore';
 import { STANDARD_TEMPLATES } from '@/lib/templatesData';
-import { useAuth } from '@/lib/auth';
+import { useAuth, DEMO_PRESETS } from '@/lib/auth';
+import { toast } from 'sonner';
 
 interface CommandItem {
   id: string;
-  category: 'Navigation' | 'Challenges & Pilots' | 'Standard Templates' | 'Actions';
+  category: 'Demo Accounts' | 'Navigation' | 'Challenges & Pilots' | 'Standard Templates' | 'Actions';
   title: string;
   subtitle?: string;
   icon: React.ElementType;
@@ -44,7 +46,7 @@ export function openCommandPalette() {
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loginDemo } = useAuth();
   const { challenges, pilots } = useNavSetu();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -90,6 +92,27 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   // Command items catalog
   const items: CommandItem[] = useMemo(() => {
+    // 1-Click Demo Personas for Judges & Evaluators
+    const demoItems: CommandItem[] = DEMO_PRESETS.map((demo) => ({
+      id: `demo-${demo.role.toLowerCase()}`,
+      category: 'Demo Accounts',
+      title: `Switch Persona: ${demo.title} (${demo.badge})`,
+      subtitle: `${demo.description} • ${demo.email}`,
+      icon: Sparkles,
+      action: async () => {
+        try {
+          const logged = await loginDemo(demo.role);
+          toast.success(`Active Persona: ${demo.title}!`, {
+            description: `Signed in as ${logged.name} (${demo.role})`,
+          });
+          navigate(demo.targetPath);
+        } catch (err: any) {
+          toast.error(err.message || 'Demo login failed');
+        }
+      },
+      keywords: ['demo', 'login', 'switch', 'persona', demo.role, demo.title, demo.badge, demo.email],
+    }));
+
     const navItems: CommandItem[] = [
       {
         id: 'nav-home',
@@ -247,8 +270,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       },
     ];
 
-    return [...navItems, ...challengeItems, ...pilotItems, ...templateItems, ...actionItems];
-  }, [challenges, pilots, user, t, i18n, navigate]);
+    return [...demoItems, ...navItems, ...challengeItems, ...pilotItems, ...templateItems, ...actionItems];
+  }, [challenges, pilots, user, loginDemo, t, i18n, navigate]);
 
   // Filter items based on user search query
   const filteredItems = useMemo(() => {

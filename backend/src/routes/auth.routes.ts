@@ -9,6 +9,14 @@ import { csrfGuard } from '../middleware/csrfGuard.js';
 
 const router = Router();
 
+// Demo Accounts & Fast 1-Click Persona Authentication (For judges and evaluators)
+router.get('/demo-accounts', AuthController.getDemoAccounts);
+router.post('/demo-login', authLimiter, AuthController.demoLogin);
+
+// Google Federated Authentication & Registration
+router.post('/google', authLimiter, AuthController.googleAuth);
+router.post('/google-login', authLimiter, AuthController.googleAuth);
+
 // Session establishment via Firebase ID token exchange
 router.post('/session', authLimiter, validate(sessionSchema), AuthController.session);
 router.post('/login', authLimiter, AuthController.session); // Compatibility alias

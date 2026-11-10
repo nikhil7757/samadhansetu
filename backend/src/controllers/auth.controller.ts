@@ -4,6 +4,105 @@ import crypto from 'crypto';
 
 export class AuthController {
   /**
+   * Returns list of supported demo accounts for 1-click evaluation.
+   */
+  static async getDemoAccounts(_req: Request, res: Response) {
+    try {
+      const accounts = AuthService.getDemoAccounts();
+      res.json({ accounts });
+    } catch (err: any) {
+      res.status(500).json({ error: 'Failed to retrieve demo accounts', message: err.message });
+    }
+  }
+
+  /**
+   * 1-Click demo authentication for hackathon evaluators and test personas.
+   */
+  static async demoLogin(req: Request, res: Response) {
+    try {
+      const role = req.body?.role || 'STARTUP';
+      const result = await AuthService.demoLogin(role);
+
+      const csrfToken = crypto.randomBytes(32).toString('hex');
+
+      res.cookie('session', result.sessionCookie, {
+        maxAge: result.expiresIn,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      });
+
+      res.cookie('csrf-token', csrfToken, {
+        maxAge: result.expiresIn,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      });
+
+      res.json({
+        user: result.user,
+        token: result.sessionCookie,
+        csrfToken,
+      });
+    } catch (err: any) {
+      console.error('Demo login error:', err);
+      res.status(500).json({
+        error: 'Failed to authenticate demo persona',
+        message: err.message,
+      });
+    }
+  }
+
+  /**
+   * Resilient Google Federated Login & Signup endpoint.
+   */
+  static async googleAuth(req: Request, res: Response) {
+    try {
+      const { idToken, email, name, role, organizationName, district } = req.body;
+      const result = await AuthService.googleAuth({
+        idToken,
+        email,
+        name,
+        role,
+        organizationName,
+        district,
+      });
+
+      const csrfToken = crypto.randomBytes(32).toString('hex');
+
+      res.cookie('session', result.sessionCookie, {
+        maxAge: result.expiresIn,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      });
+
+      res.cookie('csrf-token', csrfToken, {
+        maxAge: result.expiresIn,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      });
+
+      res.json({
+        user: result.user,
+        token: result.sessionCookie,
+        csrfToken,
+      });
+    } catch (err: any) {
+      console.error('Google auth error:', err);
+      res.status(500).json({
+        error: 'Google authentication could not be completed',
+        message: err.message,
+      });
+    }
+  }
+
+  /**
    * Creates an authenticated session from a verified Firebase ID token.
    * Sets httpOnly, Secure, SameSite session cookie and anti-CSRF cookie.
    */
