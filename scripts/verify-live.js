@@ -17,6 +17,10 @@ async function verifyLive() {
   const pillCount = await page.locator('.ios-glass-pill').count();
   console.log('✓ Live iOS Glass Pill elements verified:', pillCount);
 
+  const bottomDock = page.locator('nav.ios-bottom-dock');
+  const hasBottomDock = await bottomDock.isVisible();
+  console.log('✓ Live Pinned Floating Bottom Dock visible:', hasBottomDock);
+
   const headlineEn = await page.locator('.fluid-headline').first().textContent();
   console.log('✓ Live English Headline:', headlineEn?.trim());
 
